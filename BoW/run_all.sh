@@ -27,7 +27,8 @@ echo Moving into `echo pwd`
 for f in *_frame_segmented.txt; do
     echo Segmenting `echo $f | sed 's/_frame_segmented.txt//'`
     cd ../segmented_videos
-#    perl build_segmented_videos.pl `echo $f | sed 's/_frame_segmented.txt//'`
+## This line has to be commented whenever you want to reuse the extracted features
+    perl build_segmented_videos.pl `echo $f | sed 's/_frame_segmented.txt//'`
 done
 
 cd ..
@@ -49,8 +50,9 @@ for f in truth/*_frame_segmented.txt; do
     actor=`echo $actor | sed 's/truth\///'`
     echo Segmenting $actor
     cd ../extracted_features
-    
- #   perl avi2stip.pl $actor
+
+## You can comment the next line whenever you want to reuse the extracted features    
+   perl avi2stip.pl $actor
 
     echo "=========================================" 
     echo "Turning the stip feature files into .hof"

@@ -22,6 +22,7 @@ cd $PATH_TO_PARSER
 export CLASSPATH=$CLASSPATH:/home/mjsantof/repo/mariajose.santofimia/kingston/scone/apache-log4j-1.2.16/log4j-1.2.16.jar:/home/mjsantof/repo/mariajose.santofimia/kingston/scone
 
 javac ActionParsing.java
+javac Expectation.java
 cd ..
 java parser.ActionParsing /home/mjsantof/repo/mariajose.santofimia/kingston/BoW/recognition_process/results
 

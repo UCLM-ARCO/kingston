@@ -30,6 +30,7 @@
 (load "/home/mjsantof/repo/mariajose.santofimia/kingston/scone/domain_independant/event-calculus.lisp")
 (load "/home/mjsantof/repo/mariajose.santofimia/kingston/scone/domain_independant/actions.lisp")
 (load "/home/mjsantof/repo/mariajose.santofimia/kingston/scone/domain_independant/actions_1.lisp")
+(load "/home/mjsantof/repo/mariajose.santofimia/kingston/scone/domain_independant/expectations.lisp")
 (load "/home/mjsantof/repo/mariajose.santofimia/kingston/scone/specific_domain/context_description.lisp")
 
 
