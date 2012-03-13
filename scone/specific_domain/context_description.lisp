@@ -8,6 +8,11 @@
 ;;;** --------------------------------------------------**
 ;;;*******************************************************
 
+;; SOME RELATIONS
+(new-relation {requires} 
+	      :a-inst-of {event}
+	      :b-inst-of {event})
+
 ;; GENERAL STATEMENTS
 
 (new-type {surface} {thing})
@@ -38,3 +43,25 @@
 (new-statement {test book} {is in direct contact to} {test room floor})
 
 
+;; Since the book is on the floor, picking up a book is an action that
+;; requires the person to lower down in order to approach the book.
+
+;; (new-statement {pick up} {requires} {lower down})
+
+;; Since the chair is not at the entrance of the scenario, it can be
+;; assume that in order to sit down on the chair, you have to walk
+;; towards it first
+
+(new-statement {sit down} {requires} {walk towards})
+
+;; In order to throw something, you have to have something to throw,
+;; so a pick up action is required before the throwing one
+
+(new-statement {throw over head} {requires} {pick up})
+(new-statement {throw bottom up} {requires} {pick up})
+
+;; Also kick and punch requires the person to approach the punching
+;; ball wich is not at the entrance of the scenario
+
+(new-statement {punch} {requires} {walk towards})
+(new-statement {kick} {requires} {walk towards})

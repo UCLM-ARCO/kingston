@@ -21,3 +21,6 @@
 	      :b-inst-of {event}
 	      :symmetric t) 
 
+
+(new-type {believe} {compound event})
+(new-type-role {expectation} {believe}  {compound event})

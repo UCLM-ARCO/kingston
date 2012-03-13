@@ -10,9 +10,13 @@ echo "================================="
 
 
 cd $PATH_TO_SCONE_SERVER
-#rm scone-server.pid
-#./start-server 5000 localhost
-
+if [ -f scone-server.pid ]
+    then
+    rm scone-server.pid
+    echo "deleted scone-server.pid"
+fi
+bash start-server 5000 localhost
+sleep 15
 
 echo "=================================" 
 echo " PARSING the recognized actions"
@@ -21,10 +25,17 @@ cd $PATH_TO_PARSER
 
 export CLASSPATH=$CLASSPATH:/home/mjsantof/repo/mariajose.santofimia/kingston/scone/apache-log4j-1.2.16/log4j-1.2.16.jar:/home/mjsantof/repo/mariajose.santofimia/kingston/scone
 
-javac ActionParsing.java
+javac SconeFacade.java
+javac ClassifiedResultFile.java
+javac CSAR.java
+javac Action.java
+javac Believe.java
+javac Estimation.java
 javac Expectation.java
+
+
 cd ..
-java parser.ActionParsing /home/mjsantof/repo/mariajose.santofimia/kingston/BoW/recognition_process/results
+java parser.CSAR /home/mjsantof/repo/mariajose.santofimia/kingston/BoW/recognition_process/results
 
 
 echo "=================================" 
@@ -32,4 +43,4 @@ echo "    STOPING the Scone Server"
 echo "=================================" 
 
 cd $PATH_TO_SCONE_SERVER
-#./stop-server 
+bash stop-server 

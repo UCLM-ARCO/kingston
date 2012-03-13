@@ -20,8 +20,16 @@
 (new-type-role {objectLocation} {thing} {place})
 (new-type {animated object} {thing})
 (new-is-a {person} {animated object})
+(new-type-role {body part} {person} {thing})
+(new-indv-role {arm} {person} {body part} :n 2)
+(new-indv-role {leg} {person} {body part} :n 2)
+
 
 ;; RELATIONS APPLIED TO ACTIONS
+(new-relation {has point of interest in} 
+	      :a-inst-of {event}
+	      :b-inst-of {body part})
+
 (new-relation {is located at}
 	      :a-inst-of {thing}
 	      :b-inst-of {location})
@@ -71,11 +79,9 @@
 ((new-statement {checking person} {is aware of}
 	{checked time})))
 
-;; DEFINITIONS DESCRIBING THE ACTION OF CROSSING ARMS (ACTION 2 FROM IXMAS)
-(new-type-role {body part} {person} {thing})
-(new-indv-role {arm} {person} {body part} :n 2)
-(new-indv-role {leg} {person} {body part} :n 2)
+(new-statement {check watch} {has point of interest in} {arm}) 
 
+;; DEFINITIONS DESCRIBING THE ACTION OF CROSSING ARMS (ACTION 2 FROM IXMAS)
 (new-relation {is in direct contact to}
 	      :a-inst-of {thing}
 	      :b-inst-of {thing})
@@ -116,6 +122,9 @@
  ((new-statement {person crossing arms}  {has crossed}  {arms to cross})
   (new-statement {left arm} {is in direct contact to} {right arm})))
 
+(new-statement {cross arms} {has point of interest in} {arm}) 
+
+
 ;; DEFINITIONS DESCRIBING THE ACTION OF SCRATCHING HEAD (ACTION 3 FROM IXMAS)
 
 (new-type-role {head} {person} {body part} :n 1)
@@ -145,6 +154,9 @@
   :after
   ((new-statement {scratcher hand} {is in direct contact to}
 		{scratched head})))
+
+(new-statement {scratch head} {has point of interest in} {arm}) 
+(new-statement {scratch head} {has point of interest in} {head}) 
 
 ;; DEFINITIONS DESCRIBING THE ACTION OF SITTING DOWN (ACTION 4 FROM IXMAS)
 
@@ -180,6 +192,10 @@
    (new-not-statement {person sitting} {stands upon} {feet})
   (new-statement {person sitting} {is in direct contact to} {sitting surface})))
 
+(new-statement {sit down} {has point of interest in} {leg}) 
+
+
+
 ;; DEFINITIONS DESCRIBING THE ACTION OF GETTING UP (ACTION 5 FROM IXMAS)
 
 ;(new-event-type {get up} '({event})  
@@ -205,6 +221,7 @@
    (new-not-statement {person standing up} {is in direct contact to} {resting surface})))
 
 (new-statement {get up} {is opposite action of} {sit down})
+(new-statement {get up} {has point of interest in} {leg}) 
 
 
 ;; DEFINITIONS DESCRIBING THE ACTION OF SITTING DOWN (ACTION 7 FROM IXMAS)
@@ -222,6 +239,9 @@
  :after
  ((new-statement{person walking} {is located at}
 	{destination})))
+
+(new-statement {walk towards} {has point of interest in} {leg}) 
+
 
 ;;FLUENTS NEED TO BE ADDED IN ORDER TO DESCRIBE THE WALKING ACTION
 
@@ -243,6 +263,7 @@
   ((new-statement {person turning} {is located at} {origin})
    (new-statement {person turning} {is located at} {destination})))
 
+(new-statement {turn around} {has point of interest in} {leg}) 
 
 ;; DEFINITIONS DESCRIBING THE ACTION OF WAVING (ACTION 8 FROM IXMAS)
 (new-type-role {torso} {person} {body part} :n 1)
@@ -262,6 +283,7 @@
   (new-statement {waving hand} {performs the action of} {move}))
  :after
  ((new-not-statement {waving hand} {is in direct contact to} {torso})))
+(new-statement {wave} {has point of interest in} {arm}) 
 
 ;; DEFINITIONS DESCRIBING THE ACTION OF PUNCHING (ACTION 9 FROM IXMAS)
 (new-type-role {fist} {person} {body part} :n 2)
@@ -288,6 +310,7 @@
   (new-statement {punching person} {is closed to} {punched object}))
  :after
  ((new-statement {punching person} {has hit} {punched object})))
+(new-statement {punch} {has point of interest in} {arm}) 
 
 ;; DEFINITIONS DESCRIBING THE ACTION OF KICKING (ACTION 10 FROM IXMAS)
 (new-event-type {kicking} '({event})  
@@ -312,6 +335,8 @@
   (new-statement {kicking person} {is closed to} {kicked object}))
  :after
  ((new-statement {kicking person} {has hit} {kicked object})))
+
+(new-statement {kick} {has point of interest in} {leg}) 
 
 
 ;; DEFINITIONS DESCRIBING THE ACTION OF POINTING (ACTION 11 FROM IXMAS)
@@ -346,6 +371,8 @@
  :after
  ((new-not-statement {pointing person} {focuses attention on} {pointed object})
   (new-not-statement {pointing finger} {points at} {pointed object location})))
+
+(new-statement {point at} {has point of interest in} {arm}) 
 
 
 ;; DEFINITIONS DESCRIBING THE ACTION OF PICKING UP (ACTION 12 FROM IXMAS)
@@ -385,7 +412,21 @@
   (the-x-of-y-is-z {picking person location} {picking person} {picked object location})
   (new-statement {picked object} {is hold by} {picking hand})))
 
+(new-statement {pick up} {has point of interest in} {arm}) 
 
+(new-event-type {lower down}
+		'({event} {action})
+ :roles
+ ((:rename {agent} {person lowering down})
+  (:indv {person lowering down feet} {feet})
+  (:indv {person lowering down legs} {leg}))
+ :throughout
+ ((the-x-of-y-is-z {feet} {person lowering down} {person lowering down feet})
+  (the-x-of-y-is-z {leg} {person lowering down} {person lowering down legs}))
+ :before
+ ((new-statement {person lowering down} {stands upon} {person lowering down feet}))
+ :after
+ ((new-statement {person lowering down} {stands upon} {person lowering down legs})))
 
 
 ;; DEFINITIONS DESCRIBING THE ACTION OF THROWING OVER HEAD (ACTION 13 FROM IXMAS)
@@ -445,6 +486,8 @@
 ;; being thrown over the head. So, in the after context the end
 ;; location of the thrown object should be known. 
 
+(new-statement {throw over head} {has point of interest in} {arm}) 
+
 (new-event-type {throw bottom up}
 		'({throw} {action})	
  :throughout
@@ -453,3 +496,5 @@
  ((new-statement {thrown object} {is in direct contact to} {floor})
   (new-statement {thrown object} {rests upon} {floor})
   (new-statement {throwing hands} {is in direct contact to} {throwing person torso})))
+(new-statement {throw bottom up} {has point of interest in} {arm}) 
+
