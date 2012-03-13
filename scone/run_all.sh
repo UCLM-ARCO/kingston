@@ -16,7 +16,7 @@ if [ -f scone-server.pid ]
     echo "deleted scone-server.pid"
 fi
 bash start-server 5000 localhost
-sleep 15
+sleep 12
 
 echo "=================================" 
 echo " PARSING the recognized actions"

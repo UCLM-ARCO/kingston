@@ -53,11 +53,15 @@ public class SconeFacade {
     public String stripPoI(String queryResult){
 	int startIndexOfPoI = queryResult.indexOf("has point of interest in");
 	int endIndexOfPoI = startIndexOfPoI;
-	
+	// @DEBUGGING
+	System.out.println("\n Found point of interest: " + queryResult.substring(startIndexOfPoI, endIndexOfPoI));
+	// @DEBUGGING
 	if(startIndexOfPoI > -1){
 	    startIndexOfPoI+="has point of interest in".length();
 	    endIndexOfPoI= queryResult.indexOf('(',startIndexOfPoI)-1; 
+	    return queryResult.substring(startIndexOfPoI, endIndexOfPoI);
 	}		    	    
-	return queryResult.substring(startIndexOfPoI, endIndexOfPoI);
+	else
+	    return null;
     }
 }

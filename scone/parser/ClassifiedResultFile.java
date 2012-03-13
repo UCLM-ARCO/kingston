@@ -6,16 +6,19 @@ import java.io.*;
 
 public class ClassifiedResultFile{
     
+    static final String[] IXMAS_ACTIONS = {"nothing", "check watch", "cross arms", "scratch head", "sit down", "get up", "turn around", "walk towards", "wave", "punch", "kick",  "point at", "pick up", "throw over head", "throw from bottom up"};
 
     public String fileName;
     public String lineToParse;
     public Vector actionsInCurrentParsedLine;
     public Estimation estimationForCurrentClassifiedResultFile; 
+    public String actor;
 
     public ClassifiedResultFile(String fn){
 	fileName = fn;
+	actor = stripActorName();
 	actionsInCurrentParsedLine = new Vector();
-	estimationForCurrentClassifiedResultFile = new Estimation(stripActorName());
+	estimationForCurrentClassifiedResultFile = new Estimation(actor);
     }
 
 
@@ -27,22 +30,34 @@ public class ClassifiedResultFile{
 	    DataInputStream in = new DataInputStream(fstream);
 	    BufferedReader br = new BufferedReader(new InputStreamReader(in));
 	    String strLine;
-	    // Read File Line By Line
-	    // Each line is a level of context inheritance
 	    
-	    // Parse the first line to force first action to be "walking towards"
 	    if((strLine = br.readLine()) != null)
 		estimationForCurrentClassifiedResultFile.setFirstActionInEstimation();
 	    
-	    // Parse the rest of lines of the the classified result file
 	    while ((strLine = br.readLine()) != null)   {
+		
+		// @DEBUGGING
+		System.out.println("\nParsing next line. ");
+		// @DEBUGGING
+
 		lineToParse = strLine;
+		
+		// @DEBUGGING
+		System.out.println("Line to parse: "+lineToParse);
+		// @DEBUGGING
+		
 		actionsInCurrentParsedLine = stripActionsFromLineToParse();
-		estimationForCurrentClassifiedResultFile.setConsideredActions(actionsInCurrentParsedLine);
-	    }// END WHILE
+		
+		
+		// @DEBUGGING
+		System.out.println("Actions in current parsed line: "+ actionsInCurrentParsedLine);
+		// @DEBUGGING
+
+		estimationForCurrentClassifiedResultFile.newActionInEstimation(actionsInCurrentParsedLine);
+	    }
 	    
 	    in.close();
-	} catch (Exception e){//Catch exception if any //END TRY
+	} catch (Exception e){
 	    System.err.println("Error: " + e.getMessage());
 	}
 	
@@ -79,13 +94,26 @@ public class ClassifiedResultFile{
 	int start =0;
 	int end=lineToParse.indexOf(" ", 0);
 	
+	
 	if(lineToParse.indexOf("a") <0){ //To get rid of the accuracy message at the end of the file. The three sentences contains letter 'a'
 	    while(end !=-1){
-		actionsInCurrentParsedLine.addElement(Integer.parseInt(lineToParse.substring(start, end)));
+		// @DEBUGGING
+		System.out.println("\nParsed number: " +IXMAS_ACTIONS[Integer.parseInt(lineToParse.substring(start, end))] +"  "+ actor);
+		// @DEBUGGING
+	
+		Action tempAction = new Action(IXMAS_ACTIONS[Integer.parseInt(lineToParse.substring(start, end))], actor);
+		actionsInCurrentParsedLine.add(tempAction);
+	
 		start = end+1; 
 		end = lineToParse.indexOf(" ", start);
 	    }
 	}
+
+	// @DEBUGGING
+	System.out.println("\nBefore parsing actions to text: " +actionsInCurrentParsedLine );
+	// @DEBUGGING
+	
+
 	return actionsInCurrentParsedLine;
     }
 }
