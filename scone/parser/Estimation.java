@@ -44,7 +44,8 @@ public class Estimation{
 	consideredActions = actionsInCPL;
 
 	// @DEBUGGING
-	System.out.println("Considering actions: "+ consideredActions);
+	System.out.println("Considering actions: ");
+	printOutActionList(consideredActions);
 	// @DEBUGGING
 	
 	filterInconsistentActions();
@@ -89,7 +90,7 @@ public class Estimation{
 	sfObject.sendToScone("(new-statement {"+actor+"} {is in} {test room})");
 	sfObject.sendToScone("(new-context {believe 0 for "+actor+"})");
 	sfObject.sendToScone("(in-context (lookup-element {believe 0 for "+actor +"}))");
-	consideredBelieves.add("believe 0 for "+actor);
+	consideredBelieves.add(new Believe("believe 0 for "+actor, 0));
 
     }
     
@@ -189,17 +190,32 @@ public class Estimation{
     public void filterInconsistentActions(){
 	for(int consideredActionsIterator=0; consideredActionsIterator < consideredActions.size(); consideredActionsIterator++){
 	    currentAction = ((Action)consideredActions.elementAt(consideredActionsIterator));
-	    currentAction.getRequiredAction();
-	    deleteCurrentActionIfInconsistent();	    
-	} 
+	    // @DEBUGGING
+	    System.out.println("Exploring action: "+currentAction.actionName);
+	    // @DEBUGGING
+	    
+	    if(currentAction.hasRequiredAction()){
+		// @DEBUGGING
+		System.out.println("Action: "+currentAction.actionName+" requires actions: "+ currentAction.requiredAction.actionName);
+		// @DEBUGGING
+		deleteCurrentActionIfInconsistent();	    
+	    }
+	    
+	}
 	
     }
 
     public void deleteCurrentActionIfInconsistent(){
 	Action deleteIfNotFoundInBelieve;
+	// @DEBUGGING
+	System.out.println("Number of considered believes "+consideredBelieves.size());
+	// @DEBUGGING
 
 	for(int consideredBelievesIterator=0; consideredBelievesIterator< consideredBelieves.size(); consideredBelievesIterator++){
 	    currentBelieve = ((Believe)consideredBelieves.elementAt(consideredBelievesIterator));
+	    // @DEBUGGING
+	    System.out.println("Exploring believe: "+currentBelieve.believeName+" at time instant "+timeInstant);
+	    // @DEBUGGING
 	    if(currentBelieve.doesActionExistInBelieveAtCurrentTimeInstant(currentAction.requiredAction, timeInstant)){
 		// @DEBUGGING
 		System.out.println("Found a previous requirement for consistency \n");
@@ -372,5 +388,14 @@ public class Estimation{
 
     }
 
+    public void printOutActionList(Vector actionListToPrint){
+	for(int iter=0; iter< actionListToPrint.size(); iter++){
+	    // @DEBUGGING
+	    System.out.println(((Action)actionListToPrint.elementAt(iter)).actionName+" ");
+	    // @DEBUGGING
+	}
+	
+	System.out.println("\n");
+    }
 
 }

@@ -50,7 +50,8 @@ public class ClassifiedResultFile{
 		
 		
 		// @DEBUGGING
-		System.out.println("Actions in current parsed line: "+ actionsInCurrentParsedLine);
+		System.out.println("Actions in current parsed line: ");
+		printOutActionList(actionsInCurrentParsedLine);
 		// @DEBUGGING
 
 		estimationForCurrentClassifiedResultFile.newActionInEstimation(actionsInCurrentParsedLine);
@@ -110,10 +111,21 @@ public class ClassifiedResultFile{
 	}
 
 	// @DEBUGGING
-	System.out.println("\nBefore parsing actions to text: " +actionsInCurrentParsedLine );
+	System.out.println("\nBefore parsing actions to text: ");
+	printOutActionList(actionsInCurrentParsedLine);
 	// @DEBUGGING
 	
 
 	return actionsInCurrentParsedLine;
     }
+    public void printOutActionList(Vector actionListToPrint){
+	for(int iter=0; iter< actionListToPrint.size(); iter++){
+	    // @DEBUGGING
+	    System.out.println(((Action)actionListToPrint.elementAt(iter)).actionName+" ");
+	    // @DEBUGGING
+	}
+	
+	System.out.println("\n");
+    }
+
 }
