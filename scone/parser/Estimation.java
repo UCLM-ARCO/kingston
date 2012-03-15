@@ -51,13 +51,15 @@ public class Estimation{
 	filterInconsistentActions();
 
 	// @DEBUGGING
-	System.out.println("Considered actions after having filter inconsistent actions: "+ consideredActions);
+	System.out.println("Considered actions after having filter inconsistent actions: ");
+	printOutActionList(consideredActions);
 	// @DEBUGGING
 	
 	reorderActionsBasedOnPoI();
 
 	// @DEBUGGING
-	System.out.println("Considered actions after having reorder them based on PoI: "+ consideredActions);
+	System.out.println("Considered actions after having reorder them based on PoI: ");
+	printOutActionList(consideredActions);
 	// @DEBUGGING
 
 	assertConsideredActionsToCorrespondingBelieves();
@@ -174,7 +176,15 @@ public class Estimation{
 	
 	Vector markExpectationsOfActionsInCurrentBelieve = currentBelieve.getExpectationsInvolvingActionsInCurrentBelieve();
 	Vector markExpectationsOfCurrentAction = currentAction.getExpectationsOfAction();
+
+	// @DEBUGGING
+	System.out.println("Hola\n");
+	// @DEBUGGING
+	
+
 	Vector intersetMarkedExpectations = getIntersectionOfMarkedSet(markExpectationsOfActionsInCurrentBelieve, markExpectationsOfCurrentAction);
+	
+
 	if(intersetMarkedExpectations.size() ==1){
 	    currentExpectation = ((Expectation)intersetMarkedExpectations.elementAt(0));
 	    currentBelieve.incrementNumberOfActivatedExpectations();
@@ -188,19 +198,12 @@ public class Estimation{
     
     // This function discard those actions out of the consideredActions that are inconsistent
     public void filterInconsistentActions(){
+
 	for(int consideredActionsIterator=0; consideredActionsIterator < consideredActions.size(); consideredActionsIterator++){
+	    
 	    currentAction = ((Action)consideredActions.elementAt(consideredActionsIterator));
-	    // @DEBUGGING
-	    System.out.println("Exploring action: "+currentAction.actionName);
-	    // @DEBUGGING
-	    
-	    if(currentAction.hasRequiredAction()){
-		// @DEBUGGING
-		System.out.println("Action: "+currentAction.actionName+" requires actions: "+ currentAction.requiredAction.actionName);
-		// @DEBUGGING
+	    if(currentAction.hasRequiredAction())
 		deleteCurrentActionIfInconsistent();	    
-	    }
-	    
 	}
 	
     }
@@ -213,21 +216,13 @@ public class Estimation{
 
 	for(int consideredBelievesIterator=0; consideredBelievesIterator< consideredBelieves.size(); consideredBelievesIterator++){
 	    currentBelieve = ((Believe)consideredBelieves.elementAt(consideredBelievesIterator));
-	    // @DEBUGGING
-	    System.out.println("Exploring believe: "+currentBelieve.believeName+" at time instant "+timeInstant);
-	    // @DEBUGGING
-	    if(currentBelieve.doesActionExistInBelieveAtCurrentTimeInstant(currentAction.requiredAction, timeInstant)){
-		// @DEBUGGING
-		System.out.println("Found a previous requirement for consistency \n");
-		// @DEBUGGING
+
+	    if(currentBelieve.doesActionExistInBelieveAtCurrentTimeInstant(currentAction.requiredAction, timeInstant))
 		deleteIfNotFoundInBelieve = null;
-	    }
-	    else{
-		// @DEBUGGING
-		System.out.println("Action "+ currentAction.actionName +" requires "+currentAction.requiredAction.actionName+" and it hasn't been found");
-		// @DEBUGGING
+	    
+	    else
 		deleteIfNotFoundInBelieve = currentAction;
-	    }
+	    
 	    
 	}
 	consideredActions.remove(currentAction);
@@ -236,15 +231,23 @@ public class Estimation{
     public void reorderActionsBasedOnPoI(){
 	Vector reorderListOfConsideredActions = new Vector();
 	Map rankedListOfPoI = rankPoIOfConsideredActions();
-	Iterator rankedListOfPoIIterator = rankedListOfPoI.entrySet().iterator();
-	while(rankedListOfPoIIterator.hasNext()){
-	    String highestRankedActionName = getHighestRankedPoI(rankedListOfPoI);
-	    reorderListOfConsideredActions.add(new Action(highestRankedActionName, actor));
-	    rankedListOfPoI.remove(highestRankedActionName);
+
+
+	for(int mapIterator = 0; mapIterator< rankedListOfPoI.size(); mapIterator++){
+	    String highestRankedPoI = getHighestRankedPoI(rankedListOfPoI);
+	    
+	    for(int consideredActionsIterator=0; consideredActionsIterator < consideredActions.size(); consideredActionsIterator++){
+		Action tempAction = ((Action)consideredActions.elementAt(consideredActionsIterator));
+		if(tempAction.pointOfInterest.equals(highestRankedPoI)){
+		    reorderListOfConsideredActions.add(tempAction);
+		}
+	    }
+	    rankedListOfPoI.put(highestRankedPoI, -1);
+	   
 	}
 	consideredActions = reorderListOfConsideredActions;
     }
-
+    
     public Map rankPoIOfConsideredActions(){
 	Map poiOfConsideredActions = new HashMap();
 	int timesInConsideredActions=0;
@@ -257,11 +260,13 @@ public class Estimation{
 	    else
 		poiOfConsideredActions.put(currentAction.pointOfInterest, 1);
 	}
+
 	return poiOfConsideredActions;
     }
 
     public String getHighestRankedPoI(Map rankedListOfPoI){
-	Iterator it = rankedListOfPoI.entrySet().iterator();
+	Map rankedListCopy = rankedListOfPoI;
+	Iterator it = rankedListCopy.entrySet().iterator();
 	int max = 0;
 	String highestRanked = "nil";
 	while (it.hasNext()) {
@@ -270,8 +275,11 @@ public class Estimation{
 		highestRanked = (String)pairs.getKey();
 		max =((Integer)pairs.getValue()) ;
 	    }
-	    it.remove();
 	}
+	
+	// @DEBUGGING
+	System.out.println("Confirmamos que el mapa original está intacto "+rankedListOfPoI);
+	// @DEBUGGING
 	return highestRanked;
     }
     
@@ -292,7 +300,7 @@ public class Estimation{
 	}
 	
 	else{
-	    //setConsideredExpectations();
+	   
 	    if(isThereAnActiveExpectationInConsideredBelieves()){
 		checkIfInterchangeOfBelieveIsRequired();
 		assertConsideredActionsFollowingTheActiveExpectation();

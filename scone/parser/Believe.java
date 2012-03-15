@@ -30,6 +30,8 @@ public class Believe
 	composingActions = new Vector();
 	previousAction = new Action();
 	levelOfInheritance = loi;
+	sfObject = new SconeFacade();
+
     }
     public Vector getActionsInBelieve(){
 	
@@ -87,20 +89,12 @@ public class Believe
     
     public boolean doesActionExistInBelieveAtCurrentTimeInstant(Action requiredAction, int cti){
 	currentTimeInstant = cti;
-	// @DEBUGGING
-	System.out.println("Does action: "+requiredAction.actionName+" exists in believe "+believeName+" at time instant "+currentTimeInstant);
-	// @DEBUGGING
+	
 	for(int decreaseCurrentTimeInstant=0;  decreaseCurrentTimeInstant < currentTimeInstant;  decreaseCurrentTimeInstant++){
-	    // @DEBUGGING
-	    System.out.println("(parent-wire (lookup-element {"+requiredAction.actor+" "+requiredAction.actionName+" at t"+ currentTimeInstant+"}))");
-	    // @DEBUGGING
-
-	    String checkActionAtTimeInstant = sfObject.sendToScone("(parent-wire (lookup-element {"+requiredAction.actor+" "+requiredAction.actionName+" at t"+ currentTimeInstant+"}))\n");
-	    currentTimeInstant=-decreaseCurrentTimeInstant;
+	    String checkActionAtTimeInstant = sfObject.sendToScone("(parent-wire (lookup-element {"+requiredAction.actor+" "+requiredAction.actionName+" at t"+decreaseCurrentTimeInstant +"}))");
 	    
 	    if(!sfObject.isAnErrorMessage(checkActionAtTimeInstant))
-		return true;
-	    
+	    	return true;
 	}
 	
 	return false;

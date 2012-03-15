@@ -37,7 +37,7 @@ public class SconeFacade {
 	if(startIndexOfAction > -1){
 	    startIndexOfAction+= "requires".length();
 	    endIndexOfAction= queryResult.indexOf('(',startIndexOfAction )-1; 
-	    requiredAction = queryResult.substring(startIndexOfAction, endIndexOfAction);
+	    requiredAction = queryResult.substring(startIndexOfAction+1, endIndexOfAction);
 	}
 	return requiredAction;
     }
@@ -60,7 +60,7 @@ public class SconeFacade {
 	    // @DEBUGGING
 	    System.out.println("\n Found point of interest: " + queryResult.substring(startIndexOfPoI, endIndexOfPoI));
 	    // @DEBUGGING
-	    return queryResult.substring(startIndexOfPoI, endIndexOfPoI);
+	    return queryResult.substring(startIndexOfPoI+1, endIndexOfPoI);
 	}		    	    
 	else
 	    return null;

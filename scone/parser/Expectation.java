@@ -18,7 +18,11 @@ public class Expectation
 	actionsToCome = new Vector();
 	sfObject = new SconeFacade();
     }
-
+    
+    public Expectation(){
+	sfObject = new SconeFacade();
+	
+    }
     public Vector getActionsInExpectations(){
 	
 	// @DEBUGGING
