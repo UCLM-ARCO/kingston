@@ -36,24 +36,17 @@ public class ClassifiedResultFile{
 	    
 	    while ((strLine = br.readLine()) != null)   {
 		
-		// @DEBUGGING
-		System.out.println("\nParsing next line. ");
-		// @DEBUGGING
-
 		lineToParse = strLine;
 		
 		// @DEBUGGING
 		System.out.println("Line to parse: "+lineToParse);
 		// @DEBUGGING
 		
+		cleanUpActionsInCurrentParsedLine();
 		actionsInCurrentParsedLine = stripActionsFromLineToParse();
 		
-		
-		// @DEBUGGING
-		System.out.println("Actions in current parsed line: ");
 		printOutActionList(actionsInCurrentParsedLine);
-		// @DEBUGGING
-
+		
 		estimationForCurrentClassifiedResultFile.newActionInEstimation(actionsInCurrentParsedLine);
 	    }
 	    
@@ -63,6 +56,10 @@ public class ClassifiedResultFile{
 	}
 	
     }
+    public void cleanUpActionsInCurrentParsedLine(){
+	actionsInCurrentParsedLine = new Vector();
+    }
+	    
 
     public void setLineToParse(String ltp){
 	lineToParse = ltp;
@@ -98,22 +95,13 @@ public class ClassifiedResultFile{
 	
 	if(lineToParse.indexOf("a") <0){ //To get rid of the accuracy message at the end of the file. The three sentences contains letter 'a'
 	    while(end !=-1){
-		// @DEBUGGING
-		System.out.println("\nParsed number: " +IXMAS_ACTIONS[Integer.parseInt(lineToParse.substring(start, end))] +"  "+ actor);
-		// @DEBUGGING
-	
 		Action tempAction = new Action(IXMAS_ACTIONS[Integer.parseInt(lineToParse.substring(start, end))], actor);
 		actionsInCurrentParsedLine.add(tempAction);
-	
+		
 		start = end+1; 
 		end = lineToParse.indexOf(" ", start);
 	    }
 	}
-
-	// @DEBUGGING
-	System.out.println("\nBefore parsing actions to text: ");
-	printOutActionList(actionsInCurrentParsedLine);
-	// @DEBUGGING
 	
 
 	return actionsInCurrentParsedLine;

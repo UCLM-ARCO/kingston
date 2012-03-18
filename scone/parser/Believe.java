@@ -21,6 +21,7 @@ public class Believe
 	previousAction = new Action();
 	levelOfInheritance = loi;
 	sfObject = new SconeFacade();
+	expectationsForActionsInBelieve = new Vector();
 
     }
 
@@ -31,6 +32,7 @@ public class Believe
 	previousAction = new Action();
 	levelOfInheritance = loi;
 	sfObject = new SconeFacade();
+	expectationsForActionsInBelieve = new Vector();
 
     }
     public Vector getActionsInBelieve(){
@@ -91,10 +93,16 @@ public class Believe
 	currentTimeInstant = cti;
 	
 	for(int decreaseCurrentTimeInstant=0;  decreaseCurrentTimeInstant < currentTimeInstant;  decreaseCurrentTimeInstant++){
+	    // @DEBUGGING
+	    System.out.println("Checking string: (parent-wire (lookup-element {"+requiredAction.actor+" "+requiredAction.actionName+" at t"+decreaseCurrentTimeInstant +"}))");
+	    System.out.println("Value of decrease current time instant: "+decreaseCurrentTimeInstant);
+	    // @DEBUGGING
+	
 	    String checkActionAtTimeInstant = sfObject.sendToScone("(parent-wire (lookup-element {"+requiredAction.actor+" "+requiredAction.actionName+" at t"+decreaseCurrentTimeInstant +"}))");
 	    
 	    if(!sfObject.isAnErrorMessage(checkActionAtTimeInstant))
 	    	return true;
+	    
 	}
 	
 	return false;
@@ -103,23 +111,58 @@ public class Believe
     }
     
     public Vector getExpectationsInvolvingActionsInCurrentBelieve(){
-	
+
+	// @DEBUGGING
+	System.out.println("Get expectations involving actions in current believe with composing actions: ");
+	// @DEBUGGING	
+	printOutActionList(composingActions);
 	for(int composingActionsIterator=0; composingActionsIterator< composingActions.size(); composingActionsIterator++){
 	    Action currentAction = ((Action)composingActions.elementAt(composingActionsIterator));
+	    
 	    Vector expectationsForCurrentAction = currentAction.getExpectationsOfAction();
+	    
+	    // @DEBUGGING
+	    System.out.println("Expectation list for action: "+currentAction.actionName);
+	    // @DEBUGGING	
+	    
+	    printOutExpectationList(expectationsForCurrentAction);
 	    addExpectationsToExistingSetOfExpectations(expectationsForCurrentAction);
 	}
 	return expectationsForActionsInBelieve;
-
     }
+
     public void addExpectationsToExistingSetOfExpectations(Vector expectationsForCurrentAction){
-	for(int expectationsForCurrentActionIterator=0; expectationsForCurrentActionIterator<expectationsForCurrentAction.size(); expectationsForCurrentActionIterator++)	    
+	for(int expectationsForCurrentActionIterator=0; expectationsForCurrentActionIterator<expectationsForCurrentAction.size(); expectationsForCurrentActionIterator++)	    {
+	    // @DEBUGGING
+	    System.out.println("Hola\n\n");
+	    // @DEBUGGING	
+	    
 	    if(expectationsForActionsInBelieve.indexOf(expectationsForCurrentAction.elementAt(expectationsForCurrentActionIterator))<0)
 		expectationsForActionsInBelieve.add(((Expectation)expectationsForCurrentAction.elementAt(expectationsForCurrentActionIterator)));
+
+	}
     }
    
     public void incrementNumberOfActivatedExpectations(){
 	activatedExpectations++;
     }
     
+    public void printOutExpectationList(Vector expectationListToPrint){
+	for(int iter=0; iter< expectationListToPrint.size(); iter++){
+	    // @DEBUGGING
+	    System.out.println(((Expectation)expectationListToPrint.elementAt(iter)).expectationName+" ");
+	    // @DEBUGGING
+	}
+	
+	System.out.println("\n");
+    }
+   public void printOutActionList(Vector actionListToPrint){
+	for(int iter=0; iter< actionListToPrint.size(); iter++){
+	    // @DEBUGGING
+	    System.out.println(((Action)actionListToPrint.elementAt(iter)).actionName+" ");
+	    // @DEBUGGING
+	}
+	
+	System.out.println("\n");
+    }
 }

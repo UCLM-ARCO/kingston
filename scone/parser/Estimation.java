@@ -13,7 +13,6 @@ public class Estimation{
     public Expectation currentExpectation;
     public Believe mainBelieve;
     public Vector consideredBelieves;
-    public Vector backUpConsideredBelieves;
     public Vector consideredActions;
     public Vector consideredExpectations;
     public SconeFacade sfObject;
@@ -26,7 +25,6 @@ public class Estimation{
 	consideredBelieves = new Vector();
 	consideredActions = new Vector();
 	consideredExpectations = new Vector();
-	backUpConsideredBelieves = new Vector();
 	currentBelieve = null;
 	currentAction = null;
 	currentExpectation = null;
@@ -36,33 +34,28 @@ public class Estimation{
     
     public void newActionInEstimation(Vector actionsInCPL){
 	timeInstant++;
-
+	
 	// @DEBUGGING
 	System.out.println("Asserting new action in estimation at time instant: "+ timeInstant);
 	// @DEBUGGING
 	
-	consideredActions = actionsInCPL;
-
-	// @DEBUGGING
-	System.out.println("Considering actions: ");
-	printOutActionList(consideredActions);
-	// @DEBUGGING
+	cleanUpConsideredActions();
+	assignNewConsideredActions(actionsInCPL);
 	
 	filterInconsistentActions();
-
-	// @DEBUGGING
-	System.out.println("Considered actions after having filter inconsistent actions: ");
-	printOutActionList(consideredActions);
-	// @DEBUGGING
 	
 	reorderActionsBasedOnPoI();
 
 	// @DEBUGGING
-	System.out.println("Considered actions after having reorder them based on PoI: ");
-	printOutActionList(consideredActions);
+	System.out.println("Bug at assert considered actions to corresponding believes\n\n");
 	// @DEBUGGING
-
 	assertConsideredActionsToCorrespondingBelieves();
+    }
+    public void cleanUpConsideredActions(){
+	consideredActions = new Vector();
+    }
+    public void assignNewConsideredActions(Vector actionsInCPL){
+	consideredActions = actionsInCPL;
     }
     
     public void setFirstActionInEstimation(){
@@ -72,7 +65,7 @@ public class Estimation{
 	// @DEBUGGING
 	
 	mainBelieve = new Believe(0);
-	currentBelieve = new Believe(0);
+	currentBelieve = mainBelieve;
 	createMainBelieve();
 	mainBelieve.setFirstActionInMainBelieve(actor);
     }
@@ -101,7 +94,8 @@ public class Estimation{
     }
     
     public void activateNextBelieve(){
-	if(currentBelieve.levelOfInheritance == (backUpConsideredBelieves.size()-1)){
+	
+	if(currentBelieve.levelOfInheritance == (consideredBelieves.size()-1)){
 	    createNewBelieveInEstimation();
 	    currentBelieve = ((Believe)consideredBelieves.elementAt(consideredBelieves.size()-1));
 	}
@@ -119,7 +113,8 @@ public class Estimation{
 	sfObject.sendToScone("(in-context (lookup-element {general}))");
 	sfObject.sendToScone("(new-context {"+believeName+"})");
 	
-	consideredBelieves.add(believeName);
+	consideredBelieves.add(new Believe(believeName,consideredBelieves.size()));
+
 	
     }
 
@@ -136,28 +131,27 @@ public class Estimation{
     }
 
     public void setConsideredExpectations(){
-	Vector expectationForCurrentAction = new Vector();
-	expectationForCurrentAction = currentAction.getExpectationsOfAction();
-	Vector commonExpectations = new Vector();
+	Vector expectationForCurrentAction  = currentAction.getExpectationsOfAction();
 	
-	commonExpectations = consideredExpectations;
-	if(consideredExpectations.size()>0){
-	    for(int consideredExpectationsIterator =0; consideredExpectationsIterator< consideredExpectations.size(); consideredExpectationsIterator++){
-		for(int expectationForCurrentActionIt=0; expectationForCurrentActionIt < expectationForCurrentAction.size(); expectationForCurrentActionIt++){
-		    System.out.println("Checking expectations: "+ ((Expectation)consideredExpectations.elementAt(consideredExpectationsIterator)).expectationName+ " "+  ((Expectation)expectationForCurrentAction.elementAt(expectationForCurrentActionIt)).expectationName);
-		    if((((Expectation)consideredExpectations.elementAt(consideredExpectationsIterator)).expectationName).equals(((Expectation)expectationForCurrentAction.elementAt(expectationForCurrentActionIt)).expectationName))
-			commonExpectations.add(((Expectation)consideredExpectations.elementAt(consideredExpectationsIterator)));
-		    
-		}
+	for(int expectationForCurrentActionIterator=0;expectationForCurrentActionIterator<expectationForCurrentAction.size(); expectationForCurrentActionIterator++){
+	    if(!isPresentInConsideredExpectations((String)expectationForCurrentAction.elementAt(expectationForCurrentActionIterator))){
+		// @DEBUGGING
+		System.out.println("Expectation "+ ((String)expectationForCurrentAction.elementAt(expectationForCurrentActionIterator))+" not yet considered in considered expectations");
+		// @DEBUGGING	
+		consideredExpectations.add(new Expectation((String)expectationForCurrentAction.elementAt(expectationForCurrentActionIterator)));
 	    }
-	    consideredExpectations = commonExpectations;
+
 	}
-	else
-	    consideredExpectations =  expectationForCurrentAction;
-	
+
     }
     
-
+    public boolean isPresentInConsideredExpectations(String expectationName){
+	Expectation tempExp = new Expectation(expectationName);
+	if(consideredExpectations.indexOf(tempExp)>0)
+	    return true;
+	else
+	    return false;
+    }
 
     public void setActiveExpectation(Expectation ae){
 	if(consideredExpectations.size()==1)
@@ -175,14 +169,22 @@ public class Estimation{
     public boolean isThereAnActiveExpectationInConsideredBelieves(){
 	
 	Vector markExpectationsOfActionsInCurrentBelieve = currentBelieve.getExpectationsInvolvingActionsInCurrentBelieve();
-	Vector markExpectationsOfCurrentAction = currentAction.getExpectationsOfAction();
-
 	// @DEBUGGING
-	System.out.println("Hola\n");
+	System.out.println("expectations of actions in current believe: "+markExpectationsOfActionsInCurrentBelieve.size());
+	printOutExpectationList(markExpectationsOfActionsInCurrentBelieve);
+	// @DEBUGGING
+	System.out.println("expectations of current actions: ");	
+	Vector markExpectationsOfCurrentAction = currentAction.getExpectationsOfAction();
+	// @DEBUGGING
+
+	printOutExpectationList(markExpectationsOfCurrentAction);
 	// @DEBUGGING
 	
-
 	Vector intersetMarkedExpectations = getIntersectionOfMarkedSet(markExpectationsOfActionsInCurrentBelieve, markExpectationsOfCurrentAction);
+	// @DEBUGGING
+	System.out.println("Intersection: ");
+	printOutExpectationList(intersetMarkedExpectations);
+	// @DEBUGGING
 	
 
 	if(intersetMarkedExpectations.size() ==1){
@@ -200,7 +202,6 @@ public class Estimation{
     public void filterInconsistentActions(){
 
 	for(int consideredActionsIterator=0; consideredActionsIterator < consideredActions.size(); consideredActionsIterator++){
-	    
 	    currentAction = ((Action)consideredActions.elementAt(consideredActionsIterator));
 	    if(currentAction.hasRequiredAction())
 		deleteCurrentActionIfInconsistent();	    
@@ -208,7 +209,7 @@ public class Estimation{
 	
     }
 
-    public void deleteCurrentActionIfInconsistent(){
+    public boolean deleteCurrentActionIfInconsistent(){
 	Action deleteIfNotFoundInBelieve;
 	// @DEBUGGING
 	System.out.println("Number of considered believes "+consideredBelieves.size());
@@ -216,16 +217,13 @@ public class Estimation{
 
 	for(int consideredBelievesIterator=0; consideredBelievesIterator< consideredBelieves.size(); consideredBelievesIterator++){
 	    currentBelieve = ((Believe)consideredBelieves.elementAt(consideredBelievesIterator));
-
-	    if(currentBelieve.doesActionExistInBelieveAtCurrentTimeInstant(currentAction.requiredAction, timeInstant))
-		deleteIfNotFoundInBelieve = null;
-	    
-	    else
-		deleteIfNotFoundInBelieve = currentAction;
-	    
-	    
+	    if(!currentBelieve.doesActionExistInBelieveAtCurrentTimeInstant(currentAction.requiredAction, timeInstant)){
+		consideredActions.remove(currentAction);
+		return true;
+	    }
 	}
-	consideredActions.remove(currentAction);
+	return false;
+
     }
 
     public void reorderActionsBasedOnPoI(){
@@ -277,22 +275,13 @@ public class Estimation{
 	    }
 	}
 	
-	// @DEBUGGING
-	System.out.println("Confirmamos que el mapa original está intacto "+rankedListOfPoI);
-	// @DEBUGGING
 	return highestRanked;
     }
     
     public void assertConsideredActionsToCorrespondingBelieves(){
 	
-	// @DEBUGGING
-	System.out.println("Asserting considered actions to corresponding believes\n");
-	// @DEBUGGING
-	
-	makeBackupCopyOfConsideredBelieves();
-	
-	currentAction = ((Action)consideredActions.elementAt(0));
-	currentBelieve = ((Believe)consideredBelieves.elementAt(0));	
+	//currentAction = ((Action)consideredActions.elementAt(0));
+	//currentBelieve = ((Believe)consideredBelieves.elementAt(0));	
 	//setConsideredExpectations();
 	
 	if(isThereAnActiveExpectation()){
@@ -300,38 +289,39 @@ public class Estimation{
 	}
 	
 	else{
-	   
+	    
 	    if(isThereAnActiveExpectationInConsideredBelieves()){
 		checkIfInterchangeOfBelieveIsRequired();
 		assertConsideredActionsFollowingTheActiveExpectation();
 	    }
 	    else{
-		assertFirstActionInLineToMainBelieve();
+		assertFirstActionInLineToMainBelieve();	
 		assertRemainingActionsInLineToRemainingBelieves();
+	       
 	    }
 	}
 	
-	restoreBackupCopyOfConsideredBelieves();
-	
+       	
     }
     public void assertFirstActionInLineToMainBelieve(){
 	currentBelieve = ((Believe)consideredBelieves.elementAt(0));	
 	currentAction = ((Action)consideredActions.elementAt(0));
 	currentBelieve.setActionInBelieveAtCurrentTimeInstant(currentAction, timeInstant);
-	mainBelieve = currentBelieve;
-	removeAssertedActionFromConsideredActions(currentAction);
-	removeBelieveContainingCurrentAction(currentBelieve);
 
+	//mainBelieve = currentBelieve;
+	//removeAssertedActionFromConsideredActions(currentAction);
+	//removeBelieveContainingCurrentAction(currentBelieve);
     }
 
     public void assertRemainingActionsInLineToRemainingBelieves(){
 	
-	for(int consideredActionsIterator=0; consideredActionsIterator< consideredActions.size(); consideredActionsIterator++){
+	for(int consideredActionsIterator=1; consideredActionsIterator< consideredActions.size(); consideredActionsIterator++){  
 	    activateNextBelieve();
+	    
 	    currentAction = ((Action)consideredActions.elementAt(consideredActionsIterator));
 	    currentBelieve.setActionInBelieveAtCurrentTimeInstant(currentAction, timeInstant);
-	    removeAssertedActionFromConsideredActions(currentAction);
-	    removeBelieveContainingCurrentAction(currentBelieve);
+	    //removeAssertedActionFromConsideredActions(currentAction);
+	    //removeBelieveContainingCurrentAction(currentBelieve);
 	    
 	}
 	    
@@ -361,17 +351,32 @@ public class Estimation{
 
     public Vector getIntersectionOfMarkedSet(Vector a_marked, Vector b_marked){
 	Vector intersectedSet = new Vector();
-	int minNumberOfElementsInSet = getSmallestNumberOfElementsInSet(a_marked, b_marked);
-	for(int iterator=0; iterator < minNumberOfElementsInSet; iterator++){
-	    if(a_marked.indexOf(b_marked.elementAt(iterator))>0)
-		intersectedSet.add(b_marked.elementAt(iterator));
-	    
-	}
-	return intersectedSet;
+	// @DEBUGGING
+	System.out.println("Get intersection of marked set "+a_marked);
+	// @DEBUGGING
+	if(a_marked==null)
+	    return b_marked;
+	else{
+	    if(b_marked==null)
+		return a_marked;
+	    else{
+		int minNumberOfElementsInSet = getSmallestNumberOfElementsInSet(a_marked, b_marked);
+		
+		for(int iterator=0; iterator < minNumberOfElementsInSet; iterator++){
+		    if(a_marked.indexOf(b_marked.elementAt(iterator))>0)
+			intersectedSet.add(b_marked.elementAt(iterator));
+		    
+		}
+		
+		return intersectedSet;
+	    }
 
-	
+	}
     }
     public int  getSmallestNumberOfElementsInSet(Vector a_marked, Vector b_marked){
+	// @DEBUGGING
+	System.out.println("Get smallest number of elements "+a_marked.size()+ " "+b_marked.size());
+	// @DEBUGGING
 	if(a_marked.size()>b_marked.size())
 	    return b_marked.size();
 	else
@@ -386,20 +391,21 @@ public class Estimation{
 		mainBelieve = tempBel;
 	}
     }
-	    
-    public void makeBackupCopyOfConsideredBelieves(){
-	backUpConsideredBelieves = consideredBelieves;
-    }
-
-    public void	restoreBackupCopyOfConsideredBelieves(){
-	consideredBelieves = backUpConsideredBelieves;
-
-    }
 
     public void printOutActionList(Vector actionListToPrint){
 	for(int iter=0; iter< actionListToPrint.size(); iter++){
 	    // @DEBUGGING
 	    System.out.println(((Action)actionListToPrint.elementAt(iter)).actionName+" ");
+	    // @DEBUGGING
+	}
+	
+	System.out.println("\n");
+    }
+
+   public void printOutExpectationList(Vector actionListToPrint){
+	for(int iter=0; iter< actionListToPrint.size(); iter++){
+	    // @DEBUGGING
+	    System.out.println(((Expectation)actionListToPrint.elementAt(iter)).expectationName+" ");
 	    // @DEBUGGING
 	}
 	

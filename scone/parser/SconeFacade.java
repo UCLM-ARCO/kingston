@@ -57,9 +57,6 @@ public class SconeFacade {
 	if(startIndexOfPoI > -1){
 	    startIndexOfPoI+="has point of interest in".length();
 	    endIndexOfPoI= queryResult.indexOf('(',startIndexOfPoI)-1; 
-	    // @DEBUGGING
-	    System.out.println("\n Found point of interest: " + queryResult.substring(startIndexOfPoI, endIndexOfPoI));
-	    // @DEBUGGING
 	    return queryResult.substring(startIndexOfPoI+1, endIndexOfPoI);
 	}		    	    
 	else

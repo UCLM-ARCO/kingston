@@ -12,11 +12,11 @@ echo "================================="
 cd $PATH_TO_SCONE_SERVER
 if [ -f scone-server.pid ]
     then
-    rm scone-server.pid
+#    rm scone-server.pid
     echo "deleted scone-server.pid"
 fi
-bash start-server 5000 localhost
-sleep 12
+#bash start-server 5000 localhost
+#sleep 12
 
 echo "=================================" 
 echo " PARSING the recognized actions"
@@ -43,4 +43,4 @@ echo "    STOPING the Scone Server"
 echo "=================================" 
 
 cd $PATH_TO_SCONE_SERVER
-bash stop-server 
+#bash stop-server 

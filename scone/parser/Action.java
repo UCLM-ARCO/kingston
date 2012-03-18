@@ -18,10 +18,6 @@ public class Action{
 	actor = actorNameInputArg;
 	actionName = actionNameInputArg;
 
-	// @DEBUGGING
-	System.out.println("At Action constructor with arguments "+actor+" "+actionName);
-	// @DEBUGGING
-
 	sfObject = new SconeFacade();
 	setPoI();
 	setRequiredAction();
@@ -54,15 +50,11 @@ public class Action{
 	    System.out.println("Inside: "+retrievedExpectations.substring(startOfExpectation, endOfExpectation));
 	    // @DEBUGGING
 	    
-	    expectations.add(retrievedExpectations.substring(startOfExpectation, endOfExpectation));
+	    expectations.add(new Expectation(retrievedExpectations.substring(startOfExpectation, endOfExpectation)));
 	    startOfExpectation = retrievedExpectations.indexOf(separator, endOfExpectation);
 	    endOfExpectation =  retrievedExpectations.indexOf('(', startOfExpectation)-1;
 	    
 	}
-	
-	// @DEBUGGING
-	System.out.println("After parsing expectations: "+expectations+"\n");
-	// @DEBUGGING
 	
 	
 	return expectations;
@@ -75,29 +67,17 @@ public class Action{
     
     public void setPoI(){
 	
-	// @DEBUGGING
-	System.out.println("(incoming-a-wires (lookup-element {"+actionName+"}))");
-	// @DEBUGGING
 	String queryToGetPoI = sfObject.sendToScone("(incoming-a-wires (lookup-element {"+actionName+"}))");
 	
-	// @DEBUGGING
-	System.out.println("Seting up the PoI: "+queryToGetPoI+"\n");
-	// @DEBUGGING
 	pointOfInterest = sfObject.stripPoI(queryToGetPoI);
     }
 
     public void setRequiredAction(){
 	
-	// @DEBUGGING
-	System.out.println("(incoming-a-wires (lookup-element {"+actionName+"}))");
-	// @DEBUGGING
 	String queryToGetRequiredAction = sfObject.sendToScone("(incoming-a-wires (lookup-element {"+actionName+"}))");
 	requiredAction = new Action(sfObject.stripRequiredAction(queryToGetRequiredAction));	
 	requiredAction.actor = actor;
-	// @DEBUGGING
-	System.out.println("Seting up the required action: "+requiredAction.actionName+"\n");
-	// @DEBUGGING
-
+	
     }
     
     public boolean equals(Action actionToCheck){
