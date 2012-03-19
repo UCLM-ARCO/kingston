@@ -91,7 +91,9 @@ public class Action{
     public boolean isActionTheFirstActionToComeInExpectation(Expectation currentExpectation){
 
 	currentExpectation.setActionsToCome(this);
-	
+	// @DEBUGGING
+	System.out.println("Hola \n");
+	// @DEBUGGING
 	if(equals(((Action)currentExpectation.actionsToCome.elementAt(0))))
 	    return true;
 	else

@@ -14,14 +14,24 @@ public class Expectation
 
     public Expectation(String en){
 	expectationName = en;
+
 	actionsInExpectation = new Vector();
+	//actionsInExpectation = getActionsInExpectations();
+       
 	actionsToCome = new Vector();
+	//actionsToCome =  getActionsInExpectations();
+
 	sfObject = new SconeFacade();
     }
     
     public Expectation(){
 	sfObject = new SconeFacade();
+	actionsInExpectation = new Vector();
+	//actionsInExpectation = getActionsInExpectations();
 	
+	actionsToCome = new Vector();
+	//actionsToCome =  getActionsInExpectations();
+		
     }
     public Vector getActionsInExpectations(){
 	
@@ -29,8 +39,13 @@ public class Expectation
 	System.out.println("List all the actions involved in the expectation\n");
 	System.out.println("(show-all-x-of-y  {has expectation} {"+expectationName+"})");
 	// @DEBUGGING
-	
+
 	String actionsInvolvedInExpectation = sfObject.sendToScone("(list-all-x-of-y  {has expectation} {"+expectationName+"})");
+	// @DEBUGGING
+	System.out.println("Actions involved in expectation: "+actionsInvolvedInExpectation);
+	// @DEBUGGING
+	
+	actionsInExpectation = new Vector();
 	String separator = "{events:";
 	
 	int startOfSeparator = actionsInvolvedInExpectation.indexOf(separator);
@@ -38,7 +53,11 @@ public class Expectation
 	
 	while(startOfSeparator > -1){
 	    startOfSeparator +=  separator.length();
-	    actionsInExpectation.add(actionsInvolvedInExpectation.substring(startOfSeparator, endOfSeparator));
+	    // @DEBUGGING
+	    System.out.println("Asserting action: "+ actionsInvolvedInExpectation.substring(startOfSeparator, endOfSeparator));
+	    // @DEBUGGING
+
+	    actionsInExpectation.add(new Action(actionsInvolvedInExpectation.substring(startOfSeparator, endOfSeparator)));
 	    startOfSeparator = actionsInvolvedInExpectation.indexOf(separator, endOfSeparator);
 	    endOfSeparator = actionsInvolvedInExpectation.indexOf('}', startOfSeparator);
 	}
@@ -46,13 +65,43 @@ public class Expectation
     }
 
     public void setActionsToCome(Action currentAction){
-	
-	actionsToCome =  actionsInExpectation;
+		
+	actionsToCome = getActionsInExpectations();
+	if(isActionInExpectation(currentAction)){
+	    for(int actionsToComeIterator = 0; actionsToComeIterator < actionsToCome.size(); actionsToComeIterator++){
+		if(!(((Action)actionsToCome.elementAt(actionsToComeIterator)).actionName.equals(currentAction.actionName)))
+		    actionsToCome.remove(((Action)actionsToCome.elementAt(actionsToComeIterator)));
+	    } 
+	}
+	     // @DEBUGGING
+	else{
+	    System.out.println("Action: "+currentAction.actionName+" is not in current expectation");
+	}
+	     // @DEBUGGING
 
-	for(int actionsToComeIterator = 0; actionsToComeIterator < actionsToCome.size(); actionsToComeIterator++){
-	    if(!((Action)actionsToCome.elementAt(actionsToComeIterator)).equals(currentAction))
-		actionsToCome.remove(((Action)actionsToCome.elementAt(actionsToComeIterator)));
-	} 
+		    
+    }
+
+    public boolean isActionInExpectation(Action currentAction){
+	actionsInExpectation = getActionsInExpectations();
+	
+	for(int i=0; i < actionsInExpectation.size(); i++)
+	    if(((Action)actionsInExpectation.elementAt(i)).actionName.equals(currentAction.actionName))
+		return true;
+	return false;
+    }
+    
+    public boolean equalsTo(Expectation scdExpectation){
+	if(expectationName.equals(scdExpectation.expectationName))
+	    return true;
+	else
+	    return false;
+    }
+    public boolean isInExpectationSet(Vector expectationSet){
+	for(int i = 0; i < expectationSet.size(); i++)
+	    if(((Expectation)expectationSet.elementAt(i)).equalsTo(this))
+		return true;
+	return false;
     }
     
 

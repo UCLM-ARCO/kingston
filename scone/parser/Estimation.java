@@ -60,14 +60,15 @@ public class Estimation{
     
     public void setFirstActionInEstimation(){
 	
+	createMainBelieve();
+	currentBelieve = ((Believe)consideredBelieves.elementAt(0));
+	mainBelieve = currentBelieve;
+	
 	// @DEBUGGING
-	System.out.println("Setting first action in estimation at time instant: "+ timeInstant);
+	System.out.println("Setting first action in Believe: "+currentBelieve.believeName+" estimation at time instant: "+ timeInstant);
 	// @DEBUGGING
 	
-	mainBelieve = new Believe(0);
-	currentBelieve = mainBelieve;
-	createMainBelieve();
-	mainBelieve.setFirstActionInMainBelieve(actor);
+	currentBelieve.setFirstActionInMainBelieve(actor);
     }
  
     public void createMainBelieve(){
@@ -166,29 +167,40 @@ public class Estimation{
 	
     }
 
+    //TO-FIX :: Ahora solo chequea el current believe. It must check all the believes in consideredBelieves
+
     public boolean isThereAnActiveExpectationInConsideredBelieves(){
+	/*
+	// @DEBUGGING
+	System.out.println("Current Believe: "+currentBelieve.believeName);
+	System.out.println("Actions composing the current believe: ");
+	currentBelieve.printOutActionList(currentBelieve.composingActions);
+	// @DEBUGGING
+	*/
 	
 	Vector markExpectationsOfActionsInCurrentBelieve = currentBelieve.getExpectationsInvolvingActionsInCurrentBelieve();
+	
+	/*
 	// @DEBUGGING
 	System.out.println("expectations of actions in current believe: "+markExpectationsOfActionsInCurrentBelieve.size());
 	printOutExpectationList(markExpectationsOfActionsInCurrentBelieve);
-	// @DEBUGGING
 	System.out.println("expectations of current actions: ");	
-	Vector markExpectationsOfCurrentAction = currentAction.getExpectationsOfAction();
 	// @DEBUGGING
-
-	printOutExpectationList(markExpectationsOfCurrentAction);
-	// @DEBUGGING
+	*/
 	
-	Vector intersetMarkedExpectations = getIntersectionOfMarkedSet(markExpectationsOfActionsInCurrentBelieve, markExpectationsOfCurrentAction);
+	Vector markExpectationsOfCurrentAction = currentAction.getExpectationsOfAction();
+
+	//Vector intersetMarkedExpectations = getIntersectionOfMarkedSet(markExpectationsOfActionsInCurrentBelieve, markExpectationsOfCurrentAction);
+	consideredExpectations = new Vector();
+	consideredExpectations = getIntersectionOfMarkedSet(markExpectationsOfActionsInCurrentBelieve, markExpectationsOfCurrentAction);
 	// @DEBUGGING
 	System.out.println("Intersection: ");
-	printOutExpectationList(intersetMarkedExpectations);
+	printOutExpectationList(consideredExpectations);
 	// @DEBUGGING
 	
 
-	if(intersetMarkedExpectations.size() ==1){
-	    currentExpectation = ((Expectation)intersetMarkedExpectations.elementAt(0));
+	if(consideredExpectations.size() ==1){
+	    currentExpectation = ((Expectation)consideredExpectations.elementAt(0));
 	    currentBelieve.incrementNumberOfActivatedExpectations();
 	    return true;
 	}
@@ -292,9 +304,14 @@ public class Estimation{
 	    
 	    if(isThereAnActiveExpectationInConsideredBelieves()){
 		checkIfInterchangeOfBelieveIsRequired();
+		
 		assertConsideredActionsFollowingTheActiveExpectation();
+		// @DEBUGGING
+		System.out.println("After checking interchange\n\n");
+		// @DEBUGGING
 	    }
 	    else{
+		reorderConsideredActionsBasedOnConsideredExpectations();
 		assertFirstActionInLineToMainBelieve();	
 		assertRemainingActionsInLineToRemainingBelieves();
 	       
@@ -302,6 +319,13 @@ public class Estimation{
 	}
 	
        	
+    }
+    public void reorderConsideredActionsBasedOnConsideredExpectations(){
+	// @DEBUGGING
+	System.out.println("List of expectations considered here");
+	// @DEBUGGING
+	currentBelieve.printOutExpectationList(consideredExpectations);
+	
     }
     public void assertFirstActionInLineToMainBelieve(){
 	currentBelieve = ((Believe)consideredBelieves.elementAt(0));	
@@ -328,10 +352,18 @@ public class Estimation{
 	
     }
     public void assertConsideredActionsFollowingTheActiveExpectation(){
-	Action firstActionInActionsToCome = ((Action)currentExpectation.actionsToCome.elementAt(0));
+	// @DEBUGGING
+	System.out.println("Inside assert considered actions following the active expectation\n");
+	System.out.println("The active expectation is: "+ currentExpectation.expectationName);
+	// @DEBUGGING
+	//	Action firstActionInActionsToCome = ((Action)currentExpectation.getActionsInExpectations().elementAt(0));
+	Action firstActionInActionsToCome = ((Action)currentExpectation.getActionsInExpectations().elementAt(0));
 	
 	for(int consideredActionsIterator=0; consideredActionsIterator< consideredActions.size(); consideredActionsIterator++){
 	    Action actionInConsideredActions =  ((Action)consideredActions.elementAt(consideredActionsIterator));
+	    // @DEBUGGING
+	    System.out.println("Action in considered action "+ actionInConsideredActions.actionName);
+	    // @DEBUGGING
 	    if(actionInConsideredActions.isActionTheFirstActionToComeInExpectation(currentExpectation)){
 		firstActionInActionsToCome = ((Action)consideredActions.elementAt(consideredActionsIterator));
 		removeAssertedActionFromConsideredActions(firstActionInActionsToCome);
@@ -352,8 +384,14 @@ public class Estimation{
     public Vector getIntersectionOfMarkedSet(Vector a_marked, Vector b_marked){
 	Vector intersectedSet = new Vector();
 	// @DEBUGGING
-	System.out.println("Get intersection of marked set "+a_marked);
+	System.out.println("Get intersection of marked set ");
+	System.out.println("a_marked: ");
+	printOutExpectationList(a_marked);
+
+	System.out.println("b_marked: ");
+	printOutExpectationList(b_marked);
 	// @DEBUGGING
+
 	if(a_marked==null)
 	    return b_marked;
 	else{
@@ -361,22 +399,30 @@ public class Estimation{
 		return a_marked;
 	    else{
 		int minNumberOfElementsInSet = getSmallestNumberOfElementsInSet(a_marked, b_marked);
-		
-		for(int iterator=0; iterator < minNumberOfElementsInSet; iterator++){
-		    if(a_marked.indexOf(b_marked.elementAt(iterator))>0)
-			intersectedSet.add(b_marked.elementAt(iterator));
-		    
+		// @DEBUGGING
+		System.out.println("Smallest set has "+minNumberOfElementsInSet+" elements\n");
+		// @DEBUGGING
+		if(a_marked.size()==minNumberOfElementsInSet){
+		    for(int iterator=0; iterator < minNumberOfElementsInSet; iterator++)
+			if(((Expectation)a_marked.elementAt(iterator)).isInExpectationSet(b_marked))
+			    intersectedSet.add(b_marked.elementAt(iterator));  
 		}
-		
-		return intersectedSet;
-	    }
+		else{
+		    for(int iterator=0; iterator < minNumberOfElementsInSet; iterator++)
+			if(((Expectation)b_marked.elementAt(iterator)).isInExpectationSet(a_marked))
+			    intersectedSet.add(b_marked.elementAt(iterator));
 
+		}
+
+	    }
+	    
 	}
+	return intersectedSet;
+	
     }
+    
     public int  getSmallestNumberOfElementsInSet(Vector a_marked, Vector b_marked){
-	// @DEBUGGING
-	System.out.println("Get smallest number of elements "+a_marked.size()+ " "+b_marked.size());
-	// @DEBUGGING
+
 	if(a_marked.size()>b_marked.size())
 	    return b_marked.size();
 	else
@@ -385,6 +431,10 @@ public class Estimation{
 
     
     public void checkIfInterchangeOfBelieveIsRequired(){
+	// @DEBUGGING
+	System.out.println("Checking whether believes have to be interchanged\n");
+	// @DEBUGGING
+	
 	for(int consideredBelievesIterator=0; consideredBelievesIterator< consideredBelieves.size(); consideredBelievesIterator++){
 	    Believe tempBel = ((Believe)consideredBelieves.elementAt(consideredBelievesIterator));
 	    if(tempBel.activatedExpectations==2)

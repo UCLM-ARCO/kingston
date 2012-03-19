@@ -34,7 +34,7 @@ public class ClassifiedResultFile{
 	    if((strLine = br.readLine()) != null)
 		estimationForCurrentClassifiedResultFile.setFirstActionInEstimation();
 	    
-	    while ((strLine = br.readLine()) != null)   {
+	    while ((strLine = br.readLine()) != null && isAnActionLine(strLine))   {
 		
 		lineToParse = strLine;
 		
@@ -54,6 +54,13 @@ public class ClassifiedResultFile{
 	} catch (Exception e){
 	    System.err.println("Error: " + e.getMessage());
 	}
+	
+    }
+    public boolean isAnActionLine(String strLine){
+	if(strLine.indexOf("Accuracy") <0)
+	    return true;
+	else
+	    return false;
 	
     }
     public void cleanUpActionsInCurrentParsedLine(){

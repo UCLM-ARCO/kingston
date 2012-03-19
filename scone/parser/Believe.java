@@ -132,15 +132,25 @@ public class Believe
     }
 
     public void addExpectationsToExistingSetOfExpectations(Vector expectationsForCurrentAction){
-	for(int expectationsForCurrentActionIterator=0; expectationsForCurrentActionIterator<expectationsForCurrentAction.size(); expectationsForCurrentActionIterator++)	    {
-	    // @DEBUGGING
-	    System.out.println("Hola\n\n");
-	    // @DEBUGGING	
-	    
-	    if(expectationsForActionsInBelieve.indexOf(expectationsForCurrentAction.elementAt(expectationsForCurrentActionIterator))<0)
-		expectationsForActionsInBelieve.add(((Expectation)expectationsForCurrentAction.elementAt(expectationsForCurrentActionIterator)));
+	for(int expectationsForCurrentActionIterator=0; expectationsForCurrentActionIterator<expectationsForCurrentAction.size(); expectationsForCurrentActionIterator++)
+	    {
+		Expectation currentExpectationElement = ((Expectation)expectationsForCurrentAction.elementAt(expectationsForCurrentActionIterator));
+		
+		if(!expectationExistInExpectationsForActionsInBelieve(currentExpectationElement))
+		    expectationsForActionsInBelieve.add(((Expectation)expectationsForCurrentAction.elementAt(expectationsForCurrentActionIterator)));
+		
+	    }
+    }
+    public boolean expectationExistInExpectationsForActionsInBelieve(Expectation currentExpectationElement){
+	for(int it = 0; it < expectationsForActionsInBelieve.size(); it++){
+	    Expectation tempExp = ((Expectation)expectationsForActionsInBelieve.elementAt(it));
+
+	    if(tempExp.expectationName.equals(currentExpectationElement.expectationName))
+		return true;
 
 	}
+		
+	return false;
     }
    
     public void incrementNumberOfActivatedExpectations(){
