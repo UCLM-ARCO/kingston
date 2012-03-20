@@ -63,11 +63,15 @@ public class CSAR
 			// @DEBUGGING
 			
 			crfObject.analyzeClassifiedResultFile();
+
 			// @DEBUGGING
-			System.out.println("Content of the main believe\n\n");
+			System.out.println("*************************************************");
+			System.out.println("Content of the considered believes");
+			System.out.println("*************************************************");
 			// @DEBUGGING
-			String contentOfBelieve = csarObject.sfObject.sendToScone("(list-context-contents (lookup-element {believe 0 for actor1}))");
-			csarObject.nicelyFormatContentOfBelieve(contentOfBelieve);
+			
+			crfObject.printOutBelievesInEstimation();
+
 		    }
 		    
 		}
@@ -79,25 +83,6 @@ public class CSAR
 	    
 	}
     }
-    // @DEBUGGING
-    public void nicelyFormatContentOfBelieve(String contentOfBelieve){
-	int start = contentOfBelieve.indexOf("{events:");
-	int end = start;
-	String element = null;
-	Vector contents = new Vector();	
-	while(start > -1){
-	    start += "{events:".length();
-	    end = contentOfBelieve.indexOf('}',start);
-	    element = contentOfBelieve.substring(start, end);
-	    contents.add(element);
-	    start = contentOfBelieve.indexOf("{events:", end);	    
-	}
-	System.out.println( "\n\n\n");
-	if(contents.size()>0){
-	    for(int i=contents.size()-1; i>=0; i--)
-		System.out.println(contents.elementAt(i));
-	}
-    }
-    // @DEBUGGING
+  
     
 }

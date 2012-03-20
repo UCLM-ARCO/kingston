@@ -52,7 +52,7 @@
 ;; assume that in order to sit down on the chair, you have to walk
 ;; towards it first
 
-(new-statement {sit down} {requires} {walk towards})
+;(new-statement {sit down} {requires} {walk towards})
 
 ;; In order to throw something, you have to have something to throw,
 ;; so a pick up action is required before the throwing one
@@ -63,5 +63,5 @@
 ;; Also kick and punch requires the person to approach the punching
 ;; ball wich is not at the entrance of the scenario
 
-(new-statement {punch} {requires} {walk towards})
-(new-statement {kick} {requires} {walk towards})
+;(new-statement {punch} {requires} {walk towards})
+;(new-statement {kick} {requires} {walk towards})

@@ -41,15 +41,30 @@ public class Estimation{
 	
 	cleanUpConsideredActions();
 	assignNewConsideredActions(actionsInCPL);
-	
-	filterInconsistentActions();
-	
-	reorderActionsBasedOnPoI();
 
 	// @DEBUGGING
-	System.out.println("Bug at assert considered actions to corresponding believes\n\n");
+	System.out.println("******************* START OF FILTERING *************************\n");
+	// @DEBUGGING	
+	filterInconsistentActions();
+	
 	// @DEBUGGING
+	System.out.println("******************* END OF FILTERING *************************\n");
+	// @DEBUGGING	
+	// @DEBUGGING
+	System.out.println("******************* START OF REORDERING BASED ON POIS *************************\n");
+	// @DEBUGGING	
+	reorderActionsBasedOnPoI();
+	// @DEBUGGING
+	System.out.println("******************* END OF REORDERING BASED ON POIS *************************\n");
+	// @DEBUGGING	
+	// @DEBUGGING
+	System.out.println("******************* START OF ASSERT ACTION TO CORRESPONDING BELIVE *************************\n");
+	// @DEBUGGING	
 	assertConsideredActionsToCorrespondingBelieves();
+	// @DEBUGGING
+	System.out.println("******************* END OF ASSERT ACTION TO CORRESPONDING BELIVE *************************\n");
+	// @DEBUGGING	
+	
     }
     public void cleanUpConsideredActions(){
 	consideredActions = new Vector();
@@ -69,6 +84,17 @@ public class Estimation{
 	// @DEBUGGING
 	
 	currentBelieve.setFirstActionInMainBelieve(actor);
+    }
+
+    public void setLastActionInEstimation(){
+	
+	activateMainBelieve();
+	
+	// @DEBUGGING
+	System.out.println("Setting last action in Believe: "+currentBelieve.believeName+" estimation at time instant: "+ timeInstant);
+	// @DEBUGGING
+	
+	currentBelieve.setLastActionInMainBelieve(actor, timeInstant);
     }
  
     public void createMainBelieve(){
@@ -93,15 +119,26 @@ public class Estimation{
     public Vector getBelievesInEstimation(){
 	return consideredBelieves;
     }
+    public void activateMainBelieve(){
+	currentBelieve = ((Believe)consideredBelieves.elementAt(0));
+	sfObject.sendToScone("(in-context {"+currentBelieve.believeName+"})");
+    }
     
     public void activateNextBelieve(){
-	
+		
+	// @DEBUGGING
+	System.out.println("Activating next believe. Current level of inheritance: "+ currentBelieve.levelOfInheritance );
+	// @DEBUGGING
 	if(currentBelieve.levelOfInheritance == (consideredBelieves.size()-1)){
 	    createNewBelieveInEstimation();
 	    currentBelieve = ((Believe)consideredBelieves.elementAt(consideredBelieves.size()-1));
+	    
 	}
-	else
+	else{
 	    currentBelieve = ((Believe)consideredBelieves.elementAt(currentBelieve.levelOfInheritance+1));
+	    sfObject.sendToScone("(in-context {"+currentBelieve.believeName+"})");
+
+	}
 	
     }
 
@@ -170,23 +207,22 @@ public class Estimation{
     //TO-FIX :: Ahora solo chequea el current believe. It must check all the believes in consideredBelieves
 
     public boolean isThereAnActiveExpectationInConsideredBelieves(){
-	/*
+	
 	// @DEBUGGING
 	System.out.println("Current Believe: "+currentBelieve.believeName);
 	System.out.println("Actions composing the current believe: ");
 	currentBelieve.printOutActionList(currentBelieve.composingActions);
 	// @DEBUGGING
-	*/
+	
 	
 	Vector markExpectationsOfActionsInCurrentBelieve = currentBelieve.getExpectationsInvolvingActionsInCurrentBelieve();
-	
-	/*
+		
 	// @DEBUGGING
 	System.out.println("expectations of actions in current believe: "+markExpectationsOfActionsInCurrentBelieve.size());
 	printOutExpectationList(markExpectationsOfActionsInCurrentBelieve);
 	System.out.println("expectations of current actions: ");	
 	// @DEBUGGING
-	*/
+	
 	
 	Vector markExpectationsOfCurrentAction = currentAction.getExpectationsOfAction();
 
@@ -212,9 +248,11 @@ public class Estimation{
     
     // This function discard those actions out of the consideredActions that are inconsistent
     public void filterInconsistentActions(){
-
 	for(int consideredActionsIterator=0; consideredActionsIterator < consideredActions.size(); consideredActionsIterator++){
 	    currentAction = ((Action)consideredActions.elementAt(consideredActionsIterator));
+	    // @DEBUGGING
+	    System.out.println("Checking Action: "+ currentAction.actionName+" that requires: "+ currentAction.requiredAction.actionName);
+	    // @DEBUGGING
 	    if(currentAction.hasRequiredAction())
 		deleteCurrentActionIfInconsistent();	    
 	}
@@ -223,17 +261,15 @@ public class Estimation{
 
     public boolean deleteCurrentActionIfInconsistent(){
 	Action deleteIfNotFoundInBelieve;
-	// @DEBUGGING
-	System.out.println("Number of considered believes "+consideredBelieves.size());
-	// @DEBUGGING
-
-	for(int consideredBelievesIterator=0; consideredBelievesIterator< consideredBelieves.size(); consideredBelievesIterator++){
-	    currentBelieve = ((Believe)consideredBelieves.elementAt(consideredBelievesIterator));
-	    if(!currentBelieve.doesActionExistInBelieveAtCurrentTimeInstant(currentAction.requiredAction, timeInstant)){
-		consideredActions.remove(currentAction);
-		return true;
-	    }
-	}
+	
+	currentBelieve = ((Believe)consideredBelieves.elementAt(0));
+	currentBelieve.activateBelieve();
+	sfObject.sendToScone("(list-context-contents (lookup-element {"+currentBelieve.believeName +"}))");
+	
+	if(currentBelieve.doesActionExistInBelieveAtCurrentTimeInstant(currentAction.requiredAction, timeInstant))
+	    return true;
+	
+	consideredActions.remove(currentAction);
 	return false;
 
     }
@@ -291,35 +327,103 @@ public class Estimation{
     }
     
     public void assertConsideredActionsToCorrespondingBelieves(){
-	
-	//currentAction = ((Action)consideredActions.elementAt(0));
-	//currentBelieve = ((Believe)consideredBelieves.elementAt(0));	
-	//setConsideredExpectations();
-	
+	activateMainBelieve();
+	currentAction = ((Action)consideredActions.elementAt(0));
+
+	// @DEBUGGING
+	System.out.println("Print out considered actions: ");
+	printOutActionList(consideredActions);
+	System.out.println("Print out considered believes: ");
+	printOutBelieveList(consideredBelieves);
+	System.out.println("Print out current action: "+currentAction.actionName);
+	System.out.println("Print out current believe: "+currentBelieve.believeName);
+	// @DEBUGGING
+
 	if(isThereAnActiveExpectation()){
-	    assertConsideredActionsFollowingTheActiveExpectation();
+	    assertNextActionToComeBasedOnTheActiveExpectation();
+	    activateNextBelieve();
+
 	}
 	
 	else{
 	    
 	    if(isThereAnActiveExpectationInConsideredBelieves()){
 		checkIfInterchangeOfBelieveIsRequired();
+		// @DEBUGGING
+		System.out.println("Let's assert considered actions following the active expectation\n\n");
+		// @DEBUGGING
 		
 		assertConsideredActionsFollowingTheActiveExpectation();
-		// @DEBUGGING
-		System.out.println("After checking interchange\n\n");
-		// @DEBUGGING
+		activateNextBelieve();
+
+	
 	    }
-	    else{
-		reorderConsideredActionsBasedOnConsideredExpectations();
-		assertFirstActionInLineToMainBelieve();	
-		assertRemainingActionsInLineToRemainingBelieves();
-	       
+	}
+	// @DEBUGGING
+	System.out.println("Assert the rest of actions to the remainder believes\n");
+	// @DEBUGGING
+	//reorderConsideredActionsBasedOnConsideredExpectations();
+	assertFirstActionInLineToNextActiveBelieve();	
+	activateNextBelieve();
+	assertRemainingActionsInLineToRemainingBelieves();
+	       	
+    }
+    public boolean assertNextActionToComeBasedOnTheActiveExpectation(){
+		
+	if(!currentExpectation.isStillActive()){
+	    // @DEBUGGING
+	    System.out.println("No quedan acciones en actionsToCome\n");
+	    // @DEBUGGING
+	    currentExpectation = null;
+	    assertFirstActionInLineToNextActiveBelieve();	
+	    return false;
+	}
+
+	// @DEBUGGING
+	System.out.println("Primero vamos a chequear las ActionsToCome:");
+	printOutActionList(currentExpectation.actionsToCome);
+	System.out.println("Las acciones que tenemos en este time instant son:");
+	printOutActionList(consideredActions);
+	// @DEBUGGING
+
+	
+	Action firstActionToAssertInActionsToCome =  ((Action)currentExpectation.actionsToCome.elementAt(0));
+	
+	// @DEBUGGING
+	System.out.println("The active expectation is: "+ currentExpectation.expectationName);
+	System.out.println("The next action in expectation is: "+ firstActionToAssertInActionsToCome.actionName);
+	// @DEBUGGING
+
+	for(int consideredActionsIterator=0; consideredActionsIterator< consideredActions.size(); consideredActionsIterator++){
+	    Action tempAction = ((Action)consideredActions.elementAt(consideredActionsIterator));
+	    // @DEBUGGING
+	    System.out.println("Action in considered actions "+ tempAction.actionName);
+	    // @DEBUGGING
+	    if(currentExpectation.isActionInActionsToCome(tempAction) && firstActionToAssertInActionsToCome.actionName.equals(tempAction.actionName)){	
+		// @DEBUGGING
+		System.out.println("Assert expected action: "+ firstActionToAssertInActionsToCome.actionName+" believe: "+ currentBelieve.believeName);
+		// @DEBUGGING
+		currentBelieve.setActionInBelieveAtCurrentTimeInstant(tempAction, timeInstant);
+		currentExpectation.actionsToCome.remove(((Action)currentExpectation.actionsToCome.elementAt(0)));
+		removeAssertedActionFromConsideredActions(tempAction);
+		//removeBelieveContainingCurrentAction(currentBelieve);
+		return true;
+
 	    }
 	}
 	
-       	
+	// @DEBUGGING
+	System.out.println("Action: "+  firstActionToAssertInActionsToCome.actionName +" is not in considered action list. No worries, we force it\n");
+	// @DEBUGGING
+	Action tempAction = new Action(firstActionToAssertInActionsToCome.actionName, actor);
+	currentBelieve.setActionInBelieveAtCurrentTimeInstant(tempAction, timeInstant);
+	currentExpectation.actionsToCome.remove(((Action)currentExpectation.actionsToCome.elementAt(0)));
+	
+	return false;
+	
     }
+
+    
     public void reorderConsideredActionsBasedOnConsideredExpectations(){
 	// @DEBUGGING
 	System.out.println("List of expectations considered here");
@@ -327,50 +431,67 @@ public class Estimation{
 	currentBelieve.printOutExpectationList(consideredExpectations);
 	
     }
-    public void assertFirstActionInLineToMainBelieve(){
-	currentBelieve = ((Believe)consideredBelieves.elementAt(0));	
-	currentAction = ((Action)consideredActions.elementAt(0));
+    public void assertFirstActionInLineToNextActiveBelieve(){
+	
+	currentAction =	currentBelieve.chooseActionToAvoideRepetitions(consideredActions);
 	currentBelieve.setActionInBelieveAtCurrentTimeInstant(currentAction, timeInstant);
-
-	//mainBelieve = currentBelieve;
-	//removeAssertedActionFromConsideredActions(currentAction);
-	//removeBelieveContainingCurrentAction(currentBelieve);
+	removeAssertedActionFromConsideredActions(currentAction);
+	
     }
-
+    
     public void assertRemainingActionsInLineToRemainingBelieves(){
 	
-	for(int consideredActionsIterator=1; consideredActionsIterator< consideredActions.size(); consideredActionsIterator++){  
-	    activateNextBelieve();
-	    
+	for(int consideredActionsIterator=0; consideredActionsIterator< consideredActions.size(); consideredActionsIterator++){  
+
 	    currentAction = ((Action)consideredActions.elementAt(consideredActionsIterator));
 	    currentBelieve.setActionInBelieveAtCurrentTimeInstant(currentAction, timeInstant);
-	    //removeAssertedActionFromConsideredActions(currentAction);
-	    //removeBelieveContainingCurrentAction(currentBelieve);
+	    activateNextBelieve();
 	    
 	}
 	    
 	
     }
-    public void assertConsideredActionsFollowingTheActiveExpectation(){
-	// @DEBUGGING
-	System.out.println("Inside assert considered actions following the active expectation\n");
-	System.out.println("The active expectation is: "+ currentExpectation.expectationName);
-	// @DEBUGGING
-	//	Action firstActionInActionsToCome = ((Action)currentExpectation.getActionsInExpectations().elementAt(0));
-	Action firstActionInActionsToCome = ((Action)currentExpectation.getActionsInExpectations().elementAt(0));
+    public boolean assertConsideredActionsFollowingTheActiveExpectation(){
+
+	Action actionInConsideredActions =  currentAction;
+	currentExpectation.setActionsToCome(actionInConsideredActions);
+
+
+	    
+	Action firstActionToAssertInActionsToCome =  ((Action)currentExpectation.actionsToCome.elementAt(0));
 	
+	// @DEBUGGING
+	System.out.println("Inside assert considered actions following the active expectation");
+	System.out.println("The active expectation is: "+ currentExpectation.expectationName);
+	System.out.println("The next action in expectation is: "+ firstActionToAssertInActionsToCome.actionName);
+	// @DEBUGGING
+
 	for(int consideredActionsIterator=0; consideredActionsIterator< consideredActions.size(); consideredActionsIterator++){
-	    Action actionInConsideredActions =  ((Action)consideredActions.elementAt(consideredActionsIterator));
+	    Action tempAction = ((Action)consideredActions.elementAt(consideredActionsIterator));
 	    // @DEBUGGING
-	    System.out.println("Action in considered action "+ actionInConsideredActions.actionName);
+	    System.out.println("Action in considered actions "+ tempAction.actionName);
 	    // @DEBUGGING
-	    if(actionInConsideredActions.isActionTheFirstActionToComeInExpectation(currentExpectation)){
-		firstActionInActionsToCome = ((Action)consideredActions.elementAt(consideredActionsIterator));
-		removeAssertedActionFromConsideredActions(firstActionInActionsToCome);
+	    if(currentExpectation.isActionInExpectation(tempAction) && firstActionToAssertInActionsToCome.actionName.equals(tempAction.actionName)){	
+		// @DEBUGGING
+		System.out.println("Assert expected action: "+ firstActionToAssertInActionsToCome.actionName+" believe: "+ currentBelieve.believeName);
+		// @DEBUGGING
+		currentBelieve.setActionInBelieveAtCurrentTimeInstant(tempAction, timeInstant);
+		currentExpectation.actionsToCome.remove(((Action)currentExpectation.actionsToCome.elementAt(0)));
+		removeAssertedActionFromConsideredActions(tempAction);
+		//removeBelieveContainingCurrentAction(currentBelieve);
+		return true;
+
 	    }
 	}
-	currentBelieve.setActionInBelieveAtCurrentTimeInstant(firstActionInActionsToCome, timeInstant);
-	removeBelieveContainingCurrentAction(currentBelieve);
+	
+	// @DEBUGGING
+	System.out.println("Action: "+  firstActionToAssertInActionsToCome.actionName +" is not in considered action list. No worries, we force it\n");
+	// @DEBUGGING
+	currentExpectation.actionsToCome.remove(((Action)currentExpectation.actionsToCome.elementAt(0)));
+	removeAssertedActionFromConsideredActions(firstActionToAssertInActionsToCome);
+	//removeBelieveContainingCurrentAction(currentBelieve);
+	return false;
+	       
     }
 
     public void removeAssertedActionFromConsideredActions(Action actionToRemove){
@@ -446,6 +567,15 @@ public class Estimation{
 	for(int iter=0; iter< actionListToPrint.size(); iter++){
 	    // @DEBUGGING
 	    System.out.println(((Action)actionListToPrint.elementAt(iter)).actionName+" ");
+	    // @DEBUGGING
+	}
+	
+	System.out.println("\n");
+    }
+      public void printOutBelieveList(Vector believeListToPrint){
+	for(int iter=0; iter< believeListToPrint.size(); iter++){
+	    // @DEBUGGING
+	    System.out.println(((Believe)believeListToPrint.elementAt(iter)).believeName+" ");
 	    // @DEBUGGING
 	}
 	

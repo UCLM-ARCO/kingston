@@ -88,21 +88,36 @@ public class Believe
 	// @DEBUGGING
 	
     }
-    
+    public void setLastActionInMainBelieve(String actor, int cti){
+	removeLastAction(actor);
+	Action actionToAssert = new Action("walk towards", actor);
+
+	// @DEBUGGING
+	System.out.println("(new-event-indv {"+actor+" "+actionToAssert.actionName+" at t"+currentTimeInstant +"} {"+actionToAssert.actionName+"})");
+	// @DEBUGGING
+	
+	sfObject.sendToScone("(new-event-indv {"+actor+" "+actionToAssert.actionName+" at t"+currentTimeInstant +"} {"+actionToAssert.actionName+"})");
+	sfObject.sendToScone("(the-x-of-y-is-z {agent} {"+actor+" "+actionToAssert.actionName+" at t"+cti+"} {"+actor+"})");
+	
+	
+    }
+    public void removeLastAction(String actor){
+	Action lastAction = ((Action)composingActions.elementAt(composingActions.size()-1));
+	sfObject.sendToScone("(in-context {believe 0 for "+actor+"})");
+	sfObject.sendToScone("(remove-element (lookup-element {"+lastAction.actionName+"}))");
+    }
     public boolean doesActionExistInBelieveAtCurrentTimeInstant(Action requiredAction, int cti){
 	currentTimeInstant = cti;
-	
-	for(int decreaseCurrentTimeInstant=0;  decreaseCurrentTimeInstant < currentTimeInstant;  decreaseCurrentTimeInstant++){
+	int minTime = 0;
+	if(cti>3)
+	    minTime = cti -3;
+	for(int decreaseCurrentTimeInstant=currentTimeInstant-1;  decreaseCurrentTimeInstant >minTime;  decreaseCurrentTimeInstant--){
 	    // @DEBUGGING
-	    System.out.println("Checking string: (parent-wire (lookup-element {"+requiredAction.actor+" "+requiredAction.actionName+" at t"+decreaseCurrentTimeInstant +"}))");
-	    System.out.println("Value of decrease current time instant: "+decreaseCurrentTimeInstant);
+	    System.out.println("Checked if action happened at time instant: "+decreaseCurrentTimeInstant);
 	    // @DEBUGGING
-	
-	    String checkActionAtTimeInstant = sfObject.sendToScone("(parent-wire (lookup-element {"+requiredAction.actor+" "+requiredAction.actionName+" at t"+decreaseCurrentTimeInstant +"}))");
-	    
-	    if(!sfObject.isAnErrorMessage(checkActionAtTimeInstant))
+	    String checkActionAtTimeInstant = sfObject.sendToScone("(list-context-contents *context*)");
+	    if(checkActionAtTimeInstant.indexOf(requiredAction.actionName+" at t"+decreaseCurrentTimeInstant)>0)
 	    	return true;
-	    
 	}
 	
 	return false;
@@ -113,7 +128,7 @@ public class Believe
     public Vector getExpectationsInvolvingActionsInCurrentBelieve(){
 
 	// @DEBUGGING
-	System.out.println("Get expectations involving actions in current believe with composing actions: ");
+	System.out.println("Get expectations involving actions in current believe: "+believeName+" with composing actions: ");
 	// @DEBUGGING	
 	printOutActionList(composingActions);
 	for(int composingActionsIterator=0; composingActionsIterator< composingActions.size(); composingActionsIterator++){
@@ -174,5 +189,26 @@ public class Believe
 	}
 	
 	System.out.println("\n");
+    }
+
+    public void activateBelieve(){
+	sfObject.sendToScone("(in-context {"+believeName+"})");
+    }
+
+    public Action chooseActionToAvoideRepetitions(Vector consideredActions){
+	Action currentAction = ((Action)consideredActions.elementAt(0));
+	if(composingActions.size()>1 && !currentAction.actionName.equals(((Action)composingActions.elementAt(composingActions.size()-1)).actionName))
+	    return currentAction;
+	else{
+	    if(composingActions.size()>1 && consideredActions.size()>1){
+		// @DEBUGGING
+		System.out.println("Accion repetida. Cambiamos a la siguiente en la lista");
+		// @DEBUGGING
+		return ((Action)consideredActions.elementAt(1));
+	    }
+	    else
+		return currentAction;
+	}
+	
     }
 }

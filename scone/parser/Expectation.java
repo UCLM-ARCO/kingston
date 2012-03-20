@@ -53,10 +53,6 @@ public class Expectation
 	
 	while(startOfSeparator > -1){
 	    startOfSeparator +=  separator.length();
-	    // @DEBUGGING
-	    System.out.println("Asserting action: "+ actionsInvolvedInExpectation.substring(startOfSeparator, endOfSeparator));
-	    // @DEBUGGING
-
 	    actionsInExpectation.add(new Action(actionsInvolvedInExpectation.substring(startOfSeparator, endOfSeparator)));
 	    startOfSeparator = actionsInvolvedInExpectation.indexOf(separator, endOfSeparator);
 	    endOfSeparator = actionsInvolvedInExpectation.indexOf('}', startOfSeparator);
@@ -64,22 +60,36 @@ public class Expectation
 	return actionsInExpectation;
     }
 
-    public void setActionsToCome(Action currentAction){
+    public boolean setActionsToCome(Action currentAction){
 		
-	actionsToCome = getActionsInExpectations();
-	if(isActionInExpectation(currentAction)){
-	    for(int actionsToComeIterator = 0; actionsToComeIterator < actionsToCome.size(); actionsToComeIterator++){
-		if(!(((Action)actionsToCome.elementAt(actionsToComeIterator)).actionName.equals(currentAction.actionName)))
-		    actionsToCome.remove(((Action)actionsToCome.elementAt(actionsToComeIterator)));
-	    } 
-	}
-	     // @DEBUGGING
-	else{
-	    System.out.println("Action: "+currentAction.actionName+" is not in current expectation");
-	}
-	     // @DEBUGGING
+	///actionsToCome
+	Vector tempActions  = getActionsInExpectations();
 
-		    
+	// @DEBUGGING
+	System.out.println("Previous action was: "+ currentAction.actionName);
+	// @DEBUGGING
+
+	for(int actionsToComeIterator = tempActions.size(); actionsToComeIterator > 0; actionsToComeIterator--){
+	    if(!(((Action)tempActions.elementAt(actionsToComeIterator-1)).actionName.equals(currentAction.actionName))){
+		// @DEBUGGING
+		System.out.println("Action already occurred: "+ ((Action)tempActions.elementAt(actionsToComeIterator-1)).actionName);
+		// @DEBUGGING
+		tempActions.remove(((Action)tempActions.elementAt(actionsToComeIterator-1)));
+	    }
+	    else{
+		// @DEBUGGING
+		System.out.println("Found the starting point at action: "+ ((Action)tempActions.elementAt(actionsToComeIterator-1)).actionName);
+		// @DEBUGGING
+		
+		for(int i = tempActions.size(); i > 0; i--)
+		    actionsToCome.add(tempActions.elementAt(i-1));
+
+		return true;
+	    }
+	    
+	} 
+	return false;
+	
     }
 
     public boolean isActionInExpectation(Action currentAction){
@@ -87,6 +97,15 @@ public class Expectation
 	
 	for(int i=0; i < actionsInExpectation.size(); i++)
 	    if(((Action)actionsInExpectation.elementAt(i)).actionName.equals(currentAction.actionName))
+		return true;
+	return false;
+    }
+    
+
+    public boolean isActionInActionsToCome(Action currentAction){
+	
+	for(int i=0; i < actionsToCome.size(); i++)
+	    if(((Action)actionsToCome.elementAt(i)).actionName.equals(currentAction.actionName))
 		return true;
 	return false;
     }
@@ -104,6 +123,21 @@ public class Expectation
 	return false;
     }
     
+    public boolean includesAction(Action actionToCheck){
+	for(int i=0; i < actionsInExpectation.size(); i++)
+	    if(((Action)actionsInExpectation.elementAt(i)).actionName.equals(actionToCheck.actionName))
+		return true;
+	return false;
+
+    }
+    public boolean isStillActive(){
+	if(actionsToCome.size()>0)
+	    return true;
+	
+	else
+	    return false;
+	
+    }
 
 }
 

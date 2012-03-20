@@ -49,7 +49,7 @@ public class ClassifiedResultFile{
 		
 		estimationForCurrentClassifiedResultFile.newActionInEstimation(actionsInCurrentParsedLine);
 	    }
-	    
+	    estimationForCurrentClassifiedResultFile.setLastActionInEstimation();
 	    in.close();
 	} catch (Exception e){
 	    System.err.println("Error: " + e.getMessage());
@@ -122,5 +122,40 @@ public class ClassifiedResultFile{
 	
 	System.out.println("\n");
     }
+
+    public void printOutBelievesInEstimation(){
+
+	for(int iter=0; iter< estimationForCurrentClassifiedResultFile.consideredBelieves.size(); iter++){
+	    
+	    Believe tempBelieve = ((Believe) estimationForCurrentClassifiedResultFile.consideredBelieves.elementAt(iter));
+	    System.out.println("*********** PRINTING BELIEVE: "+tempBelieve.believeName+"************");
+
+	    String contentOfBelieve = tempBelieve.sfObject.sendToScone("(list-context-contents (lookup-element {"+tempBelieve.believeName +"}))");
+	    nicelyFormatContentOfBelieve(contentOfBelieve);
+	    System.out.println("\n");
+	    
+	}
+	
+    }
+      // @DEBUGGING
+    public void nicelyFormatContentOfBelieve(String contentOfBelieve){
+	int start = contentOfBelieve.indexOf("{events:");
+	int end = start;
+	String element = null;
+	Vector contents = new Vector();	
+	while(start > -1){
+	    start += "{events:".length();
+	    end = contentOfBelieve.indexOf('}',start);
+	    element = contentOfBelieve.substring(start, end);
+	    contents.add(element);
+	    start = contentOfBelieve.indexOf("{events:", end);	    
+	}
+	System.out.println( "\n\n\n");
+	if(contents.size()>0){
+	    for(int i=contents.size()-1; i>=0; i--)
+		System.out.println(contents.elementAt(i));
+	}
+    }
+    // @DEBUGGING
 
 }
