@@ -126,13 +126,20 @@ public class Believe
     }
     
     public Vector getExpectationsInvolvingActionsInCurrentBelieve(){
-
+	
 	// @DEBUGGING
 	System.out.println("Get expectations involving actions in current believe: "+believeName+" with composing actions: ");
 	// @DEBUGGING	
 	printOutActionList(composingActions);
-	for(int composingActionsIterator=0; composingActionsIterator< composingActions.size(); composingActionsIterator++){
-	    Action currentAction = ((Action)composingActions.elementAt(composingActionsIterator));
+	//	for(int composingActionsIterator=0; composingActionsIterator< composingActions.size(); composingActionsIterator++){
+	
+	cleanUpExpectationList();
+	int twoLevelsDown =0;
+	if(composingActions.size()>2)
+	    twoLevelsDown =composingActions.size()-2;
+	
+	for(int composingActionsIterator=composingActions.size(); composingActionsIterator>twoLevelsDown; composingActionsIterator--){
+	    Action currentAction = ((Action)composingActions.elementAt(composingActionsIterator-1));
 	    
 	    Vector expectationsForCurrentAction = currentAction.getExpectationsOfAction();
 	    
@@ -145,7 +152,9 @@ public class Believe
 	}
 	return expectationsForActionsInBelieve;
     }
-
+    public void cleanUpExpectationList(){
+	expectationsForActionsInBelieve = new Vector();
+    }
     public void addExpectationsToExistingSetOfExpectations(Vector expectationsForCurrentAction){
 	for(int expectationsForCurrentActionIterator=0; expectationsForCurrentActionIterator<expectationsForCurrentAction.size(); expectationsForCurrentActionIterator++)
 	    {

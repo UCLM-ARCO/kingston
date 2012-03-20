@@ -64,25 +64,14 @@
 ;; **************************************
 (new-indv {waving and leaving} {expectations})
 
-(the-x-of-y-is-z {has expectation} {waving and leaving} {walk towards})
 (the-x-of-y-is-z {has expectation} {waving and leaving} {wave})
 (the-x-of-y-is-z {has expectation} {waving and leaving} {walk towards})
 
 
-(new-indv {just waving} {expectations})
 
-(the-x-of-y-is-z {has expectation} {just waving} {walk towards})
-(the-x-of-y-is-z {has expectation} {just waving} {wave})
+(new-indv {sitting down and standing up with object} {expectations})
 
-
-(new-indv {saying goodbye} {expectations})
-(the-x-of-y-is-z {has expectation} {saying goodbye} {wave})
-(the-x-of-y-is-z {has expectation} {saying goodbye} {walk towards})
-
-
-
-(new-indv {sitting down and standing up} {expectations})
-
-(the-x-of-y-is-z {has expectation} {sitting down and standing up} {sit down})
-(the-x-of-y-is-z {has expectation} {sitting down and standing up} {get up})
+(the-x-of-y-is-z {has expectation} {sitting down and standing up with object} {pick up})
+(the-x-of-y-is-z {has expectation} {sitting down and standing up with object} {sit down})
+(the-x-of-y-is-z {has expectation} {sitting down and standing up with object} {get up})
 

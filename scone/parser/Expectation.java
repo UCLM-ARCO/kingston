@@ -61,7 +61,8 @@ public class Expectation
     }
 
     public boolean setActionsToCome(Action currentAction){
-		
+	
+	cleanUpActionsToCome();
 	///actionsToCome
 	Vector tempActions  = getActionsInExpectations();
 
@@ -81,8 +82,12 @@ public class Expectation
 		System.out.println("Found the starting point at action: "+ ((Action)tempActions.elementAt(actionsToComeIterator-1)).actionName);
 		// @DEBUGGING
 		
-		for(int i = tempActions.size(); i > 0; i--)
+		for(int i = tempActions.size(); i > 0; i--){
+		    // @DEBUGGING
+		    System.out.println("Add to actions to come: "+ ((Action)tempActions.elementAt(i-1)).actionName);
+		    // @DEBUGGING
 		    actionsToCome.add(tempActions.elementAt(i-1));
+		}
 
 		return true;
 	    }
@@ -91,7 +96,9 @@ public class Expectation
 	return false;
 	
     }
-
+    public void cleanUpActionsToCome(){
+	actionsToCome = new Vector();
+    }
     public boolean isActionInExpectation(Action currentAction){
 	actionsInExpectation = getActionsInExpectations();
 	

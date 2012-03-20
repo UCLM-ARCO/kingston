@@ -220,30 +220,70 @@ public class Estimation{
 	// @DEBUGGING
 	System.out.println("expectations of actions in current believe: "+markExpectationsOfActionsInCurrentBelieve.size());
 	printOutExpectationList(markExpectationsOfActionsInCurrentBelieve);
-	System.out.println("expectations of current actions: ");	
+	System.out.println("Actions in consideredactions. Falta 1: ");	
+	printOutActionList(consideredActions);
 	// @DEBUGGING
 	
-	
-	Vector markExpectationsOfCurrentAction = currentAction.getExpectationsOfAction();
+	for(int consideredActionsIt = 0; consideredActionsIt<consideredActions.size(); consideredActionsIt++){
+	    currentAction = ((Action)consideredActions.elementAt(consideredActionsIt));
 
-	//Vector intersetMarkedExpectations = getIntersectionOfMarkedSet(markExpectationsOfActionsInCurrentBelieve, markExpectationsOfCurrentAction);
-	consideredExpectations = new Vector();
-	consideredExpectations = getIntersectionOfMarkedSet(markExpectationsOfActionsInCurrentBelieve, markExpectationsOfCurrentAction);
-	// @DEBUGGING
-	System.out.println("Intersection: ");
-	printOutExpectationList(consideredExpectations);
-	// @DEBUGGING
-	
-
-	if(consideredExpectations.size() ==1){
-	    currentExpectation = ((Expectation)consideredExpectations.elementAt(0));
-	    currentBelieve.incrementNumberOfActivatedExpectations();
-	    return true;
+	    Vector markExpectationsOfCurrentAction = currentAction.getExpectationsOfAction();
+	   
+	    //Vector intersetMarkedExpectations = getIntersectionOfMarkedSet(markExpectationsOfActionsInCurrentBelieve, markExpectationsOfCurrentAction);
+	    consideredExpectations = new Vector();
+	    consideredExpectations = getIntersectionOfMarkedSet(markExpectationsOfActionsInCurrentBelieve, markExpectationsOfCurrentAction);
+	    doubleCheckWhetherCurrentActionFollowsPreviousOneInExpectationSet();
+	    // @DEBUGGING
+	    System.out.println("Analyzing expectations involving action: "+currentAction.actionName);
+	    printOutExpectationList(markExpectationsOfCurrentAction);
+	    // @DEBUGGING
+	    // @DEBUGGING
+	    System.out.println("Intersection: ");
+	    printOutExpectationList(consideredExpectations);
+	    // @DEBUGGING
+	    
+	    
+	    if(consideredExpectations.size() ==1){
+		currentExpectation = ((Expectation)consideredExpectations.elementAt(0));
+		currentBelieve.incrementNumberOfActivatedExpectations();
+		return true;
+	    }
 	}
-	else
-	    return false;
+	currentAction = ((Action)consideredActions.elementAt(0));
+	return false;
 	
    }
+    public void doubleCheckWhetherCurrentActionFollowsPreviousOneInExpectationSet(){
+	Vector tempConsideredExpectationList = new Vector();
+
+	for(int consideredExpectationIt = 0; consideredExpectationIt < consideredExpectations.size(); consideredExpectationIt++){
+	    Expectation tempExpect = ((Expectation)consideredExpectations.elementAt(consideredExpectationIt));
+	    // @DEBUGGING
+	    System.out.println("Checking Expectation: "+ tempExpect.expectationName+ " number "+consideredExpectationIt+" out of "+consideredExpectations.size());
+	  
+	    // @DEBUGGING
+	    if(tempExpect.isActionInExpectation(((Action)currentBelieve.composingActions.elementAt(currentBelieve.composingActions.size()-1)))){
+		tempExpect.setActionsToCome(((Action)currentBelieve.composingActions.elementAt(currentBelieve.composingActions.size()-1)));
+		if(tempExpect.actionsToCome.size()>1){
+		    // @DEBUGGING
+		    System.out.println("Is there a match: "+((Action)tempExpect.actionsToCome.elementAt(1)).actionName+" and "+ currentAction.actionName);
+		    // @DEBUGGING
+		    
+		    if(((Action)tempExpect.actionsToCome.elementAt(1)).actionName.equals(currentAction.actionName)){
+			 // @DEBUGGING
+			System.out.println("Assert temp expectation: "+ ((Action)tempExpect.actionsToCome.elementAt(1)).actionName);
+			// @DEBUGGING
+		    
+			tempConsideredExpectationList.add(tempExpect);
+		    }
+		}
+	    }
+	}
+	if(tempConsideredExpectationList.size()==1){
+	    consideredExpectations = new Vector();
+	    consideredExpectations.add(((Expectation)tempConsideredExpectationList.elementAt(0)));
+	}
+    }
 
     
     // This function discard those actions out of the consideredActions that are inconsistent
@@ -348,9 +388,10 @@ public class Estimation{
 	else{
 	    
 	    if(isThereAnActiveExpectationInConsideredBelieves()){
-		checkIfInterchangeOfBelieveIsRequired();
+		//checkIfInterchangeOfBelieveIsRequired();
 		// @DEBUGGING
 		System.out.println("Let's assert considered actions following the active expectation\n\n");
+		System.out.println("Current action is: "+ currentAction.actionName);
 		// @DEBUGGING
 		
 		assertConsideredActionsFollowingTheActiveExpectation();
@@ -455,6 +496,15 @@ public class Estimation{
 
 	Action actionInConsideredActions =  currentAction;
 	currentExpectation.setActionsToCome(actionInConsideredActions);
+
+	if(!currentExpectation.isStillActive()){
+	    // @DEBUGGING
+	    System.out.println("No quedan acciones en actionsToCome\n");
+	    // @DEBUGGING
+	    currentExpectation = null;
+	    assertFirstActionInLineToNextActiveBelieve();	
+	    return false;
+	}
 
 
 	    
