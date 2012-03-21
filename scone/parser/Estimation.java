@@ -264,7 +264,7 @@ public class Estimation{
 	    System.out.println("Checking Expectation: "+ tempExpect.expectationName+ " number "+consideredExpectationIt+" out of "+consideredExpectations.size());
 	    // @DEBUGGING
 	    
-	    /*	    if(tempExpect.isActionInExpectation(((Action)currentBelieve.composingActions.elementAt(currentBelieve.composingActions.size()-1))) && tempExpect.isActionInExpectation(((Action)currentBelieve.composingActions.elementAt(currentBelieve.composingActions.size()-2)))){
+	       if(tempExpect.isActionInExpectation(((Action)currentBelieve.composingActions.elementAt(currentBelieve.composingActions.size()-1))) && tempExpect.isActionInExpectation(((Action)currentBelieve.composingActions.elementAt(currentBelieve.composingActions.size()-2)))){
 		tempExpect.setActionsToCome(((Action)currentBelieve.composingActions.elementAt(currentBelieve.composingActions.size()-1)));
 		if(tempExpect.actionsToCome.size()>1){
 		    // @DEBUGGING
@@ -282,7 +282,7 @@ public class Estimation{
 			tempConsideredExpectationList.add(tempExpect);
 		    }
 		}
-	    }*/
+	    }/*
 	    if(tempExpect.isActionInExpectation(((Action)currentBelieve.composingActions.elementAt(currentBelieve.composingActions.size()-1)))){
 		tempExpect.setActionsToCome(((Action)currentBelieve.composingActions.elementAt(currentBelieve.composingActions.size()-1)));
 		if(tempExpect.actionsToCome.size()>1){
@@ -301,7 +301,7 @@ public class Estimation{
 			tempConsideredExpectationList.add(tempExpect);
 		    }
 		}
-	    }
+		}*/
 	}
 	if(tempConsideredExpectationList.size()==1){
 	     // @DEBUGGING
