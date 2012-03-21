@@ -64,4 +64,6 @@
 ;; ball wich is not at the entrance of the scenario
 
 ;(new-statement {punch} {requires} {walk towards})
-;(new-statement {kick} {requires} {walk towards})
+(new-statement {kick} {requires} {punch})
+(new-statement {point at} {requires} {turn around})
+(new-statement {scratch head} {requires} {turn around})

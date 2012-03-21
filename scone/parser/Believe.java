@@ -134,11 +134,11 @@ public class Believe
 	//	for(int composingActionsIterator=0; composingActionsIterator< composingActions.size(); composingActionsIterator++){
 	
 	cleanUpExpectationList();
-	int twoLevelsDown =0;
-	if(composingActions.size()>2)
-	    twoLevelsDown =composingActions.size()-2;
+	int oneLevelsDown =0;
+	if(composingActions.size()>1)
+	    oneLevelsDown =composingActions.size()-1;
 	
-	for(int composingActionsIterator=composingActions.size(); composingActionsIterator>twoLevelsDown; composingActionsIterator--){
+	for(int composingActionsIterator=composingActions.size(); composingActionsIterator>oneLevelsDown; composingActionsIterator--){
 	    Action currentAction = ((Action)composingActions.elementAt(composingActionsIterator-1));
 	    
 	    Vector expectationsForCurrentAction = currentAction.getExpectationsOfAction();

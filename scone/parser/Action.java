@@ -50,7 +50,13 @@ public class Action{
 	    System.out.println("Inside: "+retrievedExpectations.substring(startOfExpectation, endOfExpectation));
 	    // @DEBUGGING
 	    
-	    expectations.add(new Expectation(retrievedExpectations.substring(startOfExpectation, endOfExpectation)));
+	    if(retrievedExpectations.indexOf(retrievedExpectations.substring(startOfExpectation, endOfExpectation)) < startOfExpectation){
+		// @DEBUGGING
+		System.out.println("Nombre de expectation: "+ retrievedExpectations.substring(startOfExpectation, endOfExpectation)+" ya ha aparecido\n\n");
+		// @DEBUGGING
+	    }
+	    else
+		expectations.add(new Expectation(retrievedExpectations.substring(startOfExpectation, endOfExpectation)));
 	    startOfExpectation = retrievedExpectations.indexOf(separator, endOfExpectation);
 	    endOfExpectation =  retrievedExpectations.indexOf('(', startOfExpectation)-1;
 	    
@@ -86,7 +92,6 @@ public class Action{
 	else
 	    return false;
     }
-
     
     public boolean isActionTheFirstActionToComeInExpectation(Expectation currentExpectation){
 	if(currentExpectation.includesAction(this)){

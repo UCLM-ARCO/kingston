@@ -145,7 +145,7 @@ public class ClassifiedResultFile{
 	Vector contents = new Vector();	
 	while(start > -1){
 	    start += "{events:".length();
-	    end = contentOfBelieve.indexOf('}',start);
+	    end = contentOfBelieve.indexOf('(',start);
 	    element = contentOfBelieve.substring(start, end);
 	    contents.add(element);
 	    start = contentOfBelieve.indexOf("{events:", end);	    
