@@ -100,7 +100,8 @@ public class Estimation{
     }
  
     public void createMainBelieve(){
-	
+	sfObject.sendToScone("(in-context {general})");
+
 	// @DEBUGGING
 	System.out.println("Create the main context");
 	// @DEBUGGING
@@ -259,50 +260,59 @@ public class Estimation{
 	Vector tempConsideredExpectationList = new Vector();
 
 	for(int consideredExpectationIt = 0; consideredExpectationIt < consideredExpectations.size(); consideredExpectationIt++){
+
 	    Expectation tempExpect = ((Expectation)consideredExpectations.elementAt(consideredExpectationIt));
+
 	    // @DEBUGGING
+
 	    System.out.println("Checking Expectation: "+ tempExpect.expectationName+ " number "+consideredExpectationIt+" out of "+consideredExpectations.size());
+
+	  
+
 	    // @DEBUGGING
-	    
-	       if(tempExpect.isActionInExpectation(((Action)currentBelieve.composingActions.elementAt(currentBelieve.composingActions.size()-1))) && tempExpect.isActionInExpectation(((Action)currentBelieve.composingActions.elementAt(currentBelieve.composingActions.size()-2)))){
-		tempExpect.setActionsToCome(((Action)currentBelieve.composingActions.elementAt(currentBelieve.composingActions.size()-1)));
-		if(tempExpect.actionsToCome.size()>1){
-		    // @DEBUGGING
-		    System.out.println("Is there a match: "+((Action)tempExpect.actionsToCome.elementAt(1)).actionName+" and "+ currentAction.actionName);
-		    // @DEBUGGING
-		    
-		    //TO-FIX: Bug at -2
-		    if(((Action)tempExpect.actionsToCome.elementAt(1)).actionName.equals(currentAction.actionName) &&tempExpect.isActionInExpectation(((Action)currentBelieve.composingActions.elementAt(currentBelieve.composingActions.size()-2)))){
-			if(((Action)tempExpect.actionsToCome.elementAt(1)).actionName.equals(((Action)currentBelieve.composingActions.elementAt(currentBelieve.composingActions.size()-1))))
-			    return false;
-			 // @DEBUGGING
-			System.out.println("Assert temp expectation: "+ tempExpect.expectationName);
-			// @DEBUGGING
-			
-			tempConsideredExpectationList.add(tempExpect);
-		    }
-		}
-	    }/*
+
 	    if(tempExpect.isActionInExpectation(((Action)currentBelieve.composingActions.elementAt(currentBelieve.composingActions.size()-1)))){
+
 		tempExpect.setActionsToCome(((Action)currentBelieve.composingActions.elementAt(currentBelieve.composingActions.size()-1)));
+
 		if(tempExpect.actionsToCome.size()>1){
+
 		    // @DEBUGGING
+
 		    System.out.println("Is there a match: "+((Action)tempExpect.actionsToCome.elementAt(1)).actionName+" and "+ currentAction.actionName);
+
 		    // @DEBUGGING
+
 		    
-		    //TO-FIX: Bug at -2
+
 		    if(((Action)tempExpect.actionsToCome.elementAt(1)).actionName.equals(currentAction.actionName)){
-			if(((Action)tempExpect.actionsToCome.elementAt(1)).actionName.equals(((Action)currentBelieve.composingActions.elementAt(currentBelieve.composingActions.size()-1))))
-			    return false;
+
 			 // @DEBUGGING
-			System.out.println("Assert temp expectation: "+ tempExpect.expectationName);
+
+			System.out.println("Assert temp expectation: "+ ((Action)tempExpect.actionsToCome.elementAt(1)).actionName);
+
 			// @DEBUGGING
-			
+
+		    
+
 			tempConsideredExpectationList.add(tempExpect);
+
 		    }
+
 		}
-		}*/
+
+	    }
+
 	}
+
+	if(tempConsideredExpectationList.size()==1){
+
+	    consideredExpectations = new Vector();
+
+	    consideredExpectations.add(((Expectation)tempConsideredExpectationList.elementAt(0)));
+
+	}
+
 	if(tempConsideredExpectationList.size()==1){
 	     // @DEBUGGING
 	    System.out.println("We found an active expectation in the double check");

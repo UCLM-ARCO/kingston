@@ -49,7 +49,7 @@
 (the-x-of-y-is-z {has expectation} {punching and kicking} {kick})
 (the-x-of-y-is-z {has expectation} {punching and kicking} {punch})
 
-;(new-indv {start punching} {expectations})
+(new-indv {start punching} {expectations})
 
 ;(the-x-of-y-is-z {has expectation} {start punching} {walk towards})
 ;(the-x-of-y-is-z {has expectation} {start punching} {punch})

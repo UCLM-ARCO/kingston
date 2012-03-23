@@ -13,12 +13,24 @@ public class ClassifiedResultFile{
     public Vector actionsInCurrentParsedLine;
     public Estimation estimationForCurrentClassifiedResultFile; 
     public String actor;
+    public Vector ixmasActionsInVector;
+    public Vector contents;
 
     public ClassifiedResultFile(String fn){
 	fileName = fn;
 	actor = stripActorName();
 	actionsInCurrentParsedLine = new Vector();
 	estimationForCurrentClassifiedResultFile = new Estimation(actor);
+	ixmasActionsInVector = new Vector();
+	for(int i=0; i<15; i++){
+	    ixmasActionsInVector.add(IXMAS_ACTIONS[i]);
+	    
+		// @DEBUGGING
+	    System.out.println("Action "+i+" "+ ixmasActionsInVector.elementAt(i));
+		// @DEBUGGING
+		
+	}
+	contents = new Vector();	
     }
 
 
@@ -124,38 +136,151 @@ public class ClassifiedResultFile{
     }
 
     public void printOutBelievesInEstimation(){
-
+	
 	for(int iter=0; iter< estimationForCurrentClassifiedResultFile.consideredBelieves.size(); iter++){
 	    
 	    Believe tempBelieve = ((Believe) estimationForCurrentClassifiedResultFile.consideredBelieves.elementAt(iter));
 	    System.out.println("*********** PRINTING BELIEVE: "+tempBelieve.believeName+"************");
 
 	    String contentOfBelieve = tempBelieve.sfObject.sendToScone("(list-context-contents (lookup-element {"+tempBelieve.believeName +"}))");
-	    nicelyFormatContentOfBelieve(contentOfBelieve);
+	    if(tempBelieve.believeName.indexOf("believe 0")>-1){
+		BufferedWriter writerToFile = createFileToWriteResults();
+		nicelyFormatContentOfBelieveToAFile(contentOfBelieve, writerToFile);
+		try{
+		    writerToFile.close();
+		    
+		}catch (Exception e){//Catch exception if any
+		    System.err.println("Error: " + e.getMessage());
+		}
+		
+	    }
+	    else
+		nicelyFormatContentOfBelieveToStandardOutput(contentOfBelieve);
+	    
 	    System.out.println("\n");
 	    
 	}
-	
+
     }
       // @DEBUGGING
-    public void nicelyFormatContentOfBelieve(String contentOfBelieve){
+    public BufferedWriter createFileToWriteResults(){
+	
+	try{
+	    FileWriter fstream = new FileWriter("classificationResults/"+actor+".txt");
+	    return new BufferedWriter(fstream);
+	}catch (Exception e){//Catch exception if any
+	    System.err.println("Error: " + e.getMessage());
+	    return null;
+	}
+    }
+    
+    public void nicelyFormatContentOfBelieveToAFile(String contentOfBelieve, BufferedWriter writerToFile){
 	int start = contentOfBelieve.indexOf("{events:");
 	int end = start;
 	String element = null;
-	Vector contents = new Vector();	
+		
 	while(start > -1){
-	    start += "{events:".length();
-	    end = contentOfBelieve.indexOf('(',start);
+	    String beginingOfString = "{events:"+actor+" is the agent of "+actor+" ";
+	    start += beginingOfString.length();
+	    end = contentOfBelieve.indexOf(" at t", start);
 	    element = contentOfBelieve.substring(start, end);
 	    contents.add(element);
 	    start = contentOfBelieve.indexOf("{events:", end);	    
 	}
-	System.out.println( "\n\n\n");
-	if(contents.size()>0){
-	    for(int i=contents.size()-1; i>=0; i--)
-		System.out.println(contents.elementAt(i));
+	
+	try{
+	    if(contents.size()>0){
+		for(int i=contents.size()-1; i>=0; i--){
+		    System.out.println(contents.elementAt(i));
+		    writerToFile.write(ixmasActionsInVector.indexOf(contents.elementAt(i))+"\n");
+		}
+	    }
+	    writeLineWithNewClassificationResults(writerToFile);
+	    writeLineWithOriginalClassificationResults(writerToFile);
+	
+	}catch (Exception e){//Catch exception if any
+	    System.err.println("Error: " + e.getMessage());
 	}
     }
     // @DEBUGGING
 
+
+    public void nicelyFormatContentOfBelieveToStandardOutput(String contentOfBelieve){
+	int start = contentOfBelieve.indexOf("{events:");
+	int end = start;
+	String element = null;
+
+	while(start > -1){
+	    String beginingOfString = "{events:"+actor+" is the agent of "+actor+" ";
+	    start += beginingOfString.length();
+	    end = contentOfBelieve.indexOf("at t", start);
+	    element = contentOfBelieve.substring(start, end);
+	    contents.add(element);
+	    start = contentOfBelieve.indexOf("{events:", end);	    
+	}
+	
+	try{
+	    if(contents.size()>0){
+		for(int i=contents.size()-1; i>=0; i--){
+		    System.out.println(contents.elementAt(i));
+		    //System.out.println(contents.elementAt(i)+"\n");
+		}
+	    }
+	}catch (Exception e){//Catch exception if any
+	    System.err.println("Error: " + e.getMessage());
+	}
+    }
+    public void writeLineWithOriginalClassificationResults(BufferedWriter writerToFile){
+	try{
+	    
+	    FileInputStream fstream = new FileInputStream(fileName); //TO_FIX: path to files cannot be hard-coded
+	    DataInputStream in = new DataInputStream(fstream);
+	    BufferedReader br = new BufferedReader(new InputStreamReader(in));
+	    String strLine;
+	    while ((strLine = br.readLine()) != null && strLine.indexOf("Accuracy")<0);
+	    
+	    writerToFile.write("\n");
+	    writerToFile.write(strLine);
+	    in.close();
+	}catch (Exception e){//Catch exception if any
+	    System.err.println("Error: " + e.getMessage());
+	}
+	
+    }
+    public void writeLineWithNewClassificationResults(BufferedWriter writerToFile){
+	try{
+	    String pathToTruth = "/home/mjsantof/repo/mariajose.santofimia/kingston/BoW/videos/truth/"+actor+"_frame_segmented.txt";
+	    System.out.println("Path to file: "+pathToTruth);
+	    FileInputStream fstream = new FileInputStream(pathToTruth); //TO_FIX: path to files cannot be hard-coded
+	    DataInputStream in = new DataInputStream(fstream);
+	    BufferedReader br = new BufferedReader(new InputStreamReader(in));
+	    String strLine;
+	    int iterator = 0;
+	    int sumOfIncorrectActions=0;
+	    while ((strLine = br.readLine()) != null && iterator<contents.size() ){
+		String act = stripAction(strLine);
+		
+		System.out.println(act+" ");
+		if(Integer.parseInt(act) == ixmasActionsInVector.indexOf(contents.elementAt(iterator)))
+		    sumOfIncorrectActions++;
+		iterator++;
+	    }
+	    float result = (((float)(iterator-sumOfIncorrectActions))/((float)iterator))*100;
+	    writerToFile.write("Accuracy after reasoning = "+result +"% ("+(iterator-sumOfIncorrectActions)+"/"+iterator+") (classification)");
+	    in.close();
+
+
+
+	}catch (Exception e){//Catch exception if any
+	    System.err.println("Error: " + e.getMessage());
+	}
+		
+    }
+    public String stripAction(String lineToParse){
+	
+	int firstWhiteSpace =lineToParse.indexOf(' ');
+	int secondWhiteSpace=lineToParse.indexOf(' ', firstWhiteSpace+1);
+	return lineToParse.substring(secondWhiteSpace+1);
+	
+    }
 }

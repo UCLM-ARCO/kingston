@@ -52,14 +52,14 @@ for f in truth/*_frame_segmented.txt; do
     cd ../extracted_features
 
 ## You can comment the next line whenever you want to reuse the extracted features    
-  # perl avi2stip.pl $actor
+#   perl avi2stip.pl $actor
 
     echo "=========================================" 
     echo "Turning the stip feature files into .hof"
     echo "=========================================" 
     
     echo  stip2featuresdescriptors.pl $actor
-    #perl stip2featuresdescriptors.pl $actor
+    perl stip2featuresdescriptors.pl $actor
    
     echo "=========================================" 
     echo "Calculing look up table for the testing"

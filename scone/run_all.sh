@@ -35,6 +35,7 @@ javac Expectation.java
 
 
 cd ..
+#rm classificationResults/*
 java parser.CSAR /home/mjsantof/repo/mariajose.santofimia/kingston/BoW/recognition_process/results
 
 
