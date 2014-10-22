@@ -3,7 +3,6 @@
 
 import sys
 import os
-import xml.etree.ElementTree as ET
 
 # check the path parameter
 dirpath = sys.argv[1]
