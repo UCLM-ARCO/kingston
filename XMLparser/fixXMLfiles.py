@@ -21,17 +21,15 @@ def create_symdirs():
         mkdir_p(dirpath + "/depth/xml_symlink")
 
 def create_symlinks():
-    inActoresDir = os.listdir(currentdir + "/videos/actores")
-    for itemX in inActoresDir:
-        absItemPath = os.path.abspath(itemX)
-        if os.path.isdir(absItemPath):
-            # aqui no entra
-            inXmlDir = os.listdir(absItemPath + "/depth/xml")
-            xmlfiles_sorted = sorted(inXmlDir, key=lambda n: int(n.split('_')[1]))
-            print(xmlfiles_sorted[0])
-            print(xmlfiles_sorted[1])
-            print(xmlfiles_sorted[2])
-            print("hola")
+    actoresDir = os.path.join(currentdir, "videos/actores")
+    for itemX in os.listdir(actoresDir):
+        accionesDir = os.path.join(actoresDir, itemX)
+        print(accionesDir)
+        # xmlfiles_sorted = sorted(inXmlDir, key=lambda n: int(n.split('_')[1]))
+        # print(xmlfiles_sorted[0])
+        # print(xmlfiles_sorted[1])
+        # print(xmlfiles_sorted[2])
+        # print("hola")
 
 
 create_symlinks()
