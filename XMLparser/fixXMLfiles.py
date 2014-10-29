@@ -3,25 +3,63 @@
 
 import sys
 import os
+import errno
+
+currentdir = os.getcwd()
+
+def mkdir_p(path):
+    try:
+        os.makedirs(path)
+    except OSError as exc:
+        if exc.errno == errno.EEXIST and os.path.isdir(path):
+            pass
+        else: raise
+
+def create_symdirs():
+    for item in os.listdir(currentdir + "/videos/actores"):
+        dirpath = currentdir + "/videos/actores/" + item
+        mkdir_p(dirpath + "/depth/xml_symlink")
+
+def create_symlinks():
+    inActoresDir = os.listdir(currentdir + "/videos/actores")
+    for itemX in inActoresDir:
+        absItemPath = os.path.abspath(itemX)
+        if os.path.isdir(absItemPath):
+            # aqui no entra
+            inXmlDir = os.listdir(absItemPath + "/depth/xml")
+            xmlfiles_sorted = sorted(inXmlDir, key=lambda n: int(n.split('_')[1]))
+            print(xmlfiles_sorted[0])
+            print(xmlfiles_sorted[1])
+            print(xmlfiles_sorted[2])
+            print("hola")
+
+
+create_symlinks()
+
+
+
+
+
+
 
 # check the path parameter
-dirpath = sys.argv[1]
-pathlen = len(dirpath)
-if dirpath[pathlen-1] != '/':
-    dirpath += '/'
+# dirpath = sys.argv[1]
+# pathlen = len(dirpath)
+# if dirpath[pathlen-1] != '/':
+#     dirpath += '/'
 
-for filename in os.listdir(dirpath):
-    filepath = dirpath+filename
-    fr = open(filepath, "r")
+# for filename in os.listdir(dirpath):
+#     filepath = dirpath+filename
+#     fr = open(filepath, "r")
 
-    str = fr.read()
-    strSplited = str.split(' ')
-    strAux = '<?xml version="1.0" '
-    strAux += strSplited[2]
+#     str = fr.read()
+#     strSplited = str.split(' ')
+#     strAux = '<?xml version="1.0" '
+#     strAux += strSplited[2]
 
-    fr.close()
-    os.remove(filepath)
+#     fr.close()
+#     os.remove(filepath)
 
-    fw = open(filepath, "w")
-    fw.write(strAux)
-    fw.close()
+#     fw = open(filepath, "w")
+#     fw.write(strAux)
+#     fw.close()
