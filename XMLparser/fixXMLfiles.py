@@ -40,6 +40,7 @@ def create_symlinks():
             xmlFile_name = os.path.join(xmlDir, fileX)
             linkFile_name = os.path.join(linkDir, "frame_" + str(i) + ".xml")
             os.symlink(xmlFile_name, linkFile_name)
+            i += 1
 
 
 def fixXMLdir(path):
