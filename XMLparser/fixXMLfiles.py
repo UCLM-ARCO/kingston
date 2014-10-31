@@ -20,7 +20,7 @@ def mkdir_p(path):
 
 def create_symdirs():
     for item in os.listdir(currentdir + "/videos/actores"):
-        dirpath = currentdir + "/videos/actores/" + item
+        dirpath = os.path.join(currentdir, "videos/actores/" + item)
         mkdir_p(dirpath + "/depth/xml_symlink")
 
 
@@ -63,9 +63,10 @@ def fixXMLdir(path):
 
 def fixXMLfiles():
     actoresDir = os.path.join(currentdir, "videos/actores")
-    for itemX in actoresDir:
+    for itemX in os.listdir(actoresDir):
         xmlDir = os.path.join(actoresDir, itemX + "/depth/xml")
         fixXMLdir(xmlDir)
 
 
-create_symlinks()
+#fixXMLfiles()
+#create_symlinks()
