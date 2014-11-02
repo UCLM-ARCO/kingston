@@ -8,6 +8,8 @@
 
 import xml.etree.ElementTree as ET
 import os
+import fixXMLfiles
+import symlinks
 
 currentdir = os.getcwd()
 
@@ -26,7 +28,7 @@ def getJoints(xmlpath):
     return coordinatesList
 
 
-truthDir = os.path.join(currentdir, "truth")
+truthDir = os.path.join(currentdir, "RecogidaDatos/truth")
 truthFiles = os.listdir(truthDir)
 guidedActions = sorted(truthFiles)[0:33]
 esqueleton = guidedActions[1:32:3]
@@ -63,3 +65,7 @@ for itemX in esqueletonSorted:
 
 
     break #quitar luego
+
+fixXMLfiles.fixfiles()
+symlinks.create_symdirs()
+symlinks.create_symlinks()

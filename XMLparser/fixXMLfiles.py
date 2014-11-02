@@ -12,7 +12,7 @@ import errno
 currentdir = os.getcwd()
 
 
-def fixXMLdir(path):
+def fixdir(path):
     for fileX in os.listdir(path):
         filepath = os.path.join(path, fileX)
         fr = open(filepath, "r")
@@ -30,8 +30,8 @@ def fixXMLdir(path):
         fw.close()
 
 
-def fixXMLfiles():
-    actoresDir = os.path.join(currentdir, "videos/actores")
+def fixfiles():
+    actoresDir = os.path.join(currentdir, "RecogidaDatos/videos/actores")
     for itemX in os.listdir(actoresDir):
         xmlDir = os.path.join(actoresDir, itemX + "/depth/xml")
-        fixXMLdir(xmlDir)
+        fixdir(xmlDir)

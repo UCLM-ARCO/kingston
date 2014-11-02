@@ -23,13 +23,14 @@ def mkdir_p(path):
 
 
 def create_symdirs():
-    for item in os.listdir(currentdir + "/videos/actores"):
-        dirpath = os.path.join(currentdir, "videos/actores/" + item)
+    actoresDir = os.path.join(currentdir, "RecogidaDatos/videos/actores")
+    for item in os.listdir(actoresDir):
+        dirpath = os.path.join(actoresDir, item)
         mkdir_p(dirpath + "/depth/xml_symlink")
 
 
 def create_symlinks():
-    actoresDir = os.path.join(currentdir, "videos/actores")
+    actoresDir = os.path.join(currentdir, "RecogidaDatos/videos/actores")
     for itemX in os.listdir(actoresDir):
         # dirs to use
         accionesDir = os.path.join(actoresDir, itemX)
@@ -38,10 +39,18 @@ def create_symlinks():
         # list and sort xml files
         xmlFiles = os.listdir(xmlDir)
         xmlFiles_sorted = sorted(xmlFiles, key=lambda n: int(n.split('_')[1]))
+
         # iterate through xml sorted files and create links
         i = 0
         for fileX in xmlFiles_sorted:
             xmlFile_name = os.path.join(xmlDir, fileX)
             linkFile_name = os.path.join(linkDir, "frame_" + str(i) + ".xml")
-            os.symlink(xmlFile_name, linkFile_name)
-            i += 1
+
+            try:
+                os.symlink(xmlFile_name, linkFile_name)
+                i += 1
+            except OSError as exc:
+                if exc.errno == errno.EEXIST and os.path.isfile(xmlFile_name):
+                    pass
+                else:
+                    raise
