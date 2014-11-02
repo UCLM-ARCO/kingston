@@ -496,5 +496,4 @@
  ((new-statement {thrown object} {is in direct contact to} {floor})
   (new-statement {thrown object} {rests upon} {floor})
   (new-statement {throwing hands} {is in direct contact to} {throwing person torso})))
-(new-statement {throw bottom up} {has point of interest in} {arm}) 
-
+(new-statement {throw bottom up} {has point of interest in} {arm})
