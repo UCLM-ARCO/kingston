@@ -8,7 +8,10 @@
 (new-type {origin} {place})
 (new-type {destination} {place})
 
-(new-type {animated object} {object})
+(new-type {object} {thing})
+(new-is-a {object} {thing})
+(new-type {animated object} {thing})
+(new-is-a {person} {animated object})
 (new-type {movable object} {object})
 (new-type {moving object} {movable object})
 (new-type {move an object} {movable object})
@@ -85,7 +88,6 @@
 (new-is-a {travel vehicle} {vehicle})
 
 (new-type {travel by animal} {travel by carrier})
-(new-type {animal} {thing})
 (new-is-a {travel by animal} {travel by carrier})
 (new-action-type {travel by animal} 
 		 :agent-type {person} 
@@ -102,7 +104,6 @@
 
 (new-type {travel as driver} {travel by carrier})	
 (new-is-a {travel as driver} {travel by carrier})
-(new-type {driver} {person})	
 (x-is-the-y-of-z {agent} {travel as driver} {driver})
 
 (new-type {travel as} {action})

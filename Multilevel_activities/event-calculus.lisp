@@ -24,7 +24,7 @@ provided by stating FORMS"
   the formula given by FORMS, or NIL if this property is
    not present."
   (if time-point
-      (setq fluent (read-from-string (concatenate 'string (write-to-string						   fluent) "-at-"  (remove #\} (subseq  (write-to-string time-point) 1))))))
+      (setq fluent (read-from-string (concatenate 'string (write-to-string fluent) "-at-"  (remove #\} (subseq  (write-to-string time-point) 1))))))
   `(getf (properties ,e) ,fluent))
 
 (defmacro eval-element-fluent (e fluent)
