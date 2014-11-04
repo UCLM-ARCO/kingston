@@ -770,11 +770,7 @@
 (new-relation {stands over}
 	      :a-inst-of {thing}
 	      :b-inst-of {thing})
-
-(new-relation {is hold by}
-	      :a-inst-of {thing}
-	      :b-inst-of {person})
-	      
+     
 (new-relation {put hand over head}
 	      :a-inst-of {person}
 	      :b-inst-of {event})	      

@@ -1,0 +1,5 @@
+;;;(load "/home/maria/Scone/pathToFiles")
+
+(load "/home/maria/Scone/scone-loader.lisp")
+(scone "0.9")
+(load "/home/maria/Scone/0.9/kb/core.lisp")

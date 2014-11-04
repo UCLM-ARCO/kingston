@@ -1,18 +1,6 @@
 (new-type {expectations} {thing})
 (new-type-role {has expectation} {expectations} {event})
 
-(new-type {walk towards} {action})
-(new-type {sit down} {action})
-(new-type {get up} {action})
-(new-type {pick up} {action})
-(new-type {turn around} {action})
-(new-type {throw over head} {action})
-(new-type {throw bottom up} {action})
-(new-type {kick} {action})
-(new-type {punch} {action})
-(new-type {scratch head} {action})
-(new-type {point at} {action})
-
 ;; **************************************
 ;; *** EXPECTATION FOR READING A BOOK ***
 ;; **************************************

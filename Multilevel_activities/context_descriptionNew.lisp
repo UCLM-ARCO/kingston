@@ -17,21 +17,19 @@
 	:a-inst-of {thing} 
 	:b-inst-of {place})
 	      
-(new-relation {rests upon} 
-	:a-inst-of {thing} 
-	:b-inst-of {place})
+;(new-relation {rests upon} 
+;	:a-inst-of {thing} 
+;	:b-inst-of {place})
 	      
-(new-relation {is in direct contact to} 
-	:a-inst-of {thing} 
-	:b-inst-of {place})
+;(new-relation {is in direct contact to} 
+;	:a-inst-of {thing} 
+;	:b-inst-of {place})
 
 ;; GENERAL STATEMENTS
 
-(new-type {surface} {thing})
 (new-type {floor} {thing})
 (new-is-a {floor} {surface})
 
-(new-type {object} {thing})
 (new-type {room} {object})
 (new-type {doorway} {object})
 (new-type {book} {object})
