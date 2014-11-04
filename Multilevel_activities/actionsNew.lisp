@@ -63,13 +63,26 @@
 		:agent-type {person}
 		:object-type {time})
 		
-(new-relation {move arm} 
-	      :a-inst-of {event}
-	      :b-inst-of {arm})
+(new-relation {moves body part} 
+	      :a-inst-of {person}
+	      :b-inst-of {body part})
+
+(new-action-type {reach}
+		:agent-type {person}
+		:object-type {thing})
+(new-action-type {reach clock}
+		:agent-type {person}
+		:object-type {clock})
+
+(new-is-a {reach clock} {reach})
 
 (new-relation {reach clock}
 	      :a-inst-of {event}
 	      :b-inst-of {object})
+
+(new-relation {performs action}
+	      :a-inst-of {person}
+	      :b-inst-of {action})
 
 (new-relation {see clock}
 	      :a-inst-of {event}
@@ -86,14 +99,14 @@
 (new-is-a {check time AC} {after context})
 (x-is-the-y-of-z {check time AC} {after context} {check time})
 
-(new-indv {person 1} {person})
-(new-type {action person} {action})
-(x-is-the-y-of-z {person 1} {action person} {check time})		
+(x-is-the-y-of-z {checking person} {agent-type} {check time})
+;;(new-type {action person} {action})
+;;(x-is-the-y-of-z {person 1} {action person} {check time})		
 
 (in-context {check time BC})
-(new-not-statement {person 1} {move arm} {check time})
-(new-not-statement {person 1} {reach clock} {check time})
-(new-not-statement {person 1} {see clock} {check time})
+(new-not-statement {checking person} {moves body part} {arm})
+(new-not-statement {checking person} {performs action} {reach clock})
+(new-not-statement {checking person} {performs action} {see clock})
 (new-not-statement {checking person} {is aware of} {check time})
 
 (in-context {check time AC})
@@ -124,36 +137,41 @@
 	      :a-inst-of {thing}
 	      :b-inst-of {thing})
 	      
-(new-relation {reach right arm}
+(new-relation {has reached body part}
+	      :a-inst-of {person}
+	      :b-inst-of {body part})
+	      
+;(new-relation {reach left arm}
 	      :a-inst-of {event}
 	      :b-inst-of {arm})
 	      
-(new-relation {reach left arm}
+;(new-relation {move right arm}
 	      :a-inst-of {event}
 	      :b-inst-of {arm})
 	      
-(new-relation {move right arm}
+;(new-relation {move left arm}
 	      :a-inst-of {event}
 	      :b-inst-of {arm})
 	      
-(new-relation {move left arm}
-	      :a-inst-of {event}
-	      :b-inst-of {arm})
-	      
-(new-relation {get crosser arms}
+;;(new-relation {get crosser arms}
 	      :a-inst-of {event}
 	      :b-inst-of {arm})	    
 	       	      	      	      	      
 (in-context {general})
 (new-action-type {cross arms} 
-		 :agent-type {person})
+		 :agent-type {person}
+		 :object-type {arm})
 		 
-(new-type {crossing arms person} {person})	 
-(new-is-a {crossing arms person} {person})
+(new-type {crossing arms person} {person})
+	 
+;(new-is-a {crossing arms person} {person})
 (new-type {crosser} {crossing arms person})
 (new-is-a {crosser} {crossing arms person})
-(new-type {arms to cross} {arm})	 
-(new-is-a {arms to cross} {arm})
+(new-indv-role {left arm to cross} {arm} {crossing arms person})
+(new-indv-role {right arm to cross} {arm} {crossing arms person})
+
+;(new-type {arms to cross} {arm})	 
+;(new-is-a {arms to cross} {arm})
 (new-type {left arm} {arm})	 
 (new-is-a {left arm} {arm})
 (new-type {right arm} {arm})	 
@@ -189,6 +207,7 @@
 (new-statement {crossing arms person}  {has crossed}  {arms to cross})
 (new-statement {left arm} {is in direct contact to} {right arm})
 
+(in-contex {general})
 (new-statement {cross arms} {has point of interest in} {arm}) 
 
 
@@ -209,20 +228,22 @@
 	      :a-inst-of {event}
 	      :b-inst-of {hand})
 	      
-(new-relation {put hand in head}
-	      :a-inst-of {event}
-	      :b-inst-of {event})
+(new-relation {put hand in body part}
+	      :a-inst-of {person}
+	      :b-inst-of {body part})
 	      
-(new-relation {has scratch}
+(new-relation {has scratched}
 	      :a-inst-of {animated object}
 	      :b-inst-of {object})	      	      	      	      
 
 (in-context {general})
 (new-action-type {scratch head} 
-		 :agent-type {animated object})
+		 :agent-type {animated object}
+		 :object-type {head})
 		 
 (new-type {scratcher hand} {hand})
-(new-is-a {scratcher hand} {hand})
+(x-is-the-y-of-z {scratcher hand} {hand} {scratcher person})
+;(new-is-a {scratcher hand} {hand})
  
 (new-context {scratch head BC} {general})
 (new-is-a {scratch head BC} {before context})
@@ -265,11 +286,11 @@
 	      :a-inst-of {person}
 	      :b-inst-of {body part})
 	      
-(new-relation {reach chair}
-	      :a-inst-of {person}
-	      :b-inst-of {object})
+;(new-relation {reach chair}
+;	      :a-inst-of {person}
+;	      :b-inst-of {object})
 	      
-(new-relation {turn body}
+(new-relation {turn body part}
 	      :a-inst-of {person}
 	      :b-inst-of {body part})
 	      
@@ -281,11 +302,8 @@
 	      :a-inst-of {person}
 	      :b-inst-of {body part})
 	      
-(new-relation {put chair}
-	      :a-inst-of {person}
-	      :b-inst-of {object})	      	      	      	      	      
 (in-context {general})	      
-(new-action-type {sit down} 
+(new-action-type {sit down on} 
 		:agent-type {person}
 		:object-type {object})
 	
@@ -304,14 +322,14 @@
 (new-is-a {sit down AC} {after context})
 (x-is-the-y-of-z {sit down AC} {after context} {sit down})
 
-(x-is-the-y-of-z {person 1} {action person} {sit down})		      
+;; (x-is-the-y-of-z {person 1} {action person} {sit down})		      
 
 (in-context {sit down BC})
 (new-not-statement {person 1} {reach chair} {sit down})
 (new-not-statement {person 1} {turn body} {sit down})
 (new-not-statement {person 1} {bend knees} {sit down})
 (new-not-statement {person 1} {bend torso} {sit down})
-(new-not-statement {person 1} {put chair} {sit down})
+;(new-not-statement {person 1} {put chair} {sit down})
 (new-not-statement {sitting person} {rests upon} {sitting surface})
 (new-statement {sitting person} {stands upon} {feet})
 (new-not-statement {sitting person} {is in direct contact to} {sitting surface})
@@ -339,16 +357,16 @@
 	      :a-inst-of {person}
 	      :b-inst-of {object})
 	      
-(new-relation {stand up}
-	      :a-inst-of {person}
-	      :b-inst-of {object})
+;;(new-relation {stand up}
+;;	      :a-inst-of {person}
+;;	      :b-inst-of {object})
 	       	            
 (in-context {general})
 (new-action-type {get up} 
 		 :agent-type {person}
 		 :object-type {object})
 
-(new-type {standing up person} {person})
+(new-type {getting up person} {person})
 (new-is-a {standing up person} {person})
 (new-type {resting surface} {surface})
 (new-is-a {resting surface} {surface})
@@ -364,16 +382,16 @@
 (x-is-the-y-of-z {person 1} {action person} {get up})
 
 (in-context {get up BC})
-(new-not-statement {person 1} {put chair} {get up})
+(new-statement {person 1} {performs action} {sit down on})
 (new-not-statement {person 1} {stretch kness} {get up})
 (new-not-statement {person 1} {stretch torso} {get up})
-(new-not-statement {person 1} {stand up} {get up})
+;(new-not-statement {person 1} {stand up} {get up})
 (new-statement {standing up person} {rests upon} {resting surface})
 (new-statement {standing up person} {stands upon} {resting surface})
 (new-statement {standing up person} {is in direct contact to} {resting surface})
 
 (in-context {get up AC})
-(new-statement {person 1} {put chair} {get up})
+;(new-statement {person 1} {put chair} {get up})
 (new-statement {person 1} {stretch kness} {get up})
 (new-statement {person 1} {stretch torso} {get up})
 (new-statement {person 1} {stand up} {get up})
@@ -487,7 +505,6 @@
 (new-not-statement {person 1} {move left leg} {turn around})
 (new-not-statement {person 1} {move torso} {turn around})
 (new-statement {turning person} {is located at} {origin})
-(new-statement {turning person} {is located at} {destination})
 
 (in-context {turn around AC})
 ;(new-eq {origin} {destination})
@@ -496,8 +513,9 @@
 (new-statement {person 1} {move torso} {turn around})
 (new-statement {turning person} {is located at} {origin})
 (new-statement {turning person} {is located at} {destination})
-
+(new-statement {turning person} {performs action} {walk})
 (new-statement {turn around} {has point of interest in} {leg}) 
+(new-statement {turning person} {is located at} {destination})
 
 
 
@@ -509,7 +527,7 @@
 (in-context {general})
 (new-action-type {wave} 
 		 :agent-type {person}
-		 :object-type {object})
+		 :object-type {thing})
 		 
 ;(new-type {waving person} {person})
 ;(new-is-a {waving person} {person})
@@ -531,7 +549,7 @@
 (new-not-statement {person 1} {move torso} {wave})
 (new-not-statement {person 1} {move arm} {wave})
 (new-not-statement {person 1} {move hand} {wave})
-(new-statement {waving hand} {performs the action of} {move})
+(new-not-statement {waving hand} {performs the action of} {move})
 
 (in-context {wave AC})
 (new-statement {person 1} {reach object} {wave})
@@ -578,7 +596,7 @@
 (x-is-the-y-of-z {person 1} {action person} {punch})
 
 (in-context {punch BC})
-(new-not-statement {person 1} {reach punch object} {punch})
+;(new-not-statement {person 1} {reach punch object} {punch})
 (new-not-statement {person 1} {move right arm} {punch})
 (new-not-statement {person 1} {move left arm} {punch})
 (new-not-statement {punching fist} {is in direct contact to} {punched object})
@@ -596,11 +614,11 @@
 
 
 ;; DEFINITIONS DESCRIBING THE ACTION OF KICKING (ACTION 10 FROM IXMAS)
-(new-relation {pick up object}
+;(new-relation {pick up object}
 	      :a-inst-of {event}
 	      :b-inst-of {object})
 	      
-(new-relation {get object}
+;(new-relation {get object}
 	      :a-inst-of {event}
 	      :b-inst-of {object})	      
 
@@ -628,8 +646,8 @@
 
 (in-context {kick BC})
 (new-not-statement {person 1} {reach object} {kick})
-(new-not-statement {person 1} {pick up object} {kick})
-(new-not-statement {person 1} {get object} {kick})
+;(new-not-statement {person 1} {pick up object} {kick})
+;(new-not-statement {person 1} {get object} {kick})
 (new-not-statement {person 1} {move hand} {kick})
 (new-not-statement {kicking foot} {is in direct contact to} {kicked object})
 (new-statement {kicking person} {approaches} {kicked object})
@@ -689,9 +707,9 @@
 (x-is-the-y-of-z {person 1} {action person} {point})
 
 (in-context {point BC})
-(new-not-statement {person 1} {reach object} {point})
+;(new-not-statement {person 1} {reach object} {point})
 (new-not-statement {person 1} {move arm} {point})
-(new-not-statement {person 1} {find object} {point})
+(new-not-statement {person 1} {performs action} {find})
 (new-not-statement {person 1} {move finger} {point})
 (new-not-statement {pointing person} {focuses attention on} {pointed object})
 (new-not-statement {pointing finger} {points at} {pointed object location})
@@ -702,7 +720,7 @@
 (new-statement {person 1} {find object} {point})
 (new-statement {person 1} {move finger} {point})
 (new-statement {pointing person} {focuses attention on} {pointed object})
-(new-not-statement {pointing finger} {points at} {pointed object location})
+(new-statement {pointing finger} {points at} {pointed object location})
 
 (new-statement {point} {has point of interest in} {arm}) 
 
@@ -803,28 +821,28 @@
 (x-is-the-y-of-z {person 1} {action person} {throw over head})
 
 (in-context {throw over head BC})
-(new-not-statement {person 1} {reach object} {throw over head})
-(new-not-statement {person 1} {move right arm} {throw over head})
-(new-not-statement {person 1} {move left arm} {throw over head})
-(new-not-statement {person 1} {put hand over head} {throw over head})		
+(new-statement {person 1} {reach object} {throw over head})
+(new-statement {person 1} {move right arm} {throw over head})
+(new-statement {person 1} {move left arm} {throw over head})
+(new-statement {person 1} {put hand over head} {throw over head})		
 (new-eq {throwing person location} {thrown object location})
 (x-is-the-y-of-z {thrown object location} {thrown object} {thrown object origin})
 (new-statement {throwing person} {is in direct contact to} {thrown object location})
 (new-statement {thrown object} {is hold by} {throwing hands})
 (new-statement {throwing hands} {stands over} {throwing person head})
 (new-statement {thrown object} {rests upon} {throwing hands})
-(new-statement {thrown object} {is in direct contact to} {throwing hands})
+(new-statement {thrown object} {is in direct contact to} {throwing hands}) => recíproca
  ;; since knowing the trajectory of the thrown object is not relevant
  ;; for what we are doing at the moment, we are skipping the fluent
  ;; description for the object trajectory
     
 (in-context {throw over head AC})
-(new-statement {person 1} {reach object} {throw over head})
-(new-statement {person 1} {move right arm} {throw over head})
-(new-statement {person 1} {move left arm} {throw over head})
-(new-statement {person 1} {put hand over head} {throw over head}) 
+;(new-statement {person 1} {reach object} {throw over head})
+;(new-statement {person 1} {move right arm} {throw over head})
+;(new-statement {person 1} {move left arm} {throw over head})
+;(new-statement {person 1} {put hand over head} {throw over head}) 
 (new-not-eq {throwing person location} {thrown object location})
-(x-is-the-y-of-z {thrown object location} {thrown object} {thrown object end location})
+;(x-is-the-y-of-z {thrown object location} {thrown object} {thrown object end location})
 (new-not-statement {throwing person} {is in direct contact to} {thrown object location})
 (new-not-statement {thrown object} {is hold by} {throwing hands})  
 
