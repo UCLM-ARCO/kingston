@@ -7,22 +7,14 @@
 
 
 (in-context {general})
-(in-namespace "events" :include "common")
 
 ;; Anything that was involved in the event belongs to this type-role.
 (new-type-role {object involved} {event} {thing})
 
 ;; Usually events have a location.
-;(the-x-of-y-is-z  {location} {event} {place})
-;(new-indv-role {location} {event} {place}
-; :english '(:no-iname "location" "venue" "place")
-; :may-have t)
-
-;; things cause events
-;(new-relation {causes} 
-;	:a-inst-of {thing}
-;	:b-inst-of {event})
-		       
+(new-indv-role {location} {event} {place})
+(x-is-the-y-of-z {place} {location} {event})
+	       
 ;; A. Subevents
 
 (new-type {expandable event} {event})

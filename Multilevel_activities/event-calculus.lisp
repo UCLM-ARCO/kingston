@@ -11,8 +11,6 @@
 	      :a-inst-of {fluent}
 	      :b-inst-of {time point})
 
-
-
 (defmacro set-element-fluent (e fluent &optional (forms t))
 "Set the FLUENT of element E as a changing property. Optionally, the
 formulae that states how the fluent varies along the time can be

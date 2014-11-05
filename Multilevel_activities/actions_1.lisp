@@ -10,9 +10,7 @@
 
 
 (in-context {general})
-(in-namespace "events" :include "common")
 ;;; This file necessarily contains some forward references.
-(setq *defer-unknown-connections* t)
 ;; For our purposes of planning, it is convinient to know which is
 ;; the action that counteract a given action. This is modeled by
 ;; means of the "opposite-action-of" relation.
@@ -21,6 +19,6 @@
 	      :b-inst-of {event}
 	      :symmetric t) 
 
-
+(new-type {compound event} {event})
 (new-type {believe} {compound event})
 (new-type-role {expectation} {believe}  {compound event})

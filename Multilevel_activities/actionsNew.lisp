@@ -34,9 +34,9 @@
 (new-type-role {fist} {person} {body part} :n 2)
 (new-type-role {hand finger} {person} {body part} :n 10)
 (new-type-role {both hands} {person} {body part} :n 1)
+(new-type {position} {place})
 
 (new-type {clock} {thing})
-(new-type-role {trajectory} {thing} {line})
 
 
 ;; RELATIONS APPLIED TO ACTIONS
@@ -104,7 +104,6 @@
 (x-is-the-y-of-z {check time AC} {after context} {check time})
 
 (new-type {checking person} {person})
-(new-indv {agent-type} {agent})
 (x-is-the-y-of-z {checking person} {agent-type} {check time})	
 
 (in-context {check time BC})
@@ -281,7 +280,7 @@
 
 (new-context {sit down on AC} {general})
 (new-is-a {sit down on AC} {after context})
-(x-is-the-y-of-z {sit down AC} {after context} {sit down on})
+(x-is-the-y-of-z {sit down on AC} {after context} {sit down on})
 
 (in-context {sit down on BC})
 (new-not-statement {sitting person} {approaches} {object})
@@ -620,9 +619,10 @@
 		
 (new-type {picking person} {person})		 
 (x-is-the-y-of-z {picking person} {agent-type} {pick up})
+(new-type {picked object} {thing})
 (new-indv-role {picking person location} {picking person} {location})
 (new-indv-role {picked object location} {picked object} {location})
-(new-type {picked object} {thing})
+
 (new-indv-role {picked object origin} {picked object} {location})
 (new-indv-role {picked object end location} {picked object} {location})
 (new-type {picking hand} {thing})
@@ -640,7 +640,7 @@
 (new-not-statement {picking person} {moves body part} {torso})
 (new-not-statement {picking person} {moves body part} {hand})	
 (new-not-eq {picking person location} {picked object location})
-(x-is-the-y-of-z {picked object location} {picked object} {picked object origin})
+(x-is-the-y-of-z {picked object origin} {picked object location} {picked object})
 (new-statement {picking person} {approaches} {picked object location})
 (new-not-statement {picked object} {is hold by} {picking hand})  
 
@@ -650,9 +650,9 @@
 (new-statement {picking person} {moves body part} {hand})	
 (new-eq {picking person location} {picked object location})
 (new-statement {picking person} {is in direct contact to} {picked object})
-(x-is-the-y-of-z {picked object location} {picked object} {picked object end location})
+(x-is-the-y-of-z {picked object end location} {picked object location} {picked object})
 (new-eq {picked object end location} {picking person location})
-(x-is-the-y-of-z {picking person location} {picking person} {picked object location})
+(x-is-the-y-of-z {picked object location} {picking person location} {picking person})
 (new-statement {picked object} {is hold by} {picking hand})
 
 (in-context {general})
@@ -676,9 +676,9 @@
 		 
 (new-type {throwing person} {person})
 (x-is-the-y-of-z {throwing person} {agent-type} {throw over head})
+(new-type {thrown object} {thing})
 (new-indv-role {throwing person location} {throwing person} {location})
 (new-indv-role {thrown object location} {thrown object} {location})
-(new-type {thrown object} {thing})
 (new-indv-role {thrown object origin} {thrown object} {location})
 (new-indv-role {thrown object end location} {thrown object} {location})
 (new-not-eq {thrown object origin} {thrown object end location})
@@ -699,7 +699,7 @@
 (new-statement {throwing person} {moves body part} {left arm})
 (new-statement {throwing person} {put hand over body part} {head})		
 (new-eq {throwing person location} {thrown object location})
-(x-is-the-y-of-z {thrown object location} {thrown object} {thrown object origin})
+(x-is-the-y-of-z {thrown object origin} {thrown object location} {thrown object})
 (new-statement {throwing person} {is in direct contact to} {thrown object location})
 (new-statement {thrown object} {is hold by} {throwing hands})
 (new-statement {throwing hands} {stands over} {throwing person head})
