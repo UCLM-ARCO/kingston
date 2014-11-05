@@ -14,7 +14,7 @@
 ;;; Some roles required for the following events and actions
 (new-type-role {name} {person} {thing})
 (new-type-role {person location} {person} {place})
-(new-type-role {object location} {thing} {place})
+(new-type-role {thing location} {thing} {place})
 (new-type-role {body part} {person} {thing})
 (new-indv-role {arm} {person} {body part} :n 2)
 (new-type {left arm} {arm})	 
@@ -22,6 +22,7 @@
 (new-indv-role {leg} {person} {body part} :n 2)
 (new-type {left leg} {leg})	 
 (new-type {right leg} {leg})	
+(new-is-a {foot} {body part})
 (new-type {left foot} {foot})	 
 (new-type {right foot} {foot})
 (new-type-role {head} {person} {body part} :n 1)
@@ -41,7 +42,7 @@
 
 ;; RELATIONS APPLIED TO ACTIONS
 (new-relation {has point of interest in} 
-		:a-inst-of {event}
+		:a-inst-of {action}
 		:b-inst-of {body part})
 
 (new-relation {is located at}
@@ -53,16 +54,16 @@
 		:b-inst-of {position})
 
 (new-relation {is opposite action of}
-		:a-inst-of {event}
-		:b-inst-of {event}
+		:a-inst-of {action}
+		:b-inst-of {action}
 		:symmetric t) 
 	      
 (new-relation {performs the action of}
 		:a-inst-of {animated object}
-		:b-inst-of {event})
+		:b-inst-of {action})
 	       
 (new-relation {is performed by}
-		:a-inst-of {event}
+		:a-inst-of {action}
 		:b-inst-of {animated object})
 
 
@@ -87,7 +88,7 @@
 	      
 (new-is-a {reach clock} {reach})	      
      
-(new-relation {see clock}
+(new-relation {look at the clock}
 		:a-inst-of {person}
 		:b-inst-of {object})
 	      
@@ -109,13 +110,13 @@
 (in-context {check time BC})
 (new-not-statement {checking person} {moves body part} {arm})
 (new-not-statement {checking person} {performs the action of} {reach clock})
-(new-not-statement {checking person} {performs the action of} {see clock})
+(new-not-statement {checking person} {performs the action of} {look at the clock})
 (new-not-statement {checking person} {is aware of} {check time})
 
 (in-context {check time AC})
 (new-statement {checking person} {moves body part} {arm})
 (new-statement {checking person} {performs the action of} {reach clock})
-(new-statement {checking person} {performs the action of} {see clock})
+(new-statement {checking person} {performs the action of} {look at the clock})
 (new-statement {checking person} {is aware of} {check time})
 
 (in-context {general})
@@ -165,8 +166,12 @@
 (x-is-the-y-of-z {cross arms AC} {after context} {cross arms})
 
 (in-context {cross arms BC})
+
+;; Further explanation
 (new-not-statement {crossing arms person} {has reached body part} {right arm})
 (new-not-statement {crossing arms person} {has reached body part} {left arm})
+;;
+
 (new-not-statement {crossing arms person} {moves body part} {right arm})
 (new-not-statement {crossing arms person} {moves body part} {left arm})
 (new-not-statement {crossing arms person} {has crossed}  {arms to cross})
@@ -189,7 +194,7 @@
 
 ;; DEFINITIONS DESCRIBING THE ACTION OF SCRATCHING HEAD (ACTION 3 FROM IXMAS)
 (in-context {general})     
-(new-relation {put hand in body part}
+(new-relation {puts hand on body part}
 		:a-inst-of {person}
 		:b-inst-of {body part})
      
@@ -209,9 +214,11 @@
 		:agent-type {person}
 		:object-type {hand})	      
 	      
-(new-is-a {reach head} {reach})		
+(new-is-a {reach head} {reach})	
+
+;; Further explanation. 	
 (new-is-a {reach hand} {reach})		  
-		 
+;;		 
 (new-type {scratcher person} {person})
 (x-is-the-y-of-z {scratcher person} {agent-type} {scratch head})
 (new-type {scratcher hand} {hand})
@@ -226,10 +233,12 @@
 (x-is-the-y-of-z {scratch head AC} {after context} {scratch head})
 
 (in-context {scratch head BC})
+
+;; Further explanation. Maybe it's better to approach hand to head?
 (new-not-statement {scratcher person} {performs the action of} {reach head})
 (new-not-statement {scratcher person} {performs the action of} {reach hand})
 (new-not-statement {scratcher person} {moves body part} {hand})
-(new-not-statement {scratcher person} {put hand in body part} {head})
+(new-not-statement {scratcher person} {puts hand on body part} {head})
 (new-statement {scratcher hand} {approaches} {scratch head})
 (new-not-statement {scratcher hand} {is in direct contact to} {scratch head})
 
@@ -237,7 +246,7 @@
 (new-statement {scratcher person} {performs the action of} {reach head})
 (new-statement {scratcher person} {performs the action of} {reach hand})
 (new-statement {scratcher person} {moves body part} {hand})
-(new-statement {scratcher person} {put hand in body part} {head})
+(new-statement {scratcher person} {puts hand on body part} {head})
 (new-statement {scratcher hand} {is in direct contact to} {scratch head})
 
 (in-context {general})
@@ -283,20 +292,20 @@
 (x-is-the-y-of-z {sit down on AC} {after context} {sit down on})
 
 (in-context {sit down on BC})
-(new-not-statement {sitting person} {approaches} {object})
+(new-statement {sitting person} {approaches} {object})
 (new-not-statement {sitting person} {turn body part} {body part})
-(new-not-statement {sitting person} {bend body part} {kness})
-(new-not-statement {sitting person} {bend body part} {torso})
-(new-not-statement {sitting person} {rests upon} {sitting surface})
+(new-statement {sitting person} {bend body part} {kness})
+(new-statement {sitting person} {bend body part} {torso})
+(new-statement {sitting person} {rests upon} {sitting surface})
 (new-statement {sitting person} {stands upon} {feet})
 (new-not-statement {sitting person} {is in direct contact to} {sitting surface})
 
 (in-context {sit down on AC})
-(new-statement {sitting person} {approaches} {object})
-(new-statement {sitting person} {turn body part} {body part})
-(new-statement {sitting person} {bend body part} {kness})
-(new-statement {sitting person} {bend body part} {torso})
-(new-statement {sitting person} {rests upon} {sitting surface})
+;(new-statement {sitting person} {approaches} {object})
+;(new-statement {sitting person} {turn body part} {body part})
+;(new-statement {sitting person} {bend body part} {kness})
+;(new-statement {sitting person} {bend body part} {torso})
+;(new-statement {sitting person} {rests upon} {sitting surface})
 (new-not-statement {sitting person} {stands upon} {feet})
 (new-statement {sitting person} {is in direct contact to} {sitting surface})
 
@@ -307,7 +316,7 @@
 
 ;; DEFINITIONS DESCRIBING THE ACTION OF GETTING UP (ACTION 5 FROM IXMAS)
 (in-context {general})
-(new-relation {stretch body part}
+(new-relation {stretches body part}
 		:a-inst-of {person}
 		:b-inst-of {body part})
 	      	       	            
@@ -329,17 +338,17 @@
 
 (in-context {get up BC})
 (new-statement {standing up person} {performs the action of} {sit down on})
-(new-not-statement {standing up person} {stretch body part} {kness})
-(new-not-statement {standing up person} {stretch body part} {torso})
+(new-not-statement {standing up person} {stretches body part} {kness})
+(new-not-statement {standing up person} {stretches body part} {torso})
 (new-statement {standing up person} {rests upon} {resting surface})
 (new-statement {standing up person} {stands upon} {resting surface})
 (new-statement {standing up person} {is in direct contact to} {resting surface})
 
 (in-context {get up AC})
-(new-statement {standing up person} {stretch body part} {kness})
-(new-statement {standing up person} {stretch body part} {torso})
+(new-statement {standing up person} {stretches body part} {kness})
+(new-statement {standing up person} {stretches body part} {torso})
 (new-not-statement {standing up person} {rests upon} {resting surface})
-(new-not-statement {standing up person} {stands upon} {feet})
+(new-statement {standing up person} {stands upon} {feet})
 (new-not-statement {standing up person} {is in direct contact to} {resting surface})
 
 (in-context {general})
@@ -350,7 +359,7 @@
 
 ;; DEFINITIONS DESCRIBING THE ACTION OF WALKING (ACTION 7 FROM IXMAS)
 (in-context {general})   
-(new-relation {put front body part}
+(new-relation {moves body part forward}
 		:a-inst-of {event}
 		:b-inst-of {body part})
       	      	      	      	      
@@ -374,8 +383,8 @@
 (new-not-statement {walking person} {moves body part} {left leg})
 (new-not-statement {walking person} {moves body part} {right foot})
 (new-not-statement {walking person} {moves body part} {left foot})
-(new-not-statement {walking person} {put front body part} {right foot})
-(new-not-statement {walking person} {put front body part} {left foot})
+(new-not-statement {walking person} {moves body part forward} {right foot})
+(new-not-statement {walking person} {moves body part forward} {left foot})
 (new-statement {walking person} {is located at} {origin})
 (new-not-statement {walking person} {is located at} {destination})
 
@@ -385,8 +394,8 @@
 (new-statement {walking person} {moves body part} {left leg})
 (new-statement {walking person} {moves body part} {right foot})
 (new-statement {walking person} {moves body part} {left foot})
-(new-statement {walking person} {put front body part} {right foot})
-(new-statement {walking person} {put front body part} {left foot})
+(new-statement {walking person} {moves body part forward} {right foot})
+(new-statement {walking person} {moves body part forward} {left foot})
 (new-statement {walking person} {is located at} {destination})
 (new-not-statement {walking person} {is located at} {origin})
 
@@ -458,6 +467,7 @@
 (x-is-the-y-of-z {wave AC} {after context} {wave})
 
 (in-context {wave BC})
+;; Further explanation. Why does the waving person need to reach an object?
 (new-not-statement {waving person} {performs the action of} {reach object})
 (new-not-statement {waving person} {moves body part} {torso})
 (new-not-statement {waving person} {moves body part} {arm})
@@ -527,6 +537,7 @@
 (x-is-the-y-of-z {kicking person} {agent-type} {kick})
 (new-type {kicked object} {thing})	
 (new-type {kicking foot} {foot})
+(x-is-the-y-of-z {kicking foot} {foot} {kicking person})
 
 (new-context {kick BC} {general})
 (new-is-a {kick BC} {before context})
@@ -538,19 +549,20 @@
 
 (in-context {kick BC})
 (new-not-statement {kicking person} {performs the action of} {reach object})
-(new-not-statement {kicking person} {moves body part} {hand})
+(new-not-statement {kicking person} {moves body part} {leg})
+(new-not-statement {kicking person} {moves body part} {foot})
 (new-not-statement {kicking foot} {is in direct contact to} {kicked object})
 (new-statement {kicking person} {approaches} {kicked object})
 (new-statement {kicking person} {is closed to} {kicked object})
 
 (in-context {kick AC})
 (new-statement {kicking person} {performs the action of} {reach object})
-(new-statement {kicking person} {moves body part} {hand})
+(new-statement {kicking person} {moves body part} {leg})
+(new-statement {kicking person} {moves body part} {foot})
 (new-statement {kicking person} {has hit} {kicked object})
 
 (in-context {general})
 (new-statement {kick} {has point of interest in} {leg}) 
-
 
 
 ;; DEFINITIONS DESCRIBING THE ACTION OF POINTING (ACTION 11 FROM IXMAS)
@@ -567,8 +579,7 @@
 		:agent-type {person}
 		:object-type {object})
 		
-(new-is-a {find} {action})			      
-    	       
+  	       
 (new-action-type {point} 
 		 :agent-type {person}
 		 :object-type {object})
@@ -576,6 +587,8 @@
 (new-type {pointing person} {person})		 
 (x-is-the-y-of-z {pointing person} {agent-type} {point})
 (new-type {pointed object} {thing})
+
+; Further explanation. The pointing finger is a finger not a hand, isnt't it?
 (new-type {pointing finger} {hand})
 (new-indv-role {pointed object location} {pointed object} {location})
 
@@ -609,7 +622,7 @@
 
 ;; DEFINITIONS DESCRIBING THE ACTION OF PICKING UP (ACTION 12 FROM IXMAS)
 (in-context {general})
-(new-relation {is hold by}
+(new-relation {is held by}
 	      :a-inst-of {thing}
 	      :b-inst-of {person})
 	      
@@ -642,7 +655,7 @@
 (new-not-eq {picking person location} {picked object location})
 (x-is-the-y-of-z {picked object origin} {picked object location} {picked object})
 (new-statement {picking person} {approaches} {picked object location})
-(new-not-statement {picked object} {is hold by} {picking hand})  
+(new-not-statement {picked object} {is held by} {picking hand})  
 
 (in-context {pick up AC})
 (new-statement {picking person} {performs the action of} {reach object})
@@ -653,7 +666,7 @@
 (x-is-the-y-of-z {picked object end location} {picked object location} {picked object})
 (new-eq {picked object end location} {picking person location})
 (x-is-the-y-of-z {picked object location} {picking person location} {picking person})
-(new-statement {picked object} {is hold by} {picking hand})
+(new-statement {picked object} {is held by} {picking hand})
 
 (in-context {general})
 (new-statement {pick up} {has point of interest in} {arm}) 
@@ -665,7 +678,8 @@
 (new-relation {stands over}
 	      :a-inst-of {thing}
 	      :b-inst-of {thing})
-     
+
+;; Further explanation. You already have a "puts hand on..." I think you can use the same one.
 (new-relation {put hand over body part}
 	      :a-inst-of {person}
 	      :b-inst-of {body part})	      
@@ -701,7 +715,7 @@
 (new-eq {throwing person location} {thrown object location})
 (x-is-the-y-of-z {thrown object origin} {thrown object location} {thrown object})
 (new-statement {throwing person} {is in direct contact to} {thrown object location})
-(new-statement {thrown object} {is hold by} {throwing hands})
+(new-statement {thrown object} {is held by} {throwing hands})
 (new-statement {throwing hands} {stands over} {throwing person head})
 (new-statement {thrown object} {rests upon} {throwing hands})
 (new-statement {thrown object} {is in direct contact to} {throwing hands})
@@ -709,7 +723,7 @@
 (in-context {throw over head AC})
 (new-not-eq {throwing person location} {thrown object location})
 (new-not-statement {throwing person} {is in direct contact to} {thrown object location})
-(new-not-statement {thrown object} {is hold by} {throwing hands})  
+(new-not-statement {thrown object} {is held by} {throwing hands})  
 
 (in-context {general})
 (new-statement {throw over head} {has point of interest in} {arm})  

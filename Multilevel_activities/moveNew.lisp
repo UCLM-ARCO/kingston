@@ -39,8 +39,6 @@
 		 :recipient-type {movable object})
 		 
 (new-type {traveler} {person})
-(new-indv {agent} {thing})
-(new-indv {agent-type} {agent})	
 
 
 (new-action-type {travel} 
@@ -48,8 +46,6 @@
 		 :object-type {movable object}
 		 :recipient-type {movable object})
 		 
-(x-is-a-y-of-z {traveler} {agent-type} {travel})		  		 
-
 (new-type {travel on land} {travel})
 (new-type {land} {thing})		 		 
 (x-is-the-y-of-z {origin} {travel on land} {land})
