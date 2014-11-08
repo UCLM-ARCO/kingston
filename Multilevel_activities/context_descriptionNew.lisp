@@ -19,10 +19,10 @@
 	            
 ;; GENERAL STATEMENTS
 
+(new-type {room} {thing})
 (new-type-role {floor} {room} {thing})
 (new-is-a {floor} {surface})
 
-(new-type {room} {object})
 (new-type-role {doorway} {room} {object})
 (new-type {book} {object})
 

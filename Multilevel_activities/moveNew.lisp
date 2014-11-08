@@ -40,7 +40,6 @@
 		 
 (new-type {traveler} {person})
 
-
 (new-action-type {travel} 
 		 :agent-type {traveler} 
 		 :object-type {movable object}
@@ -88,8 +87,8 @@
 (new-type {travel as driver} {travel by carrier})
 (new-type {travel as} {action})	
 (new-split-subtypes {travel as} '({passenger} {driver}))
-(x-is-the-y-of-z {passenger} {agent-type} {travel as passenger})
-(x-is-the-y-of-z {driver} {agent-type} {travel as driver})
+(x-is-the-y-of-z {passenger} {action agent} {travel as passenger})
+(x-is-the-y-of-z {driver} {action agent} {travel as driver})
 
 (new-type {runner} {person})
 (new-type {run} {action})
