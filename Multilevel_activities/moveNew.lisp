@@ -44,27 +44,30 @@
 		 :agent-type {traveler} 
 		 :object-type {movable object}
 		 :recipient-type {movable object})
+
+(new-type {land} {thing})
+(new-type {travel on land} {travel})		 	
+(new-type-role {travel origin} {travel} {place})		 
+(new-type-role {travel destination} {travel} {place})
 		 
-(new-type {travel on land} {travel})
-(new-type {land} {thing})		 		 
-(x-is-the-y-of-z {origin} {travel on land} {land})
-(x-is-the-y-of-z {destination} {travel on land} {land})
+(x-is-the-y-of-z {land} {travel origin} {travel on land})
+(x-is-the-y-of-z {land} {travel destination} {travel on land})
 
 (new-not-eq {origin} {destination})
 
 (new-type {travel in water} {travel})
-(x-is-the-y-of-z {water} {origin} {travel in water})
-(x-is-the-y-of-z {water} {destination} {travel in water})
+(x-is-the-y-of-z {water} {travel origin} {travel in water})
+(x-is-the-y-of-z {water} {travel destination} {travel in water})
 
 (new-type {travel in air} {travel})
 (new-type {air} {thing})
-(x-is-the-y-of-z {origin} {travel in air} {air})
-(x-is-the-y-of-z {destination} {travel in air} {air})
+(x-is-the-y-of-z {air} {travel origin} {travel in air})
+(x-is-the-y-of-z {air} {travel destination} {travel in air})
 
 (new-type {travel in space} {travel})
 (new-type {space} {thing})
-(x-is-the-y-of-z {space} {origin} {travel in space})
-(x-is-the-y-of-z {space} {destination} {travel in space})
+(x-is-the-y-of-z {space} {travel origin} {travel in space})
+(x-is-the-y-of-z {space} {travel destination} {travel in space})
 
 (new-type {travel by carrier} {travel})
 (new-type {carrier} {thing})
