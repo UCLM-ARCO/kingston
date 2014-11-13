@@ -32,6 +32,13 @@ def getJointsFromXML(xmlpath):
         return coordinatesList
 
 
+def errorCase(action, j):
+    if (action == 11 and j == 9) or (action == 12 and j == 9) or (action == 13 and j == 6) or (action == 13 and j == 7) or (action == 13 and j == 9) or (action == 14 and j == 0) or (action == 14 and j == 1) or (action == 14 and j == 2) or (action == 14 and j == 3) or (action == 14 and j == 5) or (action == 14 and j == 6) or (action == 14 and j == 7) or (action == 14 and j == 8) or (action == 14 and j == 9):
+        return True
+    else:
+        return False
+
+
 def parser(joints):
     truthDir = os.path.join(currentdir, "RecogidaDatos/truth")
     actoresDir = os.path.join(currentdir, "RecogidaDatos/videos/actores")
@@ -82,10 +89,9 @@ def parser(joints):
                                           key = lambda x: int((x.split('_')[1]).split('.')[0]))
 
                 print("--------- Xml's dentro de acciones" + str(j+1) + " procesandose.")
-		# if que se salte los errores del dataset, en funcion de j y action
-		if (action == 11 and j == 9) or (action == 12 and j == 9) or (action == 13 and j == 6) or (action == 13 and j == 7) or (action == 13 and j == 9) or (action == 14 and j == 0) or (action == 14 and j == 1) or (action == 14 and j == 2) or (action == 14 and j == 3) or (action == 14 and j == 5) or (action == 14 and j == 6) or (action == 14 and j == 7) or (action == 14 and j == 8) or (action == 14 and j == 9):
-                    pass
-                else:
+
+                # if que se salte los errores del dataset, en funcion de j y action
+		if not errorCase(action, j):
                     for x in range(len(dicTmp)):
                         startFrame = int(dicTmp[x][0])
                         endFrame = int(dicTmp[x][1])
