@@ -1,45 +1,99 @@
 #!/usr/bin/python
 # -*- coding: utf-8; mode: python -*-
 
-if __name__ == "__main__":
-    print "This module is only to be used as an import in the main program."
-    exit()
-
-
 import xml.etree.ElementTree as ET
 import os
-import fixXMLfiles
-import symlinks
+import frame as fr
 
 currentdir = os.getcwd()
-joints = {}
 
 
-def getJointsFromXML(xmlpath):
+def getFrameFromXML(xmlpath):
     tree = ET.parse(xmlpath)
     root = tree.getroot()
 
     if not len(root[2]) == 1:
-        return ()
+        frame = fr.Frame()
     else:
+        timestamp = root[0].text
+        index = root[1].text
         joints = root[2][0][5]
-        coordinatesList = ()
-        for joint in joints:
-            if joint.tag != "center_of_mass" and joint.tag != "bounding_box":
-                coordinates = (joint[0][0].text, joint[0][1].text, joint[0][2].text)
-                coordinatesList += coordinates
 
-        return coordinatesList
+        for joint in joints:
+            if joint.tag == "joint_head":
+                joint_head = [joint[0][0].text, joint[0][1].text, joint[0][2].text]
+            elif joint.tag == "joint_neck":
+                joint_neck = [joint[0][0].text, joint[0][1].text, joint[0][2].text]
+            elif joint.tag == "joint_left_shoulder":
+                joint_left_shoulder = [joint[0][0].text, joint[0][1].text, joint[0][2].text]
+            elif joint.tag == "join_right_shoulder":
+                joint_right_shoulder = [joint[0][0].text, joint[0][1].text, joint[0][2].text]
+            elif joint.tag == "joint_left_elbow":
+                joint_left_elbow = [joint[0][0].text, joint[0][1].text, joint[0][2].text]
+            elif joint.tag == "joint_right_elbow":
+                joint_right_elbow = [joint[0][0].text, joint[0][1].text, joint[0][2].text]
+            elif joint.tag == "joint_left_hand":
+                joint_left_hand = [joint[0][0].text, joint[0][1].text, joint[0][2].text]
+            elif joint.tag == "joint_right_hand":
+                joint_right_hand = [joint[0][0].text, joint[0][1].text, joint[0][2].text]
+            elif joint.tag == "joint_torso":
+                joint_torso = [joint[0][0].text, joint[0][1].text, joint[0][2].text]
+            elif joint.tag == "joint_left_hip":
+                joint_left_hip = [joint[0][0].text, joint[0][1].text, joint[0][2].text]
+            elif joint.tag == "joint_right_hip":
+                joint_right_hip = [joint[0][0].text, joint[0][1].text, joint[0][2].text]
+            elif joint.tag == "joint_left_knee":
+                joint_left_knee = [joint[0][0].text, joint[0][1].text, joint[0][2].text]
+            elif joint.tag == "joint_right_knee":
+                joint_right_knee = [joint[0][0].text, joint[0][1].text, joint[0][2].text]
+            elif joint.tag == "joint_left_foot":
+                joint_left_foot = [joint[0][0].text, joint[0][1].text, joint[0][2].text]
+            elif joint.tag == "joint_right_foot":
+                joint_right_foot = [joint[0][0].text, joint[0][1].text, joint[0][2].text]
+            else:
+                pass
+
+        frame = fr.Frame(timestamp, index, joint_head, joint_neck, joint_left_shoulder,
+                        joint_right_shoulder, joint_left_elbow, joint_right_elbow,
+                        joint_left_hand, joint_right_hand, joint_torso, joint_left_hip,
+                        joint_right_hip, joint_left_knee, joint_right_knee, joint_left_foot, joint_right_foot)
+
+    return frame
 
 
 def errorCase(action, j):
-    if (action == 11 and j == 9) or (action == 12 and j == 9) or (action == 13 and j == 6) or (action == 13 and j == 7) or (action == 13 and j == 9) or (action == 14 and j == 0) or (action == 14 and j == 1) or (action == 14 and j == 2) or (action == 14 and j == 3) or (action == 14 and j == 5) or (action == 14 and j == 6) or (action == 14 and j == 7) or (action == 14 and j == 8) or (action == 14 and j == 9):
+    if ((action == 11 and j == 9) or (action == 12 and j == 9)
+        or (action == 13 and j == 6) or (action == 13 and j == 7)
+        or (action == 13 and j == 9) or (action == 14 and j == 0)
+        or (action == 14 and j == 1) or (action == 14 and j == 2)
+        or (action == 14 and j == 3) or (action == 14 and j == 5)
+        or (action == 14 and j == 6) or (action == 14 and j == 7)
+        or (action == 14 and j == 8) or (action == 14 and j == 9)):
         return True
     else:
         return False
 
 
-def parser(joints):
+def getSequences(itemXdir, action):
+    dicTmp = {}
+    fd = open(itemXdir, "r")
+
+    i = 0
+    while True:
+        line = fd.readline()
+        if not line:
+            break
+        else:
+            actionAux = int(line.split()[2])
+            if actionAux == action:
+                dicTmp[i] = (line.split()[0], line.split()[1])
+                i += 1
+
+    fd.close()
+    return dicTmp, i
+
+
+def parser(actions):
     truthDir = os.path.join(currentdir, "RecogidaDatos/truth")
     actoresDir = os.path.join(currentdir, "RecogidaDatos/videos/actores")
 
@@ -54,33 +108,21 @@ def parser(joints):
     sequencesSorted = sorted(sequences,
                              key = lambda x: (len(x), x.split('([0-9])')))[15:] # 'acciones[1-11]' dirs sorted
 
+    # loop to parse dataset action per action
     for action in range(0, 15):
 
         print("- Procesando accion:" + str(action) + "...")
 
-        joints[action] = ()     # inicializar el diccionario de la accion en cuestion
-        j = 0                   # variable para referenciar dentro de "actores/" a que secuencia "accionesX/" accedemos
+        actions[action] = {}     # init dictionary of each action
+        j = 0                    # variable to realize the matching between "actores/" and "acciones/" folders
+        sequence = 0             # sequences counter
 
         for itemX in esqueletonSorted:
-            dicTmp = {}         # inicializar el diccionario temporal de cada accion
             itemXdir = os.path.join(truthDir, itemX)
 
             print("----- Abriendo: " + itemXdir + "...")
-            fd = open(itemXdir, "r")
-
-            i = 0
-            while True:
-                line = fd.readline()
-                if not line:
-                    break
-                else:
-                    actionAux = int(line.split()[2])
-                    if actionAux == action:
-                        dicTmp[i] = (line.split()[0], line.split()[1])
-                        i += 1
-
+            dicTmp, i = getSequences(itemXdir, action)
             print("----- Cerrando: " + itemXdir + "...")
-            fd.close()
 
             if not i == 0:
 
@@ -90,16 +132,25 @@ def parser(joints):
 
                 print("--------- Xml's dentro de acciones" + str(j+1) + " procesandose.")
 
-                # if que se salte los errores del dataset, en funcion de j y action
 		if not errorCase(action, j):
+
                     for x in range(len(dicTmp)):
                         startFrame = int(dicTmp[x][0])
                         endFrame = int(dicTmp[x][1])
 
+                        actions[action][sequence] = []
+
                         for y in range(startFrame, endFrame+1):
                             frameDir = os.path.join(sequenceXMLDir, sequenceXMLFiles[y])
-                            joints[action] += getJointsFromXML(frameDir)
+                            actions[action][sequence] += [getFrameFromXML(frameDir)]
+
+                        sequence += 1
 
                 print("--------- Xml's dentro de acciones" + str(j+1) + " procesados.")
 
             j += 1
+
+
+if __name__ == "__main__":
+    print "This module is only to be used as an import in the main program."
+    exit()
