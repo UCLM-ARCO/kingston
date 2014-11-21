@@ -7,6 +7,62 @@ import scipy.spatial as sp
 import time
 
 
+def obtainFrames(sequences):
+    allFrames = []
+    for iSequence in sequences.keys():
+        frames = sequences[iSequence]
+        for iFrame in frames:
+            allFrames += [iFrame]
+
+    return allFrames
+
+
+def normalize(actions):
+    jointsPerFrame = 15
+    for action in actions.keys():
+        if not action == 0:
+            framesInAction = obtainFrames(actions[action])
+
+            for frame in framesInAction:
+                origin = np.array([0,0,0])
+
+                # calculate center of mass
+                joints = frame.getJoints()
+                for joint in joints:
+                    origin[0] += joint[0]
+                    origin[1] += joint[1]
+                    origin[2] += joint[2]
+
+                origin[0] /= jointsPerFrame
+                origin[1] /= jointsPerFrame
+                origin[2] /= jointsPerFrame
+
+                # calculate normalization distance
+                joints = scipy.matrix(joints)
+                origin = scipy.matrix(origin)
+                normDistance = sp.distance.cdist(joints, origin).sum()
+                normDistance /= jointsPerFrame
+
+                # normalize to translation
+                joints = np.array(joints)
+                for joint in joints:
+                    joint[0] = (joint[0] - origin[0]) / normDistance
+                    joint[1] = (joint[1] - origin[1]) / normDistance
+                    joint[2] = (joint[2] - origin[2]) / normDistance
+
+                # rotation
+                angle = np.arctan(((frame.joint_left_shoulder[2] + frame.joint_left_hip[2])/2 -
+                                   (frame.joint_right_shoulder[2] + frame.joint_right_hip[2])/2) /
+                                  ((frame.joint_left_shoulder[0] + frame.joint_left_hip[0])/2 -
+                                   (frame.joint_right_shoulder[0] + frame.joint_right_hip[0])/2))
+
+                for joint in joints:
+                    a = joint[0] - frame.joint_neck[0]
+                    b = joint[2] - frame.joint_neck[2]
+                    joint[0] = a * np.cos(angle) + b * np.sin(angle)
+                    joint[2] = -a * np.sin(angle) + b * np.cos(angle)
+
+
 def euclideanDistanceByMatrix(x, y):
     # to obtain the sum of each euclidean distance between the points
     # in X and the point Y. We need to calc: sqrt(x2+y2-2xy) and get the
@@ -27,21 +83,18 @@ def euclideanDistanceByMatrix(x, y):
     return euclideanDistanceSum
 
 
-def euclideanDistanceByPoint(x, y):
-    return np.linalg.norm(x-y)
-
-
 #TEST TIMES
 
 # test time using own function
 def timeMatrix(sequences):
     allJoints = []
-    frames = sequences[0]
 
     tStart = time.time()
-    for iFrame in frames:
-        joints = iFrame.getJoints()
-        allJoints += joints
+    for iSequence in sequences:
+        frames = sequences[iSequence]
+        for iFrame in frames:
+            joints = iFrame.getJoints()
+            allJoints += joints
 
     allJoints = np.array(allJoints)
     dist = euclideanDistanceByMatrix(allJoints, np.array([3,3,3]))
@@ -55,12 +108,13 @@ def timeMatrix(sequences):
 def timePointByPoint(sequences):
     allJoints = []
     dist = 0
-    frames = sequences[0]
 
     tStart = time.time()
-    for iFrame in frames:
-        joints = iFrame.getJoints()
-        allJoints += joints
+    for iSequence in sequences:
+        frames = sequences[iSequence]
+        for iFrame in frames:
+            joints = iFrame.getJoints()
+            allJoints += joints
 
     allJoints = np.array(allJoints)
 
@@ -76,12 +130,13 @@ def timePointByPoint(sequences):
 # BEST RESULTS
 def timeCDist(sequences):
     allJoints = []
-    frames = sequences[0]
 
     tStart = time.time()
-    for iFrame in frames:
-        joints = iFrame.getJoints()
-        allJoints += joints
+    for iSequence in sequences:
+        frames = sequences[iSequence]
+        for iFrame in frames:
+            joints = iFrame.getJoints()
+            allJoints += joints
 
     allJoints = scipy.matrix(allJoints)
 

@@ -11,10 +11,12 @@ currentdir = os.getcwd()
 def getFrameFromXML(xmlpath):
     tree = ET.parse(xmlpath)
     root = tree.getroot()
+    existFrame = False
 
     if not len(root[2]) == 1:
         frame = fr.Frame()
     else:
+        existFrame = True
         timestamp = root[0].text
         index = root[1].text
         joints = root[2][0][5]
@@ -58,7 +60,7 @@ def getFrameFromXML(xmlpath):
                         joint_left_hand, joint_right_hand, joint_torso, joint_left_hip,
                         joint_right_hip, joint_left_knee, joint_right_knee, joint_left_foot, joint_right_foot)
 
-    return frame
+    return existFrame, frame
 
 
 def errorCase(action, j):
@@ -142,7 +144,11 @@ def parser(actions):
 
                         for y in range(startFrame, endFrame+1):
                             frameDir = os.path.join(sequenceXMLDir, sequenceXMLFiles[y])
-                            actions[action][sequence] += [getFrameFromXML(frameDir)]
+                            existFrame, frame = getFrameFromXML(frameDir)
+                            if existFrame:
+                                actions[action][sequence] += [frame]
+                            else:
+                                pass
 
                         sequence += 1
 
