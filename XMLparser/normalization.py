@@ -37,10 +37,12 @@ def normalize(actions):
                 origin[1] /= jointsPerFrame
                 origin[2] /= jointsPerFrame
 
+                #print(origin, type(origin))
+
                 # calculate normalization distance
-                joints = scipy.matrix(joints)
-                origin = scipy.matrix(origin)
-                normDistance = sp.distance.cdist(joints, origin).sum()
+                jointsMatrix = scipy.matrix(joints)
+                originMatrix = scipy.matrix(origin)
+                normDistance = sp.distance.cdist(jointsMatrix, originMatrix).sum()
                 normDistance /= jointsPerFrame
 
                 # normalize to translation
