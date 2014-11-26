@@ -2,7 +2,7 @@
 # -*- coding: utf-8; mode: python -*-
 
 import xml.etree.ElementTree as ET
-import os
+import os, sys
 import frame as fr
 
 currentdir = os.getcwd()
@@ -63,17 +63,24 @@ def getFrameFromXML(xmlpath):
     return existFrame, frame
 
 
-def errorCase(action, j):
-    if ((action == 11 and j == 9) or (action == 12 and j == 9)
-        or (action == 13 and j == 6) or (action == 13 and j == 7)
-        or (action == 13 and j == 9) or (action == 14 and j == 0)
-        or (action == 14 and j == 1) or (action == 14 and j == 2)
-        or (action == 14 and j == 3) or (action == 14 and j == 5)
-        or (action == 14 and j == 6) or (action == 14 and j == 7)
-        or (action == 14 and j == 8) or (action == 14 and j == 9)):
-        return True
+def errorCase(action, j, step):
+    if step == "training":
+        if ((action == 11 and j == 9) or (action == 12 and j == 9)
+            or (action == 13 and j == 6) or (action == 13 and j == 7)
+            or (action == 13 and j == 9) or (action == 14 and j == 0)
+            or (action == 14 and j == 1) or (action == 14 and j == 2)
+            or (action == 14 and j == 3) or (action == 14 and j == 5)
+            or (action == 14 and j == 6) or (action == 14 and j == 7)
+            or (action == 14 and j == 8) or (action == 14 and j == 9)):
+            return True
+        else:
+            return False
     else:
-        return False
+        if ((action == 5 and j == 6) or (action == 6 and j == 9)
+            or (action == 7 and j == 2) or (action == 7 and j == 9)):
+            return True
+        else:
+            return False
 
 
 def getSequences(itemXdir, action):
@@ -95,20 +102,35 @@ def getSequences(itemXdir, action):
     return dicTmp, i
 
 
-def parser(actions):
+def parse(actions, step):
     truthDir = os.path.join(currentdir, "RecogidaDatos/truth")
     actoresDir = os.path.join(currentdir, "RecogidaDatos/videos/actores")
-
     truthFiles = os.listdir(truthDir)         # all truth files
-    guidedActions = sorted(truthFiles)[0:33]  # 'accionesX' truth files
-    esqueleton = guidedActions[1:32:3]        # 'accionesX_Esqueleto' truth files
-
-    esqueletonSorted = sorted(esqueleton,
-                              key = lambda x: (len(x), x.split('_')[0]))
-
     sequences = os.listdir(actoresDir)        # 'acciones[1-11]' and 'actor[1-15]' dirs
-    sequencesSorted = sorted(sequences,
-                             key = lambda x: (len(x), x.split('([0-9])')))[15:] # 'acciones[1-11]' dirs sorted
+
+    if step == "training":
+        guidedActions = sorted(truthFiles)[0:33]  # 'accionesX' truth files
+        esqueleton = guidedActions[1:32:3]        # 'accionesX_Esqueleto' truth files
+
+        esqueletonSorted = sorted(esqueleton,
+                                  key = lambda x: (len(x), x.split('_')[0]))
+
+        sequencesSorted = sorted(sequences,
+                                 key = lambda x: (len(x), x.split('([0-9])')))[15:] # 'acciones[1-11]' dirs sorted by name
+
+    elif step == "testing":
+        unguidedActions = sorted(truthFiles)[33:]  # 'actorX' truth files
+        esqueleton = unguidedActions[1:45:3]       # 'actorX_Esqueleto' truth files
+
+        esqueletonSorted = sorted(esqueleton,
+                                  key = lambda x: (len(x), x.split('_')[0]))
+
+        sequencesSorted = sorted(sequences,
+                                 key = lambda x: (len(x), x.split('([0-9])')))[:15] # 'actor[1-15]' dirs sorted by name
+
+    else:
+        print("Wrong step parameter, must be 'training' or 'testing'")
+        sys.exit()
 
     # loop to parse dataset action per action
     for action in range(0, 15):
@@ -134,7 +156,7 @@ def parser(actions):
 
                 print("--------- Xml's dentro de acciones" + str(j+1) + " procesandose.")
 
-		if not errorCase(action, j):
+                if not errorCase(action, j, step):
 
                     for x in range(len(dicTmp)):
                         startFrame = int(dicTmp[x][0])
@@ -159,4 +181,4 @@ def parser(actions):
 
 if __name__ == "__main__":
     print "This module is only to be used as an import in the main program."
-    exit()
+    sys.exit()

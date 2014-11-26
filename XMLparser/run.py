@@ -15,11 +15,11 @@ print("Fixed!")
 
 # parse dataset
 print("Parsing DATASET.....")
-actions = {}
-xmlp.parser(actions)
+trainingActions = {}
+xmlp.parse(trainingActions, "training")
 print("Parsed!")
 
 # normalize dataset
 print("Normalizing DATASET.....")
-nm.normalize(actions)
+nm.normalize(trainingActions)
 print("Normalized!")
