@@ -17,9 +17,16 @@ print("Fixed!")
 print("Parsing DATASET.....")
 trainingActions = {}
 xmlp.parse(trainingActions, "training")
+testingActions = {}
+xmlp.parse(testingActions, "testing")
 print("Parsed!")
 
 # normalize dataset
 print("Normalizing DATASET.....")
 nm.normalize(trainingActions)
+nm.normalize(testingActions)
 print("Normalized!")
+
+# obtain action files
+xmlp.createActionFiles(trainingActions, "training")
+xmlp.createActionFiles(testingActions, "testing")

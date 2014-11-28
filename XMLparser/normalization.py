@@ -37,8 +37,6 @@ def normalize(actions):
                 origin[1] /= jointsPerFrame
                 origin[2] /= jointsPerFrame
 
-                #print(origin, type(origin))
-
                 # calculate normalization distance
                 jointsMatrix = scipy.matrix(joints)
                 originMatrix = scipy.matrix(origin)
@@ -146,3 +144,8 @@ def timeCDist(sequences):
     tEnd = time.time() - tStart
 
     return dist, tEnd
+
+
+if __name__ == "__main__":
+    print "This module is only to be used as an import in the main program."
+    exit()

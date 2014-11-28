@@ -2,8 +2,10 @@
 # -*- coding: utf-8; mode: python -*-
 
 import xml.etree.ElementTree as ET
-import os, sys
+import os, sys, errno
 import frame as fr
+from fixDataset import symlinks
+import numpy as np
 
 currentdir = os.getcwd()
 
@@ -83,7 +85,7 @@ def errorCase(action, j, step):
             return False
 
 
-def getSequences(itemXdir, action):
+def getSequencesPerAction(itemXdir, action):
     dicTmp = {}
     fd = open(itemXdir, "r")
 
@@ -102,12 +104,22 @@ def getSequences(itemXdir, action):
     return dicTmp, i
 
 
+def getJointsPerAction(sequences):
+    joints = []
+    for iSequence in sequences.keys():
+        for iFrame in sequences[iSequence]:
+            joints += iFrame.getJoints()
+
+    return np.array(joints)
+
+
 def parse(actions, step):
     truthDir = os.path.join(currentdir, "RecogidaDatos/truth")
     actoresDir = os.path.join(currentdir, "RecogidaDatos/videos/actores")
     truthFiles = os.listdir(truthDir)         # all truth files
     sequences = os.listdir(actoresDir)        # 'acciones[1-11]' and 'actor[1-15]' dirs
 
+    # select training or testing files
     if step == "training":
         guidedActions = sorted(truthFiles)[0:33]  # 'accionesX' truth files
         esqueleton = guidedActions[1:32:3]        # 'accionesX_Esqueleto' truth files
@@ -135,26 +147,20 @@ def parse(actions, step):
     # loop to parse dataset action per action
     for action in range(0, 15):
 
-        print("- Procesando accion:" + str(action) + "...")
-
         actions[action] = {}     # init dictionary of each action
-        j = 0                    # variable to realize the matching between "actores/" and "acciones/" folders
+        j = 0                    # variable to realize the matching between "actores/" and "acciones/, actor/" folders
         sequence = 0             # sequences counter
 
         for itemX in esqueletonSorted:
             itemXdir = os.path.join(truthDir, itemX)
 
-            print("----- Abriendo: " + itemXdir + "...")
-            dicTmp, i = getSequences(itemXdir, action)
-            print("----- Cerrando: " + itemXdir + "...")
+            dicTmp, i = getSequencesPerAction(itemXdir, action)
 
             if not i == 0:
 
                 sequenceXMLDir = os.path.join(actoresDir, sequencesSorted[j] + "/depth/xml_symlink")
                 sequenceXMLFiles = sorted(os.listdir(sequenceXMLDir),
                                           key = lambda x: int((x.split('_')[1]).split('.')[0]))
-
-                print("--------- Xml's dentro de acciones" + str(j+1) + " procesandose.")
 
                 if not errorCase(action, j, step):
 
@@ -174,9 +180,36 @@ def parse(actions, step):
 
                         sequence += 1
 
-                print("--------- Xml's dentro de acciones" + str(j+1) + " procesados.")
-
             j += 1
+
+
+def createActionFiles(actions, step):
+    if step == "training" or step == "testing":
+        filedir = os.path.join(currentdir, "RecogidaDatos/actionsFiles/" + step)
+        symlinks.mkdir_p(filedir)
+
+        for iAction in actions.keys():
+            filename = os.path.join(filedir, "action" + str(iAction) + ".txt")
+            joints = getJointsPerAction(actions[iAction])
+
+            try:
+                fd = open(filename, "w")
+            except OSError as exc:
+                if exc.errno == errno.EEXIST and os.path.isfile(filename):
+                    pass
+                else:
+                    raise
+
+            for iJoint in joints:
+                fd.write("%s, " % iJoint[0])
+                fd.write("%s, " % iJoint[1])
+                fd.write("%s, " % iJoint[2])
+
+            fd.close()
+
+    else:
+        print("Wrong step parameter, must be 'training' or 'testing'")
+        sys.exit()
 
 
 if __name__ == "__main__":
