@@ -201,9 +201,9 @@ def createActionFiles(actions, step):
                     raise
 
             for iJoint in joints:
-                fd.write("%s, " % iJoint[0])
-                fd.write("%s, " % iJoint[1])
-                fd.write("%s, " % iJoint[2])
+                fd.write("%s " % iJoint[0])
+                fd.write("%s " % iJoint[1])
+                fd.write("%s " % iJoint[2])
 
             fd.close()
 

@@ -31,10 +31,26 @@ class Frame(object):
         self.joint_right_foot = np.array(joint_right_foot, dtype=np.float_)
         self.center_of_mass = np.array(center_of_mass, dtype=np.float_)
 
-
     def getJoints(self):
         return [self.joint_head, self.joint_neck, self.joint_left_shoulder,
                 self.joint_right_shoulder, self.joint_left_elbow, self.joint_right_elbow,
                 self.joint_left_hand, self.joint_right_hand, self.joint_torso,
                 self.joint_left_hip, self.joint_right_hip, self.joint_left_knee,
                 self.joint_right_knee, self.joint_left_foot, self.joint_right_foot]
+
+    def updateJointsValue(self, joints):
+        self.joint_head = joints[0]
+        self.joint_neck = joints[1]
+        self.joint_left_shoulder = joints[2]
+        self.joint_right_shoulder = joints[3]
+        self.joint_left_elbow = joints[4]
+        self.joint_right_elbow = joints[5]
+        self.joint_left_hand = joints[6]
+        self.joint_right_hand = joints[7]
+        self.joint_torso = joints[8]
+        self.joint_left_hip = joints[9]
+        self.joint_right_hip = joints[10]
+        self.joint_left_knee = joints[11]
+        self.joint_right_knee = joints[12]
+        self.joint_left_foot = joints[13]
+        self.joint_right_foot = joints[14]

@@ -10,9 +10,7 @@ import time
 def obtainFrames(sequences):
     allFrames = []
     for iSequence in sequences.keys():
-        frames = sequences[iSequence]
-        for iFrame in frames:
-            allFrames += [iFrame]
+        allFrames += sequences[iSequence]
 
     return allFrames
 
@@ -50,17 +48,22 @@ def normalize(actions):
                     joint[1] = (joint[1] - origin[1]) / normDistance
                     joint[2] = (joint[2] - origin[2]) / normDistance
 
+                frame.updateJointsValue(joints)
+
                 # rotation
                 angle = np.arctan(((frame.joint_left_shoulder[2] + frame.joint_left_hip[2])/2 -
                                    (frame.joint_right_shoulder[2] + frame.joint_right_hip[2])/2) /
                                   ((frame.joint_left_shoulder[0] + frame.joint_left_hip[0])/2 -
                                    (frame.joint_right_shoulder[0] + frame.joint_right_hip[0])/2))
 
+                joints = frame.getJoints()
                 for joint in joints:
                     a = joint[0] - frame.joint_neck[0]
                     b = joint[2] - frame.joint_neck[2]
                     joint[0] = a * np.cos(angle) + b * np.sin(angle)
                     joint[2] = -a * np.sin(angle) + b * np.cos(angle)
+
+                frame.updateJointsValue(joints)
 
 
 def euclideanDistanceByMatrix(x, y):
