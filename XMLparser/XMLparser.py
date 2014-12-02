@@ -4,7 +4,6 @@
 import xml.etree.ElementTree as ET
 import os
 import sys
-import errno
 import frame as fr
 from fixDataset import symlinks
 import numpy as np
@@ -194,20 +193,13 @@ def createActionFiles(actions, step):
             filename = os.path.join(filedir, "action" + str(iAction) + ".txt")
             joints = getJointsPerAction(actions[iAction])
 
-            try:
-                fd = open(filename, "w")
-            except OSError as exc:
-                if exc.errno == errno.EEXIST and os.path.isfile(filename):
-                    pass
-                else:
-                    raise
+            with open(filename, "w") as fd:
+                for iJoint in joints:
+                        fd.write("%s " % iJoint[0])
+                        fd.write("%s " % iJoint[1])
+                        fd.write("%s " % iJoint[2])
 
-            for iJoint in joints:
-                fd.write("%s " % iJoint[0])
-                fd.write("%s " % iJoint[1])
-                fd.write("%s " % iJoint[2])
-
-            fd.close()
+                fd.close()
 
     else:
         print("Wrong step parameter, must be 'training' or 'testing'")
