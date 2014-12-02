@@ -2,7 +2,9 @@
 # -*- coding: utf-8; mode: python -*-
 
 import xml.etree.ElementTree as ET
-import os, sys, errno
+import os
+import sys
+import errno
 import frame as fr
 from fixDataset import symlinks
 import numpy as np
@@ -58,9 +60,9 @@ def getFrameFromXML(xmlpath):
                 pass
 
         frame = fr.Frame(timestamp, index, joint_head, joint_neck, joint_left_shoulder,
-                        joint_right_shoulder, joint_left_elbow, joint_right_elbow,
-                        joint_left_hand, joint_right_hand, joint_torso, joint_left_hip,
-                        joint_right_hip, joint_left_knee, joint_right_knee, joint_left_foot, joint_right_foot)
+                         joint_right_shoulder, joint_left_elbow, joint_right_elbow,
+                         joint_left_hand, joint_right_hand, joint_torso, joint_left_hip,
+                         joint_right_hip, joint_left_knee, joint_right_knee, joint_left_foot, joint_right_foot)
 
     return existFrame, frame
 
@@ -128,7 +130,7 @@ def parse(actions, step):
                                   key = lambda x: (len(x), x.split('_')[0]))
 
         sequencesSorted = sorted(sequences,
-                                 key = lambda x: (len(x), x.split('([0-9])')))[15:] # 'acciones[1-11]' dirs sorted by name
+                                 key = lambda x: (len(x), x.split('([0-9])')))[15:]  # 'acciones[1-11]' dirs sorted by name
 
     elif step == "testing":
         unguidedActions = sorted(truthFiles)[33:]  # 'actorX' truth files
@@ -138,7 +140,7 @@ def parse(actions, step):
                                   key = lambda x: (len(x), x.split('_')[0]))
 
         sequencesSorted = sorted(sequences,
-                                 key = lambda x: (len(x), x.split('([0-9])')))[:15] # 'actor[1-15]' dirs sorted by name
+                                 key = lambda x: (len(x), x.split('([0-9])')))[:15]  # 'actor[1-15]' dirs sorted by name
 
     else:
         print("Wrong step parameter, must be 'training' or 'testing'")
@@ -170,7 +172,7 @@ def parse(actions, step):
 
                         actions[action][sequence] = []
 
-                        for y in range(startFrame, endFrame+1):
+                        for y in range(startFrame, endFrame + 1):
                             frameDir = os.path.join(sequenceXMLDir, sequenceXMLFiles[y])
                             existFrame, frame = getFrameFromXML(frameDir)
                             if existFrame:

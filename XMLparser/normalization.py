@@ -22,7 +22,7 @@ def normalize(actions):
             framesInAction = obtainFrames(actions[action])
 
             for frame in framesInAction:
-                origin = np.array([0,0,0])
+                origin = np.array([0, 0, 0])
 
                 # calculate center of mass
                 joints = frame.getJoints()
@@ -44,17 +44,17 @@ def normalize(actions):
                 # normalize to translation
                 joints = np.array(joints)
                 for joint in joints:
-                    joint[0] = (joint[0] - origin[0]) / normDistance
-                    joint[1] = (joint[1] - origin[1]) / normDistance
-                    joint[2] = (joint[2] - origin[2]) / normDistance
+                    joint[0] = float((joint[0] - origin[0]) / normDistance)
+                    joint[1] = float((joint[1] - origin[1]) / normDistance)
+                    joint[2] = float((joint[2] - origin[2]) / normDistance)
 
                 frame.updateJointsValue(joints)
 
                 # rotation
-                angle = np.arctan(((frame.joint_left_shoulder[2] + frame.joint_left_hip[2])/2 -
-                                   (frame.joint_right_shoulder[2] + frame.joint_right_hip[2])/2) /
-                                  ((frame.joint_left_shoulder[0] + frame.joint_left_hip[0])/2 -
-                                   (frame.joint_right_shoulder[0] + frame.joint_right_hip[0])/2))
+                angle = np.arctan(((frame.joint_left_shoulder[2] + frame.joint_left_hip[2]) / 2 -
+                                   (frame.joint_right_shoulder[2] + frame.joint_right_hip[2]) / 2) /
+                                  ((frame.joint_left_shoulder[0] + frame.joint_left_hip[0]) / 2 -
+                                   (frame.joint_right_shoulder[0] + frame.joint_right_hip[0]) / 2))
 
                 joints = frame.getJoints()
                 for joint in joints:
@@ -79,9 +79,9 @@ def euclideanDistanceByMatrix(x, y):
     XY = np.dot(X, Y.T)
 
     op1 = Xsum + Ysum
-    op2 = -2*(XY)
+    op2 = -2 * (XY)
     res = op1 + op2
-    euclideanDistanceSum = np.power(res,0.5).sum()
+    euclideanDistanceSum = np.power(res, 0.5).sum()
 
     return euclideanDistanceSum
 
@@ -100,7 +100,7 @@ def timeMatrix(sequences):
             allJoints += joints
 
     allJoints = np.array(allJoints)
-    dist = euclideanDistanceByMatrix(allJoints, np.array([3,3,3]))
+    dist = euclideanDistanceByMatrix(allJoints, np.array([3, 3, 3]))
     tEnd = time.time() - tStart
 
     return dist, tEnd
@@ -122,7 +122,7 @@ def timePointByPoint(sequences):
     allJoints = np.array(allJoints)
 
     for iJoint in allJoints:
-        dist += np.linalg.norm(iJoint-np.array([3,3,3]))
+        dist += np.linalg.norm(iJoint - np.array([3, 3, 3]))
     tEnd = time.time() - tStart
 
     return dist, tEnd
@@ -143,7 +143,7 @@ def timeCDist(sequences):
 
     allJoints = scipy.matrix(allJoints)
 
-    dist = sp.distance.cdist(allJoints, scipy.matrix([3,3,3])).sum()
+    dist = sp.distance.cdist(allJoints, scipy.matrix([3, 3, 3])).sum()
     tEnd = time.time() - tStart
 
     return dist, tEnd
