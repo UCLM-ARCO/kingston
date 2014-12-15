@@ -9,6 +9,13 @@ from fixDataset import symlinks
 import numpy as np
 
 currentdir = os.getcwd()
+truthDir = os.path.join(currentdir, "RecogidaDatos/truth")
+actoresDir = os.path.join(currentdir, "RecogidaDatos/videos/actores")
+truthFiles = os.listdir(truthDir)                             # all truth files
+accionesX_truthFiles = sorted(truthFiles)[0:33]               # 'accionesX' truth files
+accionesXEsqueleto_truthFiles = accionesX_truthFiles[1:32:3]  # 'accionesX_Esqueleto' truth files
+actorX_truthFiles = sorted(truthFiles)[33:]                   # 'actorX' truth files
+actorXEsqueleto_truthFiles = actorX_truthFiles[1:45:3]        # 'actorX_Esqueleto' truth files
 
 
 def getFrameFromXML(xmlpath):
@@ -86,7 +93,7 @@ def errorCase(action, j, step):
             return False
 
 
-def getSequencesPerAction(itemXdir, action):
+def getSequenceListing(itemXdir, action):
     dicTmp = {}
     fd = open(itemXdir, "r")
 
@@ -114,37 +121,15 @@ def getJointsPerAction(sequences):
     return np.array(joints)
 
 
-def parse(actions, step):
-    truthDir = os.path.join(currentdir, "RecogidaDatos/truth")
-    actoresDir = os.path.join(currentdir, "RecogidaDatos/videos/actores")
-    truthFiles = os.listdir(truthDir)         # all truth files
-    sequences = os.listdir(actoresDir)        # 'acciones[1-11]' and 'actor[1-15]' dirs
+def getJointsPerSequence(sequence):
+    joints = []
+    for iFrame in sequence:
+        joints += iFrame.getJoints()
 
-    # select training or testing files
-    if step == "training":
-        guidedActions = sorted(truthFiles)[0:33]  # 'accionesX' truth files
-        esqueleton = guidedActions[1:32:3]        # 'accionesX_Esqueleto' truth files
+    return np.array(joints)
 
-        esqueletonSorted = sorted(esqueleton,
-                                  key = lambda x: (len(x), x.split('_')[0]))
 
-        sequencesSorted = sorted(sequences,
-                                 key = lambda x: (len(x), x.split('([0-9])')))[15:]  # 'acciones[1-11]' dirs sorted by name
-
-    elif step == "testing":
-        unguidedActions = sorted(truthFiles)[33:]  # 'actorX' truth files
-        esqueleton = unguidedActions[1:45:3]       # 'actorX_Esqueleto' truth files
-
-        esqueletonSorted = sorted(esqueleton,
-                                  key = lambda x: (len(x), x.split('_')[0]))
-
-        sequencesSorted = sorted(sequences,
-                                 key = lambda x: (len(x), x.split('([0-9])')))[:15]  # 'actor[1-15]' dirs sorted by name
-
-    else:
-        print("Wrong step parameter, must be 'training' or 'testing'")
-        sys.exit()
-
+def loopThroughActions(actions, esqueletonFiles, sequencesDirs, step):
     # loop to parse dataset action per action
     for action in range(0, 15):
 
@@ -152,14 +137,14 @@ def parse(actions, step):
         j = 0                    # variable to realize the matching between "actores/" and "acciones/, actor/" folders
         sequence = 0             # sequences counter
 
-        for itemX in esqueletonSorted:
+        for itemX in esqueletonFiles:
             itemXdir = os.path.join(truthDir, itemX)
 
-            dicTmp, i = getSequencesPerAction(itemXdir, action)
+            dicTmp, i = getSequenceListing(itemXdir, action)
 
             if not i == 0:
 
-                sequenceXMLDir = os.path.join(actoresDir, sequencesSorted[j] + "/depth/xml_symlink")
+                sequenceXMLDir = os.path.join(actoresDir, sequencesDirs[j] + "/depth/xml_symlink")
                 sequenceXMLFiles = sorted(os.listdir(sequenceXMLDir),
                                           key = lambda x: int((x.split('_')[1]).split('.')[0]))
 
@@ -172,8 +157,8 @@ def parse(actions, step):
                         actions[action][sequence] = []
 
                         for y in range(startFrame, endFrame + 1):
-                            frameDir = os.path.join(sequenceXMLDir, sequenceXMLFiles[y])
-                            existFrame, frame = getFrameFromXML(frameDir)
+                            frameFile = os.path.join(sequenceXMLDir, sequenceXMLFiles[y])
+                            existFrame, frame = getFrameFromXML(frameFile)
                             if existFrame:
                                 actions[action][sequence] += [frame]
                             else:
@@ -184,17 +169,42 @@ def parse(actions, step):
             j += 1
 
 
-def createActionFiles(actions, step):
+def parseTrainingActions(actions):
+    accionesXEsqueleto_truthFilesSorted = sorted(accionesXEsqueleto_truthFiles,
+                                                 key = lambda x: (len(x), x.split('_')[0]))
+
+    accionesX_dirsSorted = sorted(os.listdir(actoresDir),
+                             key = lambda x: (len(x), x.split('([0-9])')))[15:]  # 'acciones[1-11]' dirs sorted by name
+
+    loopThroughActions(actions, accionesXEsqueleto_truthFilesSorted, accionesX_dirsSorted, "training")
+
+
+def parseTestingActionsForSequenceRecognition(actions):
+    actorXEsqueleto_truthFilesSorted = sorted(actorXEsqueleto_truthFiles,
+                                              key = lambda x: (len(x), x.split('_')[0]))
+
+    actorX_dirsSorted = sorted(os.listdir(actoresDir),
+                               key = lambda x: (len(x), x.split('([0-9])')))[:15]  # 'actor[1-15]' dirs sorted by name
+
+    loopThroughActions(actions, actorXEsqueleto_truthFilesSorted, actorX_dirsSorted, "testing")
+
+
+#def parseTestingActionsForContinuousRecognition(actions):
+    # to-do
+
+
+def createActionFilesForSequenceRecognition(actions, step):
     if step == "training" or step == "testing":
         filedir = os.path.join(currentdir, "RecogidaDatos/actionsFiles/" + step)
         symlinks.mkdir_p(filedir)
 
         for iAction in actions.keys():
-            filename = os.path.join(filedir, "action" + str(iAction) + ".txt")
-            joints = getJointsPerAction(actions[iAction])
+            for iSequence in actions[iAction].keys():
+                filename = os.path.join(filedir, "action" + str(iAction) + "sequence" + str(iSequence) + ".txt")
+                joints = getJointsPerSequence(actions[iAction][iSequence])
 
-            with open(filename, "w") as fd:
-                for iJoint in joints:
+                with open(filename, "w") as fd:
+                    for iJoint in joints:
                         fd.write("%s " % iJoint[0])
                         fd.write("%s " % iJoint[1])
                         fd.write("%s " % iJoint[2])
@@ -202,7 +212,7 @@ def createActionFiles(actions, step):
                 fd.close()
 
     else:
-        print("Wrong step parameter, must be 'training' or 'testing'")
+        print("Error! Step parameter should be 'training' or 'testing'")
         sys.exit()
 
 
