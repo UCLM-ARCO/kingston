@@ -15,18 +15,25 @@ print("Fixed!")
 
 # parse dataset
 print("Parsing DATASET.....")
+print("--- parsing training actions")
 trainingActions = {}
-xmlp.parse(trainingActions, "training")
-testingActions = {}
-xmlp.parse(testingActions, "testing")
+xmlp.parseTrainingActions(trainingActions)
+print("--- parsing testing actions for sequence recognition")
+testingSeqActions = {}
+xmlp.parseTestingActionsForSequenceRecognition(testingSeqActions)
+print("--- parsing testing actions for continuous recognition")
+testingConActions = {}
+xmlp.parseTestingActionsForContinuousRecognition(testingConActions)
 print("Parsed!")
 
 # normalize dataset
 print("Normalizing DATASET.....")
 nm.normalize(trainingActions)
-nm.normalize(testingActions)
+nm.normalize(testingSeqActions)
+nm.normalize(testingConActions)
 print("Normalized!")
 
 # obtain action files
-xmlp.createActionFiles(trainingActions, "training")
-xmlp.createActionFiles(testingActions, "testing")
+xmlp.createTrainingFiles(trainingActions)
+xmlp.createTestingFiles(testingSeqActions, "sequence")
+#xmlp.createTestingFiles(testingConActions, "continuous")

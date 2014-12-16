@@ -73,7 +73,7 @@ def getFrameFromXML(xmlpath):
     return existFrame, frame
 
 
-def errorCase(action, j, step):
+def errorCase1(action, j, step):
     if step == "training":
         if ((action == 11 and j == 9) or (action == 12 and j == 9)
             or (action == 13 and j == 6) or (action == 13 and j == 7)
@@ -93,20 +93,27 @@ def errorCase(action, j, step):
             return False
 
 
+def errorCase2(actor, sequence):
+    if ((actor == 3 and sequence == 114) or (actor == 7 and sequence == 59)
+        or (actor == 10 and sequence == 44)):
+        return True
+    else:
+        return False
+
+
 def getSequenceListing(itemXdir, action):
     dicTmp = {}
-    fd = open(itemXdir, "r")
-
     i = 0
-    while True:
-        line = fd.readline()
-        if not line:
-            break
-        else:
-            actionAux = int(line.split()[2])
-            if actionAux == action:
-                dicTmp[i] = (line.split()[0], line.split()[1])
-                i += 1
+    with open(itemXdir, "r") as fd:
+        while True:
+            line = fd.readline()
+            if not line:
+                break
+            else:
+                actionAux = int(line.split()[2])
+                if actionAux == action:
+                    dicTmp[i] = (line.split()[0], line.split()[1])
+                    i += 1
 
     fd.close()
     return dicTmp, i
@@ -129,6 +136,16 @@ def getJointsPerSequence(sequence):
     return np.array(joints)
 
 
+def generateListOfFramesBySequence(startFrame, endFrame, actions, sequenceXMLDir, sequenceXMLFiles, actionIndex, sequenceIndex):
+    for i in range(startFrame, endFrame + 1):
+        frameFile = os.path.join(sequenceXMLDir, sequenceXMLFiles[i])
+        existFrame, frame = getFrameFromXML(frameFile)
+        if existFrame:
+            actions[actionIndex][sequenceIndex] += [frame]
+        else:
+            pass
+
+
 def loopThroughActions(actions, esqueletonFiles, sequencesDirs, step):
     # loop to parse dataset action per action
     for action in range(0, 15):
@@ -148,54 +165,40 @@ def loopThroughActions(actions, esqueletonFiles, sequencesDirs, step):
                 sequenceXMLFiles = sorted(os.listdir(sequenceXMLDir),
                                           key = lambda x: int((x.split('_')[1]).split('.')[0]))
 
-                if not errorCase(action, j, step):
+                if not errorCase1(action, j, step):
 
                     for x in range(len(dicTmp)):
                         startFrame = int(dicTmp[x][0])
                         endFrame = int(dicTmp[x][1])
 
                         actions[action][sequence] = []
-
-                        for y in range(startFrame, endFrame + 1):
-                            frameFile = os.path.join(sequenceXMLDir, sequenceXMLFiles[y])
-                            existFrame, frame = getFrameFromXML(frameFile)
-                            if existFrame:
-                                actions[action][sequence] += [frame]
-                            else:
-                                pass
-
+                        generateListOfFramesBySequence(startFrame, endFrame, actions, sequenceXMLDir, sequenceXMLFiles, action, sequence)
                         sequence += 1
 
             j += 1
 
 
-def parseTrainingActions(actions):
-    accionesXEsqueleto_truthFilesSorted = sorted(accionesXEsqueleto_truthFiles,
-                                                 key = lambda x: (len(x), x.split('_')[0]))
+def createTrainingFiles(actions):
+    filedir = os.path.join(currentdir, "RecogidaDatos/actionsFiles/training")
+    symlinks.mkdir_p(filedir)
 
-    accionesX_dirsSorted = sorted(os.listdir(actoresDir),
-                             key = lambda x: (len(x), x.split('([0-9])')))[15:]  # 'acciones[1-11]' dirs sorted by name
+    for iAction in actions.keys():
+        for iSequence in actions[iAction].keys():
+            filename = os.path.join(filedir, "action" + str(iAction) + "sequence" + str(iSequence) + ".txt")
+            joints = getJointsPerSequence(actions[iAction][iSequence])
 
-    loopThroughActions(actions, accionesXEsqueleto_truthFilesSorted, accionesX_dirsSorted, "training")
+            with open(filename, "w") as fd:
+                for iJoint in joints:
+                    fd.write("%s " % iJoint[0])
+                    fd.write("%s " % iJoint[1])
+                    fd.write("%s " % iJoint[2])
 
-
-def parseTestingActionsForSequenceRecognition(actions):
-    actorXEsqueleto_truthFilesSorted = sorted(actorXEsqueleto_truthFiles,
-                                              key = lambda x: (len(x), x.split('_')[0]))
-
-    actorX_dirsSorted = sorted(os.listdir(actoresDir),
-                               key = lambda x: (len(x), x.split('([0-9])')))[:15]  # 'actor[1-15]' dirs sorted by name
-
-    loopThroughActions(actions, actorXEsqueleto_truthFilesSorted, actorX_dirsSorted, "testing")
+            fd.close()
 
 
-#def parseTestingActionsForContinuousRecognition(actions):
-    # to-do
-
-
-def createActionFilesForSequenceRecognition(actions, step):
-    if step == "training" or step == "testing":
-        filedir = os.path.join(currentdir, "RecogidaDatos/actionsFiles/" + step)
+def createTestingFiles(actions, recognitionType):
+    if recognitionType == "sequence" or recognitionType == "continuous":
+        filedir = os.path.join(currentdir, "RecogidaDatos/actionsFiles/testing-" + recognitionType)
         symlinks.mkdir_p(filedir)
 
         for iAction in actions.keys():
@@ -212,8 +215,62 @@ def createActionFilesForSequenceRecognition(actions, step):
                 fd.close()
 
     else:
-        print("Error! Step parameter should be 'training' or 'testing'")
+        print("Error! recognition type should be 'sequence' or 'continuous")
         sys.exit()
+
+
+def parseTrainingActions(actions):
+    accionesXEsqueleto_truthFilesSorted = sorted(accionesXEsqueleto_truthFiles,
+                                                 key = lambda x: (len(x), x.split('_')[0]))
+
+    accionesX_dirsSorted = sorted(os.listdir(actoresDir),
+                                  key = lambda x: (len(x), x.split('([0-9])')))[15:]  # 'acciones[1-11]' dirs sorted by name
+
+    loopThroughActions(actions, accionesXEsqueleto_truthFilesSorted, accionesX_dirsSorted, "training")
+
+
+def parseTestingActionsForSequenceRecognition(actions):
+    actorXEsqueleto_truthFilesSorted = sorted(actorXEsqueleto_truthFiles,
+                                              key = lambda x: (len(x), x.split('_')[0]))
+
+    actorX_dirsSorted = sorted(os.listdir(actoresDir),
+                               key = lambda x: (len(x), x.split('([0-9])')))[:15]  # 'actor[1-15]' dirs sorted by name
+
+    loopThroughActions(actions, actorXEsqueleto_truthFilesSorted, actorX_dirsSorted, "testing")
+
+
+def parseTestingActionsForContinuousRecognition(actions):
+    actorCount = 0
+    actorX_dirsSorted = sorted(os.listdir(actoresDir),
+                               key = lambda x: (len(x), x.split('([0-9])')))[:15]
+
+    # loop to parse dataset actor per actor
+    for itemX in actorX_dirsSorted:
+        actions[actorCount + 1] = {}
+        sequence = 0
+        truthFile_name = os.path.join(truthDir, itemX + "Esqueleto_frame_segmented.txt")
+
+        with open(truthFile_name, "r") as fd:
+            while True:
+                line = fd.readline()
+                if not line:
+                    break
+                else:
+                    # en caso de error, evaluar actorCount y sequence
+                    startFrame = int(line.split()[0])
+                    endFrame = int(line.split()[1])
+
+                    sequenceXMLDir = os.path.join(actoresDir, actorX_dirsSorted[actorCount] + "/depth/xml_symlink")
+                    sequenceXMLFiles = sorted(os.listdir(sequenceXMLDir),
+                                              key = lambda x: int((x.split('_')[1]).split('.')[0]))
+
+                    actions[actorCount + 1][sequence] = []
+                    if not errorCase2(actorCount + 1, sequence):
+                        generateListOfFramesBySequence(startFrame, endFrame, actions, sequenceXMLDir, sequenceXMLFiles, actorCount + 1, sequence)
+                        sequence += 1
+
+        fd.close()
+        actorCount += 1
 
 
 if __name__ == "__main__":
