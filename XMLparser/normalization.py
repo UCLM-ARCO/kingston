@@ -9,8 +9,9 @@ import time
 
 def obtainFrames(sequences):
     allFrames = []
+    extendFrames = allFrames.extend
     for iSequence in sequences.keys():
-        allFrames += sequences[iSequence]
+        extendFrames(sequences[iSequence])
 
     return allFrames
 
@@ -91,13 +92,12 @@ def euclideanDistanceByMatrix(x, y):
 # test time using own function
 def timeMatrix(sequences):
     allJoints = []
+    extendJoints = allJoints.extend
 
     tStart = time.time()
     for iSequence in sequences:
-        frames = sequences[iSequence]
-        for iFrame in frames:
-            joints = iFrame.getJoints()
-            allJoints += joints
+        for iFrame in sequences[iSequence]:
+            extendJoints(iFrame.getJoints())
 
     allJoints = np.array(allJoints)
     dist = euclideanDistanceByMatrix(allJoints, np.array([3, 3, 3]))
@@ -110,14 +110,13 @@ def timeMatrix(sequences):
 # point by point through a loop
 def timePointByPoint(sequences):
     allJoints = []
+    extendJoints = allJoints.extend
     dist = 0
 
     tStart = time.time()
     for iSequence in sequences:
-        frames = sequences[iSequence]
-        for iFrame in frames:
-            joints = iFrame.getJoints()
-            allJoints += joints
+        for iFrame in sequences[iSequence]:
+            extendJoints(iFrame.getJoints())
 
     allJoints = np.array(allJoints)
 
@@ -133,13 +132,12 @@ def timePointByPoint(sequences):
 # BEST RESULTS
 def timeCDist(sequences):
     allJoints = []
+    extendJoints = allJoints.extend
 
     tStart = time.time()
     for iSequence in sequences:
-        frames = sequences[iSequence]
-        for iFrame in frames:
-            joints = iFrame.getJoints()
-            allJoints += joints
+        for iFrame in sequences[iSequence]:
+            extendJoints(iFrame.getJoints())
 
     allJoints = scipy.matrix(allJoints)
 

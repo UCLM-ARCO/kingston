@@ -1,12 +1,17 @@
 #!/usr/bin/python
 # -*- coding: utf-8; mode: python -*-
 
-import xml.etree.ElementTree as ET
-import os
-import sys
 import frame as fr
 from fixDataset import symlinks
+import os
+import sys
 import numpy as np
+
+try:
+    import xml.etree.cElementTree as ET
+except ImportError:
+    import xml.etree.ElementTree as ET
+
 
 currentdir = os.getcwd()
 truthDir = os.path.join(currentdir, "RecogidaDatos/truth")
@@ -121,27 +126,30 @@ def getSequenceListing(itemXdir, action):
 
 def getJointsPerAction(sequences):
     joints = []
+    extendJoints = joints.extend
     for iSequence in sequences.keys():
         for iFrame in sequences[iSequence]:
-            joints += iFrame.getJoints()
+            extendJoints(iFrame.getJoints())
 
     return np.array(joints)
 
 
 def getJointsPerSequence(sequence):
     joints = []
+    extendJoints = joints.extend
     for iFrame in sequence:
-        joints += iFrame.getJoints()
+        extendJoints(iFrame.getJoints())
 
     return np.array(joints)
 
 
 def generateListOfFramesBySequence(startFrame, endFrame, actions, sequenceXMLDir, sequenceXMLFiles, actionIndex, sequenceIndex):
+    appendIntoSequence = actions[actionIndex][sequenceIndex].append
     for i in range(startFrame, endFrame + 1):
         frameFile = os.path.join(sequenceXMLDir, sequenceXMLFiles[i])
         existFrame, frame = getFrameFromXML(frameFile)
         if existFrame:
-            actions[actionIndex][sequenceIndex] += [frame]
+            appendIntoSequence(frame)
         else:
             pass
 
@@ -161,7 +169,7 @@ def loopThroughActions(actions, esqueletonFiles, sequencesDirs, step):
 
             if not i == 0:
 
-                sequenceXMLDir = os.path.join(actoresDir, sequencesDirs[j] + "/depth/xml_symlink")
+                sequenceXMLDir = os.path.join(actoresDir, "%s/depth/xml_symlink" % sequencesDirs[j])
                 sequenceXMLFiles = sorted(os.listdir(sequenceXMLDir),
                                           key = lambda x: int((x.split('_')[1]).split('.')[0]))
 
@@ -184,7 +192,7 @@ def createTrainingFiles(actions):
 
     for iAction in actions.keys():
         for iSequence in actions[iAction].keys():
-            filename = os.path.join(filedir, "action" + str(iAction) + "sequence" + str(iSequence) + ".txt")
+            filename = os.path.join(filedir, "action%ssequence%s.txt" % (iAction, iSequence))
             joints = getJointsPerSequence(actions[iAction][iSequence])
 
             with open(filename, "w") as fd:
@@ -198,12 +206,12 @@ def createTrainingFiles(actions):
 
 def createTestingFiles(actions, recognitionType):
     if recognitionType == "sequence" or recognitionType == "continuous":
-        filedir = os.path.join(currentdir, "RecogidaDatos/actionsFiles/testing-" + recognitionType)
+        filedir = os.path.join(currentdir, "RecogidaDatos/actionsFiles/testing-%s" % (recognitionType))
         symlinks.mkdir_p(filedir)
 
         for iAction in actions.keys():
             for iSequence in actions[iAction].keys():
-                filename = os.path.join(filedir, "action" + str(iAction) + "sequence" + str(iSequence) + ".txt")
+                filename = os.path.join(filedir, "action%ssequence%s.txt" % (iAction, iSequence))
                 joints = getJointsPerSequence(actions[iAction][iSequence])
 
                 with open(filename, "w") as fd:
@@ -215,7 +223,7 @@ def createTestingFiles(actions, recognitionType):
                 fd.close()
 
     else:
-        print("Error! recognition type should be 'sequence' or 'continuous")
+        print("Error! recognition type should be 'sequence' or 'continuous'")
         sys.exit()
 
 
@@ -248,7 +256,7 @@ def parseTestingActionsForContinuousRecognition(actions):
     for itemX in actorX_dirsSorted:
         actions[actorCount + 1] = {}
         sequence = 0
-        truthFile_name = os.path.join(truthDir, itemX + "Esqueleto_frame_segmented.txt")
+        truthFile_name = os.path.join(truthDir, "%sEsqueleto_frame_segmented.txt" % itemX)
 
         with open(truthFile_name, "r") as fd:
             while True:
@@ -260,7 +268,7 @@ def parseTestingActionsForContinuousRecognition(actions):
                     startFrame = int(line.split()[0])
                     endFrame = int(line.split()[1])
 
-                    sequenceXMLDir = os.path.join(actoresDir, actorX_dirsSorted[actorCount] + "/depth/xml_symlink")
+                    sequenceXMLDir = os.path.join(actoresDir, "%s/depth/xml_symlink" % actorX_dirsSorted[actorCount])
                     sequenceXMLFiles = sorted(os.listdir(sequenceXMLDir),
                                               key = lambda x: int((x.split('_')[1]).split('.')[0]))
 
@@ -274,5 +282,5 @@ def parseTestingActionsForContinuousRecognition(actions):
 
 
 if __name__ == "__main__":
-    print "This module is only to be used as an import in the main program."
+    print ("This module is only to be used as an import in the main program.")
     sys.exit()

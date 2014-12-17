@@ -21,7 +21,7 @@ def create_symdirs():
     actoresDir = os.path.join(currentdir, "RecogidaDatos/videos/actores")
     for item in os.listdir(actoresDir):
         dirpath = os.path.join(actoresDir, item)
-        mkdir_p(dirpath + "/depth/xml_symlink")
+        mkdir_p("%s/depth/xml_symlink" % dirpath)
 
 
 def create_symlinks():
@@ -39,7 +39,7 @@ def create_symlinks():
         i = 0
         for fileX in xmlFiles_sorted:
             xmlFile_name = os.path.join(xmlDir, fileX)
-            linkFile_name = os.path.join(linkDir, "frame_" + str(i) + ".xml")
+            linkFile_name = os.path.join(linkDir, "frame_%s.xml" % i)
 
             try:
                 os.symlink(xmlFile_name, linkFile_name)
