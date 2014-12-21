@@ -15,8 +15,8 @@ namespace WaRo14
 
 		static void Main(string[] args)
 		{
-			testSequenceRecognition();
-
+			//testSequenceRecognition();
+			testContinuousRecognition ();
 
 		}
 
@@ -25,11 +25,10 @@ namespace WaRo14
 			// prepare learnings params
 			LearningParams learning_params = new LearningParams ();
 			List<string> class_labels = new List<string> ();
-			class_labels.Add ("nada");
 			class_labels.Add ("mirar_reloj");
 			class_labels.Add ("cruzar_brazos");
 			class_labels.Add ("rascarse_cabeza");
-			class_labels.Add ("sentarse");
+			/*class_labels.Add ("sentarse");
 			class_labels.Add ("levantarse");
 			class_labels.Add ("darse_vuelta");
 			class_labels.Add ("caminar");
@@ -39,11 +38,67 @@ namespace WaRo14
 			class_labels.Add ("senalar");
 			class_labels.Add ("coger");
 			class_labels.Add ("lanzar_sobre_cabeza");
-			class_labels.Add ("lanzar_abajo_arriba");
+			class_labels.Add ("lanzar_abajo_arriba");*/
 
 			learning_params.ClassLabels = class_labels;
 			learning_params.Clustering = LearningParams.ClusteringType.Kmeans;
-			learning_params.InitialK = 64;
+			learning_params.InitialK = 32;
+			learning_params.FeatureSize = 45;
+			/*learning_params.SetDistThresholdsSelection(400);
+			learning_params.SetEvidThresholdsSelection(300);
+			learning_params.UseZones = true;*/
+
+			// Sliding window
+			//learning_params.MinFrames = 5;
+			//learning_params.MaxFrames = 30;
+
+			// prepare train data
+			TrainDataType train_data = new TrainDataType();
+			for (int i = 1; i <= 3; i ++) {
+				generateTrainData (train_data, i);
+			}
+
+			// Train.
+			BoKP bokp = new BoKP(learning_params);
+			bokp.Train(train_data.Dictionary);
+			Console.WriteLine ("SystemTrained!");
+
+			// Prepare test sequence
+			int action = 1;
+			int sequence = 0;
+			string typeOfTesting = "sequence";
+			List<List<double[]>> test_data = generateTestingData (typeOfTesting, action);
+			
+			// Test.
+			string recognition = bokp.EvaluateSequence(test_data[sequence]);
+			
+			// Print result.
+			Console.WriteLine("The test sequence has been recognized as " + recognition);
+		}
+
+		private static void testContinuousRecognition()
+		{
+			// prepare learnings params
+			LearningParams learning_params = new LearningParams ();
+			List<string> class_labels = new List<string> ();
+			class_labels.Add ("mirar_reloj");
+			class_labels.Add ("cruzar_brazos");
+			class_labels.Add ("rascarse_cabeza");
+			/*class_labels.Add ("sentarse");
+			class_labels.Add ("levantarse");
+			class_labels.Add ("darse_vuelta");
+			class_labels.Add ("caminar");
+			class_labels.Add ("saludar");
+			class_labels.Add ("dar_punetazo");
+			class_labels.Add ("dar_patada");
+			class_labels.Add ("senalar");
+			class_labels.Add ("coger");
+			class_labels.Add ("lanzar_sobre_cabeza");
+			class_labels.Add ("lanzar_abajo_arriba");*/
+
+			learning_params.ClassLabels = class_labels;
+			learning_params.Clustering = LearningParams.ClusteringType.Kmeans;
+			learning_params.InitialK = 32;
 			learning_params.FeatureSize = 45;
 			learning_params.SetDistThresholdsSelection(400);
 			learning_params.SetEvidThresholdsSelection(300);
@@ -55,7 +110,7 @@ namespace WaRo14
 
 			// prepare train data
 			TrainDataType train_data = new TrainDataType();
-			for (int i = 1; i <= 6; i ++) {
+			for (int i = 1; i <= 3; i ++) {
 				generateTrainData (train_data, i);
 			}
 
@@ -65,13 +120,17 @@ namespace WaRo14
 			Console.WriteLine ("SystemTrained!");
 
 			// Prepare test sequence
-			List<List<double[]>> test_data = generateTestingData ("sequence", 5);
-			
+			int action = 1;
+			int sequence = 0;
+			string typeOfTesting = "continuous";
+			List<List<double[]>> test_data = generateTestingData (typeOfTesting, action);
+
 			// Test.
-			string recognition = bokp.EvaluateSequence(test_data[0]);
-			
+			List<string> recognition = bokp.EvaluateCHARSequence(test_data[sequence]);
+
 			// Print result.
-			Console.WriteLine("The test sequence has been recognized as " + recognition);
+			Console.WriteLine("The test sequence has been recognized as: ");
+			foreach (string frame in recognition) Console.WriteLine(frame);
 		}
 
 		private static void generateTrainData(TrainDataType train_data, int action)
