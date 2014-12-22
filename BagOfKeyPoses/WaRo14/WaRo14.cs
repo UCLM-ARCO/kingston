@@ -6,131 +6,188 @@ using System.Linq;
 using System.Text;
 using System.IO;
 using System;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.ComponentModel;
 
 namespace WaRo14 
 {
-	class WaRo14
+	public class WaRo14
 	{
-		public const string dataset_path = "/home/roberto/Documents/projects/kingston/RecogidaDatos";
+		public const string dataset_path = "/home/roberto/Documents/repos/kingston/RecogidaDatos";
+		const string FileNameSeq = "/home/roberto/Documents/repos/kingston/BagOfKeyPoses/BoKP_obj_serialized/BoKP_seq.bin";
+		const string FileNameCon = "/home/roberto/Documents/repos/kingston/BagOfKeyPoses/BoKP_obj_serialized/BoKP_con.bin";
 
 		static void Main(string[] args)
 		{
-			//testSequenceRecognition();
+			//testSequenceRecognition ();
 			testContinuousRecognition ();
-
 		}
 
 		private static void testSequenceRecognition()
 		{
-			// prepare learnings params
-			LearningParams learning_params = new LearningParams ();
-			List<string> class_labels = new List<string> ();
-			class_labels.Add ("mirar_reloj");
-			class_labels.Add ("cruzar_brazos");
-			class_labels.Add ("rascarse_cabeza");
-			/*class_labels.Add ("sentarse");
-			class_labels.Add ("levantarse");
-			class_labels.Add ("darse_vuelta");
-			class_labels.Add ("caminar");
-			class_labels.Add ("saludar");
-			class_labels.Add ("dar_punetazo");
-			class_labels.Add ("dar_patada");
-			class_labels.Add ("senalar");
-			class_labels.Add ("coger");
-			class_labels.Add ("lanzar_sobre_cabeza");
-			class_labels.Add ("lanzar_abajo_arriba");*/
+			if (File.Exists (FileNameSeq)) {
+				// Deserialize bokp objetc
+				Stream TestFileStream = File.OpenRead (FileNameSeq);
+				BinaryFormatter deserializer = new BinaryFormatter ();
+				BoKP bokp = (BoKP)deserializer.Deserialize (TestFileStream);
+				TestFileStream.Close ();
 
-			learning_params.ClassLabels = class_labels;
-			learning_params.Clustering = LearningParams.ClusteringType.Kmeans;
-			learning_params.InitialK = 32;
-			learning_params.FeatureSize = 45;
-			/*learning_params.SetDistThresholdsSelection(400);
-			learning_params.SetEvidThresholdsSelection(300);
-			learning_params.UseZones = true;*/
+				// Prepare test sequence
+				int action = 1;
+				int sequence = 0;
+				string typeOfTesting = "sequence";
+				List<List<double[]>> test_data = generateTestingData (typeOfTesting, action);
 
-			// Sliding window
-			//learning_params.MinFrames = 5;
-			//learning_params.MaxFrames = 30;
+				// Test.
+				string recognition = bokp.EvaluateSequence(test_data[sequence]);
 
-			// prepare train data
-			TrainDataType train_data = new TrainDataType();
-			for (int i = 1; i <= 3; i ++) {
-				generateTrainData (train_data, i);
+				// Print result.
+				Console.WriteLine("The test sequence has been recognized as " + recognition);
 			}
+			else {
+				// prepare learnings params
+				LearningParams learning_params = new LearningParams ();
+				List<string> class_labels = new List<string> ();
+				class_labels.Add ("mirar_reloj");
+				class_labels.Add ("cruzar_brazos");
+				class_labels.Add ("rascarse_cabeza");
+				class_labels.Add ("sentarse");
+				class_labels.Add ("levantarse");
+				class_labels.Add ("darse_vuelta");
+				class_labels.Add ("caminar");
+				class_labels.Add ("saludar");
+				class_labels.Add ("dar_punetazo");
+				class_labels.Add ("dar_patada");
+				class_labels.Add ("senalar");
+				class_labels.Add ("coger");
+				class_labels.Add ("lanzar_sobre_cabeza");
+				class_labels.Add ("lanzar_abajo_arriba");
 
-			// Train.
-			BoKP bokp = new BoKP(learning_params);
-			bokp.Train(train_data.Dictionary);
-			Console.WriteLine ("SystemTrained!");
+				learning_params.ClassLabels = class_labels;
+				learning_params.Clustering = LearningParams.ClusteringType.Kmeans;
+				learning_params.InitialK = 32;
+				learning_params.FeatureSize = 45;
+				/*learning_params.SetDistThresholdsSelection(400);
+				learning_params.SetEvidThresholdsSelection(300);
+				learning_params.UseZones = true;*/
 
-			// Prepare test sequence
-			int action = 1;
-			int sequence = 0;
-			string typeOfTesting = "sequence";
-			List<List<double[]>> test_data = generateTestingData (typeOfTesting, action);
-			
-			// Test.
-			string recognition = bokp.EvaluateSequence(test_data[sequence]);
-			
-			// Print result.
-			Console.WriteLine("The test sequence has been recognized as " + recognition);
+				// Sliding window
+				//learning_params.MinFrames = 5;
+				//learning_params.MaxFrames = 30;
+
+				// prepare train data
+				TrainDataType train_data = new TrainDataType();
+				for (int i = 1; i <= 14; i ++) {
+					generateTrainData (train_data, i);
+				}
+
+				// Train.
+				BoKP bokp = new BoKP (learning_params);
+				bokp.Train(train_data.Dictionary);
+				Console.WriteLine ("SystemTrained!");
+
+				// Serialize bokp objetc
+				Stream TestFileStream = File.Create (FileNameSeq);
+				BinaryFormatter serializer = new BinaryFormatter ();
+				serializer.Serialize (TestFileStream, bokp);
+				TestFileStream.Close ();
+
+				// Prepare test sequence
+				int action = 1;
+				int sequence = 0;
+				string typeOfTesting = "sequence";
+				List<List<double[]>> test_data = generateTestingData (typeOfTesting, action);
+
+				// Test.
+				string recognition = bokp.EvaluateSequence(test_data[sequence]);
+
+				// Print result.
+				Console.WriteLine("The test sequence has been recognized as " + recognition);
+			}
 		}
 
 		private static void testContinuousRecognition()
 		{
-			// prepare learnings params
-			LearningParams learning_params = new LearningParams ();
-			List<string> class_labels = new List<string> ();
-			class_labels.Add ("mirar_reloj");
-			class_labels.Add ("cruzar_brazos");
-			class_labels.Add ("rascarse_cabeza");
-			/*class_labels.Add ("sentarse");
-			class_labels.Add ("levantarse");
-			class_labels.Add ("darse_vuelta");
-			class_labels.Add ("caminar");
-			class_labels.Add ("saludar");
-			class_labels.Add ("dar_punetazo");
-			class_labels.Add ("dar_patada");
-			class_labels.Add ("senalar");
-			class_labels.Add ("coger");
-			class_labels.Add ("lanzar_sobre_cabeza");
-			class_labels.Add ("lanzar_abajo_arriba");*/
+			if (File.Exists (FileNameCon)) {
+				Stream TestFileStream = File.OpenRead (FileNameCon);
+				BinaryFormatter deserializer = new BinaryFormatter ();
+				BoKP bokp = (BoKP)deserializer.Deserialize (TestFileStream);
+				TestFileStream.Close ();
 
-			learning_params.ClassLabels = class_labels;
-			learning_params.Clustering = LearningParams.ClusteringType.Kmeans;
-			learning_params.InitialK = 32;
-			learning_params.FeatureSize = 45;
-			learning_params.SetDistThresholdsSelection(400);
-			learning_params.SetEvidThresholdsSelection(300);
-			learning_params.UseZones = true;
+				// Prepare test sequence
+				int actor = 1;
+				int sequence = 0;
+				string typeOfTesting = "continuous";
+				List<List<double[]>> test_data = generateTestingData (typeOfTesting, actor);
 
-			// Sliding window
-			learning_params.MinFrames = 5;
-			learning_params.MaxFrames = 30;
+				// Test.
+				List<string> recognition = bokp.EvaluateCHARSequence(test_data[sequence]);
 
-			// prepare train data
-			TrainDataType train_data = new TrainDataType();
-			for (int i = 1; i <= 3; i ++) {
-				generateTrainData (train_data, i);
+				// Print result.
+				Console.WriteLine("The test sequence has been recognized as: ");
+				foreach (string frame in recognition) Console.WriteLine(frame);
+			} 
+			else {
+				// prepare learnings params
+				LearningParams learning_params = new LearningParams ();
+				List<string> class_labels = new List<string> ();
+				class_labels.Add ("mirar_reloj");
+				class_labels.Add ("cruzar_brazos");
+				class_labels.Add ("rascarse_cabeza");
+				class_labels.Add ("sentarse");
+				class_labels.Add ("levantarse");
+				class_labels.Add ("darse_vuelta");
+				class_labels.Add ("caminar");
+				class_labels.Add ("saludar");
+				class_labels.Add ("dar_punetazo");
+				class_labels.Add ("dar_patada");
+				class_labels.Add ("senalar");
+				class_labels.Add ("coger");
+				class_labels.Add ("lanzar_sobre_cabeza");
+				class_labels.Add ("lanzar_abajo_arriba");
+
+				learning_params.ClassLabels = class_labels;
+				learning_params.Clustering = LearningParams.ClusteringType.Kmeans;
+				learning_params.InitialK = 32;
+				learning_params.FeatureSize = 45;
+				learning_params.SetDistThresholdsSelection(400);
+				learning_params.SetEvidThresholdsSelection(300);
+				learning_params.UseZones = true;
+
+				// Sliding window
+				learning_params.MinFrames = 5;
+				learning_params.MaxFrames = 30;
+
+				// prepare train data
+				TrainDataType train_data = new TrainDataType();
+				for (int i = 1; i <= 14; i ++) {
+					generateTrainData (train_data, i);
+				}
+
+				// Train.
+				BoKP bokp = new BoKP (learning_params);
+				bokp.Train(train_data.Dictionary);
+				Console.WriteLine ("SystemTrained!");
+
+				// Serialize bokp objetc
+				Stream TestFileStream = File.Create (FileNameCon);
+				BinaryFormatter serializer = new BinaryFormatter ();
+				serializer.Serialize (TestFileStream, bokp);
+				TestFileStream.Close ();
+
+				// Prepare test sequence
+				int actor = 1;
+				int sequence = 0;
+				string typeOfTesting = "continuous";
+				List<List<double[]>> test_data = generateTestingData (typeOfTesting, actor);
+
+				// Test.
+				List<string> recognition = bokp.EvaluateCHARSequence(test_data[sequence]);
+
+				// Print result.
+				Console.WriteLine("The test sequence has been recognized as: ");
+				foreach (string frame in recognition) Console.WriteLine(frame);
 			}
-
-			// Train.
-			BoKP bokp = new BoKP(learning_params);
-			bokp.Train(train_data.Dictionary);
-			Console.WriteLine ("SystemTrained!");
-
-			// Prepare test sequence
-			int action = 1;
-			int sequence = 0;
-			string typeOfTesting = "continuous";
-			List<List<double[]>> test_data = generateTestingData (typeOfTesting, action);
-
-			// Test.
-			List<string> recognition = bokp.EvaluateCHARSequence(test_data[sequence]);
-
-			// Print result.
-			Console.WriteLine("The test sequence has been recognized as: ");
-			foreach (string frame in recognition) Console.WriteLine(frame);
 		}
 
 		private static void generateTrainData(TrainDataType train_data, int action)
