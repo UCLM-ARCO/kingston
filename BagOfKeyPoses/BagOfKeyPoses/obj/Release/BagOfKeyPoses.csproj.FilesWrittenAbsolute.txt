@@ -1,0 +1,7 @@
+/home/roberto/Documents/project/BagOfKeyPoses/BagOfKeyPoses/obj/Release/.NETFramework,Version=v4.0.AssemblyAttribute.cs
+/home/roberto/Documents/project/BagOfKeyPoses/BagOfKeyPoses/bin/Release/BagOfKeyPoses.dll.mdb
+/home/roberto/Documents/project/BagOfKeyPoses/BagOfKeyPoses/bin/Release/BagOfKeyPoses.dll
+/home/roberto/Documents/project/BagOfKeyPoses/BagOfKeyPoses/obj/Release/BagOfKeyPoses.dll
+/home/roberto/Documents/project/BagOfKeyPoses/BagOfKeyPoses/obj/Release/BagOfKeyPoses.dll.mdb
+/home/roberto/Documents/project/BagOfKeyPoses/BagOfKeyPoses/bin/Release/Util.dll
+/home/roberto/Documents/project/BagOfKeyPoses/BagOfKeyPoses/bin/Release/Util.dll.mdb

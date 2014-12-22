@@ -1,0 +1,9 @@
+/home/roberto/Documents/project/BagOfKeyPoses/WaRo14/obj/x86/Release/.NETFramework,Version=v4.5.AssemblyAttribute.cs
+/home/roberto/Documents/project/BagOfKeyPoses/WaRo14/bin/Release/WaRo14.exe.mdb
+/home/roberto/Documents/project/BagOfKeyPoses/WaRo14/bin/Release/WaRo14.exe
+/home/roberto/Documents/project/BagOfKeyPoses/WaRo14/obj/x86/Release/WaRo14.exe
+/home/roberto/Documents/project/BagOfKeyPoses/WaRo14/obj/x86/Release/WaRo14.exe.mdb
+/home/roberto/Documents/project/BagOfKeyPoses/WaRo14/bin/Release/BagOfKeyPoses.dll
+/home/roberto/Documents/project/BagOfKeyPoses/WaRo14/bin/Release/BagOfKeyPoses.dll.mdb
+/home/roberto/Documents/project/BagOfKeyPoses/WaRo14/bin/Release/Util.dll
+/home/roberto/Documents/project/BagOfKeyPoses/WaRo14/bin/Release/Util.dll.mdb

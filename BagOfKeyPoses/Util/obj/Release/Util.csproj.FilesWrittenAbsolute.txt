@@ -1,0 +1,5 @@
+/home/roberto/Documents/project/BagOfKeyPoses/Util/obj/Release/.NETFramework,Version=v4.0.AssemblyAttribute.cs
+/home/roberto/Documents/project/BagOfKeyPoses/Util/bin/Release/Util.dll.mdb
+/home/roberto/Documents/project/BagOfKeyPoses/Util/bin/Release/Util.dll
+/home/roberto/Documents/project/BagOfKeyPoses/Util/obj/Release/Util.dll
+/home/roberto/Documents/project/BagOfKeyPoses/Util/obj/Release/Util.dll.mdb
