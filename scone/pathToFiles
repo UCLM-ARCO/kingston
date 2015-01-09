@@ -1,43 +1,6 @@
-;ifconfig lo 127.0.0.1
-; (load "/home/mjsantof/repo/mariajose.santofimia/kingston/scone/pathToFiles")
+;;;(load "/home/maria/Scone/pathToFiles")
 
-(load "/home/mjsantof/repo/mariajose.santofimia/tesis/CMU/Scone/scone/scone-loader.lisp")
-(scone "0.7b")
-
-;; Load general knowledge
-;(load-kb "/home/mjsantof/repo/mariajose.santofimia/tesis/CMU/Scone/csahin/events/kb/core-kb_time")
-(load-kb "/home/mjsantof/repo/mariajose.santofimia/tesis/CMU/Scone/scone/0.7b/kb/core-kb.lisp")
-
-
-;; Load general events knowledge
-(load "/home/mjsantof/repo/mariajose.santofimia/tesis/CMU/Scone/csahin/events/events")
-
-;; Load general events knowledge
-(load "/home/mjsantof/repo/mariajose.santofimia/tesis/CMU/Scone/csahin/events/new-event")
-
-;(load-kb "/home/mjsantof/repo/mariajose.santofimia/tesis/CMU/Scone/files/common/service-architecture-events")
-(load-kb "/home/mjsantof/repo/mariajose.santofimia/tesis/CMU/Scone/files/common/service-kb")
-
-
-;; Load movement and MLP knowledge base
-(load-kb "/home/mjsantof/repo/mariajose.santofimia/tesis/CMU/Scone/csahin/events/kb/core-extension.lisp")
-(load "/home/mjsantof/repo/mariajose.santofimia/tesis/CMU/Scone/csahin/events/kb/move")
-(load-kb "/home/mjsantof/repo/mariajose.santofimia/tesis/CMU/Scone/files/MLP/Shape")
-(load-kb "/home/mjsantof/repo/mariajose.santofimia/tesis/CMU/Scone/files/common/building-kb")
-;(load-kb "/home/mjsantof/repo/mariajose.santofimia/tesis/CMU/Scone/files/common/actions")
-
-;; LOAD DOMAIN INDEPENDENT KNOWLEDGE
-(load "/home/mjsantof/repo/mariajose.santofimia/kingston/scone/domain_independant/event-calculus.lisp")
-(load "/home/mjsantof/repo/mariajose.santofimia/kingston/scone/domain_independant/actions.lisp")
-(load "/home/mjsantof/repo/mariajose.santofimia/kingston/scone/domain_independant/actions_1.lisp")
-(load "/home/mjsantof/repo/mariajose.santofimia/kingston/scone/domain_independant/expectations.lisp")
-(load "/home/mjsantof/repo/mariajose.santofimia/kingston/scone/specific_domain/context_description.lisp")
-
-
-;(load-kb "/home/mjsantof/repo/mariajose.santofimia/tesis/CMU/Scone/scone/0.8.0/kb/core-components/time-model_MJS.lisp")
-
-
-;; PARA EL CORE 0.8.0
-;;(load "/home/mjsantof/repo/mariajose.santofimia/tesis/CMU/Scone/scone/scone-loader.lisp")
-;;(scone "0.8.0")
-;;(load-kb "/home/mjsantof/repo/mariajose.santofimia/tesis/CMU/Scone/scone/0.8.0/kb/core.lisp")
+(load "/home/maria/Scone/scone-loader.lisp")
+(scone "0.9")
+(load "/home/maria/Scone/0.9/kb/core.lisp")
+(load "/home/maria/Scone/0.9/kb/cshar.lisp")
