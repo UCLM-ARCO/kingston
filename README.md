@@ -13,7 +13,7 @@ The folders of reasoning part of the system are: Multilevel_activities and scone
 
 - Multilevel_activities folder: this folder is compose by cshar-components folder and cshar.lisp file. This file has the statements to load the specified knowledge in the knowledge base Scone. 
 
-** Cshar-components folder: this folder has all files about modeling knowledge referring movements, actions, events and list of expected actions. These are developed in LIPS terms.
+- Cshar-components folder: this folder has all files about modeling knowledge referring movements, actions, events and list of expected actions. These are developed in LIPS terms.
 
 - scone folder: this folder contains knowledge modeling of previous project. It is the base for the new knowledge in new terms of Scone. 
 
