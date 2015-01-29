@@ -41,20 +41,18 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
+    <Reference Include="BagOfKeyPoses">
+      <HintPath>..\..\..\BagOfKeyPoses\trunk\BagOfKeyPoses\BagOfKeyPoses\bin\Debug\BagOfKeyPoses.dll</HintPath>
+    </Reference>
+    <Reference Include="Util">
+      <HintPath>..\..\..\BagOfKeyPoses\trunk\BagOfKeyPoses\BagOfKeyPoses\bin\Debug\Util.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Util\Util.csproj">
-      <Project>{3ACCD24A-1291-4C81-A658-7EC38C777B3D}</Project>
-      <Name>Util</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\BagOfKeyPoses\BagOfKeyPoses.csproj">
-      <Project>{24CDD5CE-48FC-40D5-A909-658721A11708}</Project>
-      <Name>BagOfKeyPoses</Name>
-    </ProjectReference>
+    <Compile Include="..\WaRo14\WaRo14.cs">
+      <Link>WaRo14.cs</Link>
+    </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

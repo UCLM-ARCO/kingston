@@ -1,7 +1,7 @@
-/home/roberto/Documents/project/BagOfKeyPoses/BagOfKeyPoses/obj/Debug/.NETFramework,Version=v4.0.AssemblyAttribute.cs
-/home/roberto/Documents/project/BagOfKeyPoses/BagOfKeyPoses/bin/Debug/BagOfKeyPoses.dll.mdb
-/home/roberto/Documents/project/BagOfKeyPoses/BagOfKeyPoses/bin/Debug/BagOfKeyPoses.dll
-/home/roberto/Documents/project/BagOfKeyPoses/BagOfKeyPoses/obj/Debug/BagOfKeyPoses.dll
-/home/roberto/Documents/project/BagOfKeyPoses/BagOfKeyPoses/obj/Debug/BagOfKeyPoses.dll.mdb
-/home/roberto/Documents/project/BagOfKeyPoses/BagOfKeyPoses/bin/Debug/Util.dll
-/home/roberto/Documents/project/BagOfKeyPoses/BagOfKeyPoses/bin/Debug/Util.dll.mdb
+/home/mjsantof/repo/kingston/BagOfKeyPoses/BagOfKeyPoses/obj/Debug/.NETFramework,Version=v4.0.AssemblyAttribute.cs
+/home/mjsantof/repo/kingston/BagOfKeyPoses/BagOfKeyPoses/bin/Debug/BagOfKeyPoses.dll.mdb
+/home/mjsantof/repo/kingston/BagOfKeyPoses/BagOfKeyPoses/bin/Debug/BagOfKeyPoses.dll
+/home/mjsantof/repo/kingston/BagOfKeyPoses/BagOfKeyPoses/obj/Debug/BagOfKeyPoses.dll
+/home/mjsantof/repo/kingston/BagOfKeyPoses/BagOfKeyPoses/obj/Debug/BagOfKeyPoses.dll.mdb
+/home/mjsantof/repo/kingston/BagOfKeyPoses/BagOfKeyPoses/bin/Debug/Util.dll
+/home/mjsantof/repo/kingston/BagOfKeyPoses/BagOfKeyPoses/bin/Debug/Util.dll.mdb

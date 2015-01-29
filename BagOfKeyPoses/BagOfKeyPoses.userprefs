@@ -1,12 +1,6 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="WaRo14/WaRo14.cs">
-    <Files>
-      <File FileName="WaRo14/WaRo14.cs" Line="14" Column="14" />
-      <File FileName="BagOfKeyPoses/BoKP.cs" Line="1" Column="1" />
-      <File FileName="SampleUsage/Program.cs" Line="10" Column="10" />
-    </Files>
-  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.Workbench />
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore />
   </MonoDevelop.Ide.DebuggingService.Breakpoints>

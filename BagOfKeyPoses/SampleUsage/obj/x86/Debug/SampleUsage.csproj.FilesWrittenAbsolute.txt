@@ -1,3 +1,10 @@
 /home/roberto/Documents/project/BagOfKeyPoses/SampleUsage/obj/x86/Debug/.NETFramework,Version=v4.0,Profile=Client.AssemblyAttribute.cs
 /home/roberto/Documents/project/BagOfKeyPoses/SampleUsage/bin/Debug/Util.dll
 /home/roberto/Documents/project/BagOfKeyPoses/SampleUsage/bin/Debug/Util.dll.mdb
+/home/mjsantof/repo/kingston/BagOfKeyPoses/SampleUsage/obj/x86/Debug/.NETFramework,Version=v4.0,Profile=Client.AssemblyAttribute.cs
+/home/mjsantof/repo/kingston/BagOfKeyPoses/SampleUsage/bin/Debug/SampleUsage.exe.mdb
+/home/mjsantof/repo/kingston/BagOfKeyPoses/SampleUsage/bin/Debug/SampleUsage.exe
+/home/mjsantof/repo/kingston/BagOfKeyPoses/SampleUsage/obj/x86/Debug/SampleUsage.exe
+/home/mjsantof/repo/kingston/BagOfKeyPoses/SampleUsage/obj/x86/Debug/SampleUsage.exe.mdb
+/home/mjsantof/repo/kingston/BagOfKeyPoses/SampleUsage/bin/Debug/BagOfKeyPoses.dll
+/home/mjsantof/repo/kingston/BagOfKeyPoses/SampleUsage/bin/Debug/Util.dll
