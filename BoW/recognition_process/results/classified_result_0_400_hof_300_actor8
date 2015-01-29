@@ -1,0 +1,16 @@
+10 
+3 
+9 
+10 
+13 
+1 
+9 
+5 
+9 
+5 
+6 
+9 
+6 
+Accuracy = 15.3846% (2/13) (classification)
+Mean squared error = 17.3077 (regression)
+Squared correlation coefficient = 0.235294 (regression)
