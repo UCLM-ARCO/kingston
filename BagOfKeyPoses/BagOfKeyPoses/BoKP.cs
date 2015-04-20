@@ -28,7 +28,8 @@ namespace BagOfKeyPoses
     /// <summary>
     /// This is the entry point of this library. It handles the learning and recognition of any kind of temporally related sequences of features by means
     /// of the bag of key poses method.
-    ///  
+    /// NOTE: This class is not thread-safe.
+    /// 
     /// In order to use this code in research work the following citation is required: 
     ///     Chaaraoui, A. A., Climent-Pérez, P., & Flórez-Revuelta, F. (2013). 
     ///     Silhouette-based human action recognition using sequences of key poses. 
@@ -37,10 +38,8 @@ namespace BagOfKeyPoses
     /// Code is distributed under the free software license Apache 2.0 License (http://www.apache.org/licenses/LICENSE-2.0.html) 
     /// and requires preservation of the copyright notice and disclaimer.
     /// </summary>
-
-	[Serializable()]
-	public class BoKP
-	{
+    public class BoKP
+    {
         // Static
         public static readonly object LockFolds = new object();                         // The employed lock for concurrent folds
         //public static int FoldsInParallel = -1;                                         // By default folds are executed in parallel (-1 no limit)
@@ -76,19 +75,19 @@ namespace BagOfKeyPoses
         /// <param name="trainData">Sequences of features hashed per class</param>
         /// <param name="keyPoses">Already learnt Key poses for learning of new action classes</param>
         /// </summary>
-        public void Train(TrainDataType trainData, /*BackgroundWorker bgw = null, */AssociativeArray<string, List<double[]>> keyPoses = null)
+        public void Train(TrainDataType trainData, BackgroundWorker bgw = null, AssociativeArray<string, List<double[]>> keyPoses = null)
         {
             try
             {            
                 // Learn Key Poses, key pose weights and key pose sequences
-                Config.KeyPoses = KeyPoseWeighter.DoLearn(trainData, Config, /*bgw, */true, keyPoses);
+                Config.KeyPoses = KeyPoseWeighter.DoLearn(trainData, Config, bgw, Config.Params.CalcKPWeightsAndSeqs, keyPoses);
                 Config.KeyPoseDistanceCache = new AssociativeMatrix<KeyPose, KeyPose, double>();
 
                 if(Config.Params.UseZones)
                     KeyPoseWeighter.LearnZones(trainData, Config);               
 
-                //if (bgw != null)
-                //    bgw.ReportProgress(100, "\nDone.");
+                if (bgw != null)
+                    bgw.ReportProgress(100, "\nDone.");
             }
             catch (Exception e)
             {
@@ -103,8 +102,16 @@ namespace BagOfKeyPoses
         /// <returns></returns>
         private KeyPose TestOne(double[] feature)
         {
-            // Find closest keypose
-            CurrentKeyPose = KeyPose.ClosestAmongAll(feature, Config.KeyPoses, Config, true);
+            if (!Config.Params.OneClassLearning)
+            {
+                // Substitute with nearest neighbour key pose
+                CurrentKeyPose = KeyPose.ClosestAmongAll(feature, Config.KeyPoses, Config, true);
+            }
+            else
+            {
+                // Test feature could belong to an unknown class
+                CurrentKeyPose = new KeyPose("test", feature);
+            }
 
             return CurrentKeyPose;
         }
@@ -142,6 +149,65 @@ namespace BagOfKeyPoses
             MatchedTestSequence = new KeyPoseSequence();
             testSequence = sequence;
         }
+        public string[] TestSequenceDTW5actions(out double minDistance)
+        {
+            string action = null;
+            string[] res = new string[14];
+            minDistance = double.MaxValue;
+            Dictionary<string, double> posibleActions = new Dictionary<string, double>();
+
+            foreach (KeyValuePair<string, List<KeyPoseSequence>> trainSequences in Config.MatchedKeyPoseSequences) // For each action
+            {
+                foreach (KeyPoseSequence trainSequence in trainSequences.Value) // For each sequence
+                {
+                    if (trainSequence.Items.Count > 0)
+                    {
+                        // Early Abandon DTW
+                        SimpleEarlyAbandonDTW<KeyPose> dtw = new SimpleEarlyAbandonDTW<KeyPose>(MatchedTestSequence.Items, trainSequence.Items);
+                        dtw.ComputeDTW(new KeyPoseComparison(Config, trainSequence.ClassLabel), minDistance);
+
+                        double d = dtw.GetSum();
+                        action = trainSequences.Key;
+                        posibleActions[action] = d;
+                    }
+                }
+            }
+            var ordered = posibleActions.OrderBy(x => x.Value);
+            int iter=0;
+            foreach (var elem in ordered)
+            {
+                res[iter++] = elem.Key;
+            }
+            
+            // ascending order
+           /* var items = from pair in posibleActions
+                        orderby pair.Value ascending
+                        select pair;
+
+            int iter = 0;
+            foreach (KeyValuePair<string, double> pair in items)
+            {
+                res[iter] = pair.Key;
+                if (iter == 4)
+                    break;
+                else
+                    iter++;
+            }*/
+
+            return res;
+        }
+
+        public string[] EvaluateSequenceRet5(List<double[]> sequence)
+        {
+            // Init sequence
+            TestSequenceInit(sequence);
+
+            // Evaluate sequence
+            while (TestSequenceNext()) ;
+
+            // Obtain result
+            return TestSequenceDTW5actions();
+        }
 
         /// <summary>
         /// Uses the current matchedTestSequence to match it to the closest of the saved config.MatchedKeyPoses by using
@@ -157,70 +223,30 @@ namespace BagOfKeyPoses
             {
                 foreach (KeyPoseSequence trainSequence in trainSequences.Value) // For each sequence
                 {
-                    // Simple DTW
-                    //SimpleDTW<KeyPose> dtw = new SimpleDTW<KeyPose>(matchedTestSequence.Items, trainSequence.Items, new KeyPoseComparison(Config, keyPoseDistanceCache, trainSequence.Action));
-                    //dtw.ComputeDTW();
-
-                    // Early Abandon DTW
-                    SimpleEarlyAbandonDTW<KeyPose> dtw = new SimpleEarlyAbandonDTW<KeyPose>(MatchedTestSequence.Items, trainSequence.Items);
-                    dtw.ComputeDTW(new KeyPoseComparison(Config, trainSequence.ClassLabel), minDistance);
-
-                    double d = dtw.GetSum();
-
-                    if (d < minDistance)
+                    if (trainSequence.Items.Count > 0)
                     {
-                        minDistance = d;
-                        action = trainSequences.Key;
+                        // Simple DTW
+                        //SimpleDTW<KeyPose> dtw = new SimpleDTW<KeyPose>(matchedTestSequence.Items, trainSequence.Items, new KeyPoseComparison(Config, keyPoseDistanceCache, trainSequence.Action));
+                        //dtw.ComputeDTW();
+
+                        // Early Abandon DTW
+                        SimpleEarlyAbandonDTW<KeyPose> dtw = new SimpleEarlyAbandonDTW<KeyPose>(MatchedTestSequence.Items, trainSequence.Items);
+                        dtw.ComputeDTW(new KeyPoseComparison(Config, trainSequence.ClassLabel), minDistance);
+
+                        double d = dtw.GetSum();
+
+                        if (d < minDistance)
+                        {
+                            minDistance = d;
+                            action = trainSequences.Key;
+                        }
                     }
                 }
             }
 
             return action;
         }
-			
-		/// <summary>
-		/// Same as TestSequenceDTW but return 5 posibles actions
-		/// Dynamic Time Warping
-		/// </summary>
-		/// <returns></returns>
-		public string[] TestSequenceDTW5actions(out double minDistance)
-		{
-			string action = null;
-			string[] res = new string[5];
-			minDistance = double.MaxValue;
-			Dictionary<string, double> posibleActions = new Dictionary<string, double> ();
 
-			foreach (KeyValuePair<string, List<KeyPoseSequence>> trainSequences in Config.MatchedKeyPoseSequences) // For each action
-			{
-				foreach (KeyPoseSequence trainSequence in trainSequences.Value) // For each sequence
-				{
-					// Simple DTW
-					SimpleDTW<KeyPose> dtw = new SimpleDTW<KeyPose>(MatchedTestSequence.Items, trainSequence.Items);
-					dtw.ComputeDTW(new KeyPoseComparison(Config, trainSequence.ClassLabel));
-
-					double d = dtw.GetSum();
-					action = trainSequences.Key;
-					posibleActions [action] = d;
-				}
-			}
-				
-			// ascending order
-			var items = from pair in posibleActions
-			            orderby pair.Value ascending
-			            select pair;
-
-			int iter = 0;
-			foreach (KeyValuePair<string, double> pair in items) {
-				res [iter] = pair.Key;
-				if (iter == 4)
-					break;
-				else
-					iter++;
-			}
-
-			return res;
-		}
-			
         /// <summary>
         /// Parameter-less overload of TestSequenceDTW
         /// </summary>
@@ -231,15 +257,17 @@ namespace BagOfKeyPoses
             return TestSequenceDTW(out d);
         }
 
-		/// <summary>
-		/// Parameter-less overload of TestSequenceDTW5actions
-		/// </summary>
-		/// <returns></returns>
-		private string[] TestSequenceDTW5actions()
-		{
-			double d;
-			return TestSequenceDTW5actions(out d);
-		}
+
+        /// <summary>
+        /// Parameter-less overload of TestSequenceDTW5actions
+        /// </summary>
+        /// <returns></returns>
+        private string[] TestSequenceDTW5actions()
+        {
+            double d;
+            return TestSequenceDTW5actions(out d);
+        }
+
 
         /// <summary>
         /// Evaluates a given sequence with DTW and returns the class label of the nearest neighbor sequence
@@ -248,33 +276,50 @@ namespace BagOfKeyPoses
         /// <returns></returns>
         public string EvaluateSequence(List<double[]> sequence)
         {
+            double dist;
+            return EvaluateSequence(sequence, out dist);
+        }
+
+        /// <summary>
+        /// Evaluates a given sequence with DTW and returns the class label of the nearest neighbor sequence.
+        /// </summary>
+        /// <param name="sequence"></param>
+        /// <returns></returns>
+        public string EvaluateSequence(List<double[]> sequence, out double distance)
+        {
             // Init sequence
             TestSequenceInit(sequence);
 
             // Evaluate sequence
             while (TestSequenceNext());
 
-            // Obtain result
-            return TestSequenceDTW();
+            // Obtain result            
+            return TestSequenceDTW(out distance);
         }
 
-		/// <summary>
-		/// Evaluates a given sequence with DTW and returns the class label of the 5 nearest neighbor sequences
-		/// </summary>
-		/// <param name="sequence"></param>
-		/// <returns></returns>
-		public string[] EvaluateSequenceRet5(List<double[]> sequence)
-		{
-			// Init sequence
-			TestSequenceInit(sequence);
-
-			// Evaluate sequence
-			while (TestSequenceNext());
-
-			// Obtain result
-			return TestSequenceDTW5actions();
-		}
-
+        /// <summary>
+        /// Evaluates a given sequence with DTW and returns the class label of the 5 nearest neighbor sequences
+        /// </summary>
+        /// <param name="sequence"></param>
+        /// <returns></returns>
+       
+        /// <summary>
+        /// Evaluates a given sequence based only on its features and returns the class labels and distances of the 
+        /// nearest neighbour key poses.
+        /// </summary>
+        /// <param name="sequence">Input sequence of features</param>
+        /// <param name="distances">Distances of the nearest neighbour key poses</param>
+        public void EvaluatePoses(List<double[]> sequence, out List<double> distances)
+        {
+            distances = new List<double>();
+            
+            // Evaluate sequence.
+            foreach (var feature in sequence)
+            {
+                KeyPose nnkp = KeyPose.ClosestAmongAll(feature, Config.KeyPoses, Config, true);
+                distances.Add(nnkp.MatchedDistance);
+            }
+        }
 
         /// <summary>
         /// Applys continuous evaluation to the given sequence based on sliding window technique and segment evaluation.
@@ -330,7 +375,7 @@ namespace BagOfKeyPoses
                 {
                     // Evaluate the current sequence
                     double d;
-					string bestMatch = TestSequenceDTW(out d);
+                    string bestMatch = TestSequenceDTW(out d);
 
                     if (d <= Config.Params.DThreshold[bestMatch] * segmentFrame) // Frame-wise threshold
                     {
