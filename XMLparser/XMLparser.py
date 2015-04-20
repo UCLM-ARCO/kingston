@@ -28,7 +28,7 @@ def getFrameFromXML(xmlpath):
     root = tree.getroot()
     existFrame = False
 
-    if not len(root[2]) == 1:
+    if len(root[2]) == 0:
         frame = fr.Frame()
     else:
         existFrame = True
@@ -76,35 +76,6 @@ def getFrameFromXML(xmlpath):
                          joint_right_hip, joint_left_knee, joint_right_knee, joint_left_foot, joint_right_foot)
 
     return existFrame, frame
-
-
-def errorCase1(action, j, step):
-    if step == "training":
-        if ((action == 11 and j == 9) or (action == 12 and j == 9)
-            or (action == 13 and j == 6) or (action == 13 and j == 7)
-            or (action == 13 and j == 9) or (action == 14 and j == 0)
-            or (action == 14 and j == 1) or (action == 14 and j == 2)
-            or (action == 14 and j == 3) or (action == 14 and j == 5)
-            or (action == 14 and j == 6) or (action == 14 and j == 7)
-            or (action == 14 and j == 8) or (action == 14 and j == 9)):
-            return True
-        else:
-            return False
-    else:
-        if ((action == 5 and j == 6) or (action == 6 and j == 9)
-            or (action == 7 and j == 2) or (action == 7 and j == 9)):
-            return True
-        else:
-            return False
-
-
-def errorCase2(actor, sequence):
-    if ((actor == 3 and sequence == 114) or (actor == 7 and sequence == 59)
-        or (actor == 10 and sequence == 44)):
-        return True
-    else:
-        return False
-
 
 def getSequenceListing(itemXdir, action):
     dicTmp = {}
@@ -169,13 +140,11 @@ def loopThroughActions(actions, esqueletonFiles, sequencesDirs, step):
 
             if not i == 0:
 
-                sequenceXMLDir = os.path.join(actoresDir, "%s/depth/xml_symlink" % sequencesDirs[j])
+                sequenceXMLDir = os.path.join(actoresDir, "%s/depth_symlink/xml_symlink" % sequencesDirs[j])
                 sequenceXMLFiles = sorted(os.listdir(sequenceXMLDir),
-                                          key = lambda x: int((x.split('_')[1]).split('.')[0]))
+                                          key = lambda x: int(x.split('_')[1]))
 
-                if not errorCase1(action, j, step):
-
-                    for x in range(len(dicTmp)):
+                for x in range(len(dicTmp)):
                         startFrame = int(dicTmp[x][0])
                         endFrame = int(dicTmp[x][1])
 
@@ -268,14 +237,13 @@ def parseTestingActionsForContinuousRecognition(actions):
                     startFrame = int(line.split()[0])
                     endFrame = int(line.split()[1])
 
-                    sequenceXMLDir = os.path.join(actoresDir, "%s/depth/xml_symlink" % actorX_dirsSorted[actorCount])
+                    sequenceXMLDir = os.path.join(actoresDir, "%s/depth_symlink/xml_symlink" % actorX_dirsSorted[actorCount])                              
                     sequenceXMLFiles = sorted(os.listdir(sequenceXMLDir),
-                                              key = lambda x: int((x.split('_')[1]).split('.')[0]))
-
+                                              key = lambda x: int(x.split('_')[1]))
+                                          
                     actions[actorCount + 1][sequence] = []
-                    if not errorCase2(actorCount + 1, sequence):
-                        generateListOfFramesBySequence(startFrame, endFrame, actions, sequenceXMLDir, sequenceXMLFiles, actorCount + 1, sequence)
-                        sequence += 1
+                    generateListOfFramesBySequence(startFrame, endFrame, actions, sequenceXMLDir, sequenceXMLFiles, actorCount + 1, sequence)
+                    sequence += 1
 
         fd.close()
         actorCount += 1

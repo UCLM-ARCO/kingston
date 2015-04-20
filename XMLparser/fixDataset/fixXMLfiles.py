@@ -27,7 +27,7 @@ def fixdir(path):
 def fixfiles():
     actoresDir = os.path.join(currentdir, "RecogidaDatos/videos/actores")
     for itemX in os.listdir(actoresDir):
-        xmlDir = os.path.join(actoresDir, "%s/depth/xml" % itemX)
+        xmlDir = os.path.join(actoresDir, "%s/depth_symlink/xml_symlink" % itemX)
         fixdir(xmlDir)
 
 

@@ -36,4 +36,4 @@ print("Normalized!")
 # obtain action files
 xmlp.createTrainingFiles(trainingActions)
 xmlp.createTestingFiles(testingSeqActions, "sequence")
-#xmlp.createTestingFiles(testingConActions, "continuous")
+xmlp.createTestingFiles(testingConActions, "continuous")
