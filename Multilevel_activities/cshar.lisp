@@ -10,48 +10,48 @@
 
 ;;; Service architecture-events.
 
-(load-kb "cshar-components/service-architecture-eventsNew")
+(load-kb "cshar-components/ma-service_architecture_events")
 
 ;;;; ----------------------------------------------------------------------
 ;;;; EVENT CALCULUS
 
 ;;; Knowledge of event calculus.
 
-(load-kb "cshar-components/event-calculus")
+(load-kb "cshar-components/ma-event_calculus")
 
 ;;;; ----------------------------------------------------------------------
 ;;;; MOVE
 
 ;;; Knowledge of actions moves.
 
-(load-kb "cshar-components/moveNew")
+(load-kb "cshar-components/ma-move")
 
 ;;;; ----------------------------------------------------------------------
 ;;;; ACTIONS
 
 ;;; Knowledge of persons actions.
 
-(load-kb "cshar-components/actionsNew")
+(load-kb "cshar-components/ma-actions")
 
 ;;;; ----------------------------------------------------------------------
 ;;;; ACTIONS 1
 
 ;;; Knowledge of persons actions 1.
 
-(load-kb "cshar-components/actions_1")
+(load-kb "cshar-components/ma-actions_1")
 
 ;;;; ----------------------------------------------------------------------
 ;;;; EXPECTATIONS
 
 ;;; Knowledge of expectations
 
-(load-kb "cshar-components/expectationsNew")
+(load-kb "cshar-components/ma-expectations")
 
 ;;;; ----------------------------------------------------------------------
 ;;;; CONTEXT DESCRIPTION
 
 ;;; Knowledge of specific domain.
 
-(load-kb "cshar-components/context_descriptionNew")
+(load-kb "cshar-components/ma-context_description")
 
 ;;;; ----------------------------------------------------------------------
