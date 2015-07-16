@@ -43,65 +43,67 @@ def getFrameFromXML(xmlpath):
         joints = root[1][0][4]
 
         for joint in joints:
-            if joint.tag == "joint_SpineBase":
-                joint_SpineBase = [joint[0][0].text, joint[0][1].text, joint[0][2].text]
-            elif joint.tag == "joint_SpineMid":
-                joint_SpineMid = [joint[0][0].text, joint[0][1].text, joint[0][2].text]
-            elif joint.tag == "joint_Neck":
-                joint_Neck = [joint[0][0].text, joint[0][1].text, joint[0][2].text]
-            elif joint.tag == "joint_Head":
-                joint_Head = [joint[0][0].text, joint[0][1].text, joint[0][2].text]
-            elif joint.tag == "joint_ShoulderLeft":
-                joint_ShoulderLeft = [joint[0][0].text, joint[0][1].text, joint[0][2].text]
-            elif joint.tag == "joint_ElbowLeft":
-                joint_ElbowLeft = [joint[0][0].text, joint[0][1].text, joint[0][2].text]
-            elif joint.tag == "joint_WristLeft":
-                joint_WristLeft = [joint[0][0].text, joint[0][1].text, joint[0][2].text]
-            elif joint.tag == "joint_HandLeft":
-                joint_HandLeft = [joint[0][0].text, joint[0][1].text, joint[0][2].text]
-            elif joint.tag == "joint_ShoulderRight":
-                joint_ShoulderRight = [joint[0][0].text, joint[0][1].text, joint[0][2].text]
-            elif joint.tag == "joint_ElbowRight":
-                joint_ElbowRight = [joint[0][0].text, joint[0][1].text, joint[0][2].text]
-            elif joint.tag == "joint_WristRight":
-                joint_WristRight = [joint[0][0].text, joint[0][1].text, joint[0][2].text]
-            elif joint.tag == "joint_HandRight":
-                joint_HandRight = [joint[0][0].text, joint[0][1].text, joint[0][2].text]
-            elif joint.tag == "joint_HipLeft":
-                joint_HipLeft = [joint[0][0].text, joint[0][1].text, joint[0][2].text]
-            elif joint.tag == "joint_KneeLeft":
-                joint_KneeLeft = [joint[0][0].text, joint[0][1].text, joint[0][2].text]
-            elif joint.tag == "joint_AnkleLeft":
-                joint_AnkleLeft = [joint[0][0].text, joint[0][1].text, joint[0][2].text]
-            elif joint.tag == "joint_FootLeft":
-                joint_FootLeft = [joint[0][0].text, joint[0][1].text, joint[0][2].text]
-            elif joint.tag == "joint_HipRight":
-                joint_HipRight = [joint[0][0].text, joint[0][1].text, joint[0][2].text]
-            elif joint.tag == "joint_KneeRight":
-                joint_KneeRight = [joint[0][0].text, joint[0][1].text, joint[0][2].text]
-            elif joint.tag == "joint_AnkleRight":
-                joint_AnkleRight = [joint[0][0].text, joint[0][1].text, joint[0][2].text]
-            elif joint.tag == "joint_FootRight":
-                joint_FootRight = [joint[0][0].text, joint[0][1].text, joint[0][2].text]
-            elif joint.tag == "joint_SpineShoulder":
-                joint_SpineShoulder = [joint[0][0].text, joint[0][1].text, joint[0][2].text]
-            elif joint.tag == "joint_HandTipLeft":
-                joint_HandTipLeft = [joint[0][0].text, joint[0][1].text, joint[0][2].text]
-            elif joint.tag == "joint_ThumbLeft":
-                joint_ThumbLeft = [joint[0][0].text, joint[0][1].text, joint[0][2].text]
-            elif joint.tag == "joint_HandTipRight":
-                joint_HandTipRight = [joint[0][0].text, joint[0][1].text, joint[0][2].text]
-            elif joint.tag == "joint_ThumbRight":
-                joint_ThumbRight = [joint[0][0].text, joint[0][1].text, joint[0][2].text] 
+            if joint.tag == "SpineBase":
+                joint_SpineBase = [joint[0][0].text.replace(",", "."), joint[0][1].text.replace(",", "."), joint[0][2].text.replace(",", ".")]
+            elif joint.tag == "SpineMid":
+                joint_SpineMid = [joint[0][0].text.replace(",", "."), joint[0][1].text.replace(",", "."), joint[0][2].text.replace(",", ".")]
+            elif joint.tag == "Neck":
+                joint_Neck = [joint[0][0].text.replace(",", "."), joint[0][1].text.replace(",", "."), joint[0][2].text.replace(",", ".")]
+            elif joint.tag == "Head":
+                joint_Head = [joint[0][0].text.replace(",", "."), joint[0][1].text.replace(",", "."), joint[0][2].text.replace(",", ".")]
+            elif joint.tag == "ShoulderLeft":
+                joint_ShoulderLeft = [joint[0][0].text.replace(",", "."), joint[0][1].text.replace(",", "."), joint[0][2].text.replace(",", ".")]
+            elif joint.tag == "ElbowLeft":
+                joint_ElbowLeft = [joint[0][0].text.replace(",", "."), joint[0][1].text.replace(",", "."), joint[0][2].text.replace(",", ".")]
+            elif joint.tag == "WristLeft":
+                joint_WristLeft = [joint[0][0].text.replace(",", "."), joint[0][1].text.replace(",", "."), joint[0][2].text.replace(",", ".")]
+            elif joint.tag == "HandLeft":
+                joint_HandLeft = [joint[0][0].text.replace(",", "."), joint[0][1].text.replace(",", "."), joint[0][2].text.replace(",", ".")]
+            elif joint.tag == "ShoulderRight":
+                joint_ShoulderRight = [joint[0][0].text.replace(",", "."), joint[0][1].text.replace(",", "."), joint[0][2].text.replace(",", ".")]
+            elif joint.tag == "ElbowRight":
+                joint_ElbowRight = [joint[0][0].text.replace(",", "."), joint[0][1].text.replace(",", "."), joint[0][2].text.replace(",", ".")]
+            elif joint.tag == "WristRight":
+                joint_WristRight = [joint[0][0].text.replace(",", "."), joint[0][1].text.replace(",", "."), joint[0][2].text.replace(",", ".")]
+            elif joint.tag == "HandRight":
+                joint_HandRight = [joint[0][0].text.replace(",", "."), joint[0][1].text.replace(",", "."), joint[0][2].text.replace(",", ".")]
+            elif joint.tag == "HipLeft":
+                joint_HipLeft = [joint[0][0].text.replace(",", "."), joint[0][1].text.replace(",", "."), joint[0][2].text.replace(",", ".")]
+            elif joint.tag == "KneeLeft":
+                joint_KneeLeft = [joint[0][0].text.replace(",", "."), joint[0][1].text.replace(",", "."), joint[0][2].text.replace(",", ".")]
+            elif joint.tag == "AnkleLeft":
+                joint_AnkleLeft = [joint[0][0].text.replace(",", "."), joint[0][1].text.replace(",", "."), joint[0][2].text.replace(",", ".")]
+            elif joint.tag == "FootLeft":
+                joint_FootLeft = [joint[0][0].text.replace(",", "."), joint[0][1].text.replace(",", "."), joint[0][2].text.replace(",", ".")]
+            elif joint.tag == "HipRight":
+                joint_HipRight = [joint[0][0].text.replace(",", "."), joint[0][1].text.replace(",", "."), joint[0][2].text.replace(",", ".")]
+            elif joint.tag == "KneeRight":
+                joint_KneeRight = [joint[0][0].text.replace(",", "."), joint[0][1].text.replace(",", "."), joint[0][2].text.replace(",", ".")]
+            elif joint.tag == "AnkleRight":
+                joint_AnkleRight = [joint[0][0].text.replace(",", "."), joint[0][1].text.replace(",", "."), joint[0][2].text.replace(",", ".")]
+            elif joint.tag == "FootRight":
+                joint_FootRight = [joint[0][0].text.replace(",", "."), joint[0][1].text.replace(",", "."), joint[0][2].text.replace(",", ".")]
+            elif joint.tag == "SpineShoulder":
+                joint_SpineShoulder = [joint[0][0].text.replace(",", "."), joint[0][1].text.replace(",", "."), joint[0][2].text.replace(",", ".")]
+            elif joint.tag == "HandTipLeft":
+                joint_HandTipLeft = [joint[0][0].text.replace(",", "."), joint[0][1].text.replace(",", "."), joint[0][2].text.replace(",", ".")]
+            elif joint.tag == "ThumbLeft":
+                joint_ThumbLeft = [joint[0][0].text.replace(",", "."), joint[0][1].text.replace(",", "."), joint[0][2].text.replace(",", ".")]
+            elif joint.tag == "HandTipRight":
+                joint_HandTipRight = [joint[0][0].text.replace(",", "."), joint[0][1].text.replace(",", "."), joint[0][2].text.replace(",", ".")]
+            elif joint.tag == "ThumbRight":
+                joint_ThumbRight = [joint[0][0].text.replace(",", "."), joint[0][1].text.replace(",", "."), joint[0][2].text.replace(",", ".")] 
             else:
                 pass
 
         frame = fr.Frame(timestamp, user_index, joint_SpineBase, joint_SpineMid, 
-        joint_Neck, joint_Head, joint_ShoulderLeft, joint_ElbowLeft, joint_WristLeft, 
-        joint_HandLeft, joint_ShoulderRight, joint_ElbowRight, joint_WristRight, 
-        joint_HandRight, joint_HipLeft, joint_KneeLeft, joint_AnkleLeft, joint_FootLeft, 
-        joint_HipRight, joint_KneeRight, joint_AnkleRight, joint_FootRight, joint_SpineShoulder, 
-        joint_HandTipLeft, joint_ThumbLeft, joint_HandTipRight, joint_ThumbRight)
+                        joint_Neck, joint_Head, joint_ShoulderLeft, joint_ElbowLeft, 
+                        joint_WristLeft, joint_HandLeft, joint_ShoulderRight, 
+                        joint_ElbowRight, joint_WristRight, joint_HandRight, 
+                        joint_HipLeft, joint_KneeLeft, joint_AnkleLeft, joint_FootLeft, 
+                        joint_HipRight, joint_KneeRight, joint_AnkleRight, 
+                        joint_FootRight, joint_SpineShoulder, joint_HandTipLeft, 
+                        joint_ThumbLeft, joint_HandTipRight, joint_ThumbRight)
 
     return existFrame, frame
 

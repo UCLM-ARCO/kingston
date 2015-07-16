@@ -50,9 +50,9 @@ class Frame(object):
                 self.joint_ElbowRight, self.joint_WristRight, self.joint_HandRight, 
                 self.joint_HipLeft, self.joint_KneeLeft, self.joint_AnkleLeft, 
                 self.joint_FootLeft, self.joint_HipRight, self.joint_KneeRight, 
-                self.joint_AnkleRight, self.joint_FootRight, self.join_SpineShoulder,
-                self.join_HandTipLeft, self.join_ThumbLeft, self.join_HandTipRight,
-                self.join_ThumbRight]
+                self.joint_AnkleRight, self.joint_FootRight, self.joint_SpineShoulder,
+                self.joint_HandTipLeft, self.joint_ThumbLeft, self.joint_HandTipRight,
+                self.joint_ThumbRight]
 
     def updateJointsValue(self, joints):
         self.joint_SpineBase = joints[0]
