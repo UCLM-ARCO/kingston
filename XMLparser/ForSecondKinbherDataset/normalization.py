@@ -17,7 +17,7 @@ def obtainFrames(sequences):
 
 
 def normalize(actions):
-    jointsPerFrame = 15
+    jointsPerFrame = 25
     for action in actions.keys():
         if not action == 0:
             framesInAction = obtainFrames(actions[action])
@@ -52,15 +52,15 @@ def normalize(actions):
                 frame.updateJointsValue(joints)
 
                 # rotation
-                angle = np.arctan(((frame.joint_left_shoulder[2] + frame.joint_left_hip[2]) / 2 -
-                                   (frame.joint_right_shoulder[2] + frame.joint_right_hip[2]) / 2) /
-                                  ((frame.joint_left_shoulder[0] + frame.joint_left_hip[0]) / 2 -
-                                   (frame.joint_right_shoulder[0] + frame.joint_right_hip[0]) / 2))
+                angle = np.arctan(((frame.joint_ShoulderLeft[2] + frame.joint_HipLeft[2]) / 2 -
+                                   (frame.joint_ShoulderRight[2] + frame.joint_HipRight[2]) / 2) /
+                                  ((frame.joint_ShoulderLeft[0] + frame.joint_HipLeft[0]) / 2 -
+                                   (frame.joint_ShoulderRight[0] + frame.joint_HipRight[0]) / 2))
 
                 joints = frame.getJoints()
                 for joint in joints:
-                    a = joint[0] - frame.joint_neck[0]
-                    b = joint[2] - frame.joint_neck[2]
+                    a = joint[0] - frame.joint_Neck[0]
+                    b = joint[2] - frame.joint_Neck[2]
                     joint[0] = a * np.cos(angle) + b * np.sin(angle)
                     joint[2] = -a * np.sin(angle) + b * np.cos(angle)
 
