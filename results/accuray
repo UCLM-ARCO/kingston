@@ -1,34 +1,104 @@
+
+/**************************************************************************/
+/********* Accuracy considering the five most plausible action ************/
+/**************************************************************************/
+Accuracy action 1 66,6666666666667%
+Accuracy action 3 0%
+Accuracy action 4 77,7777777777778%
+Accuracy action 5 93,1034482758621%
+Accuracy action 6 98,4536082474227%
+Accuracy action 7 99,1228070175439%
+Accuracy action 8 66,6666666666667%
+Accuracy action 9 2,02020202020202%
+Accuracy action 10 0%
+Accuracy action 12 2,34375%
+Accuracy action 13 2,17391304347826%
+Accuracy action 14 22,2222222222222%
+
+Accuracy actor 1 67,3469387755102%
+Accuracy actor 2 80,7017543859649%
+Accuracy actor 3 88,4615384615385%
+Accuracy actor 4 89,6825396825397%
+Accuracy actor 5 87,0967741935484%
+Accuracy actor 6 91,3793103448276%
+Accuracy actor 7 80%
+Accuracy actor 8 85,7142857142857%
+Accuracy actor 9 83,7837837837838%
+Accuracy actor 10 90,9090909090909%
+Accuracy actor 11 75,609756097561%
+Accuracy actor 12 85,7142857142857%
+Accuracy actor 13 82,8125%
+Accuracy actor 14 80%
+Accuracy actor 15 75,7575757575758%
+
+
+
+/******************************************************************************/
+/************** Accuracy considering just the first action ********************/
+/******************************************************************************/
+Accuracy action 1 0%
+Accuracy action 3 0%
+Accuracy action 4 33,3333333333333%
+Accuracy action 5 6,89655172413793%
+Accuracy action 6 22,1649484536082%
+Accuracy action 7 0%
+Accuracy action 8 0%
+Accuracy action 9 1,01010101010101%
+Accuracy action 10 0%
+Accuracy action 12 2,34375%
+Accuracy action 13 2,17391304347826%
+Accuracy action 14 1,85185185185185%
+
+Accuracy actor 1 36,734693877551%
+Accuracy actor 2 17,5438596491228%
+Accuracy actor 3 20,1923076923077%
+Accuracy actor 4 19,8412698412698%
+Accuracy actor 5 29,0322580645161%
+Accuracy actor 6 22,4137931034483%
+Accuracy actor 7 17,7777777777778%
+Accuracy actor 8 21,4285714285714%
+Accuracy actor 9 28,3783783783784%
+Accuracy actor 10 20,4545454545455%
+Accuracy actor 11 21,9512195121951%
+Accuracy actor 12 23,8095238095238%
+Accuracy actor 13 14,0625%
+Accuracy actor 14 20%
+Accuracy actor 15 15,1515151515152
+
+
+NUEVO DATASET
+
 /**************************************************************************/
 /********* Accuracy considering the five most plausible action ************/
 /**************************************************************************/
 Accuracy action 1 0%
 Accuracy action 3 0%
-Accuracy action 4 84,8484848484848%
-Accuracy action 5 85,7142857142857%
-Accuracy action 6 90,8571428571429%
-Accuracy action 7 91,219512195122%
-Accuracy action 8 50%
-Accuracy action 9 46,9178082191781%
-Accuracy action 10 16,4705882352941%
-Accuracy action 12 23,5294117647059%
-Accuracy action 13 56,4102564102564%
-Accuracy action 14 85%
+Accuracy action 4 100%
+Accuracy action 5 100%
+Accuracy action 6 100%
+Accuracy action 7 100%
+Accuracy action 8 0%
+Accuracy action 9 14,8148148148148%
+Accuracy action 10 0%
+Accuracy action 12 71,1111111111111%
+Accuracy action 13 0%
+Accuracy action 14 0%
 
-Accuracy actor 1 66,6666666666667%
-Accuracy actor 2 64,5833333333333%
-Accuracy actor 3 73,9130434782609%
-Accuracy actor 4 58,5987261146497%
-Accuracy actor 5 76,1904761904762%
-Accuracy actor 6 54,5454545454545%
-Accuracy actor 7 70,1754385964912%
-Accuracy actor 8 53,125%
-Accuracy actor 9 59,0909090909091%
-Accuracy actor 10 56,5217391304348%
-Accuracy actor 11 64,6017699115044%
-Accuracy actor 12 69,2307692307692%
-Accuracy actor 13 50,7042253521127%
-Accuracy actor 14 68,1318681318681%
-Accuracy actor 15 65,9574468085106%
+Accuracy actor 1 100%
+Accuracy actor 2 91,6666666666667%
+Accuracy actor 3 90,4761904761905%
+Accuracy actor 4 80%
+Accuracy actor 5 100%
+Accuracy actor 6 83,3333333333333%
+Accuracy actor 7 94,7368421052632%
+Accuracy actor 8 88,2352941176471%
+Accuracy actor 9 93,75%
+Accuracy actor 10 92,3076923076923%
+Accuracy actor 11 100%
+Accuracy actor 12 89,1891891891892%
+Accuracy actor 13 73,6842105263158%
+Accuracy actor 14 90%
+Accuracy actor 15 92,8571428571429%
 
 
 /******************************************************************************/
@@ -37,30 +107,31 @@ Accuracy actor 15 65,9574468085106%
 
 Accuracy action 1 0%
 Accuracy action 3 0%
-Accuracy action 4 42,4242424242424%
-Accuracy action 5 33,3333333333333%
-Accuracy action 6 18,8571428571429%
-Accuracy action 7 40,9756097560976%
+Accuracy action 4 62,5%
+Accuracy action 5 57,5757575757576%
+Accuracy action 6 66,1290322580645%
+Accuracy action 7 31,0679611650485%
 Accuracy action 8 0%
-Accuracy action 9 4,09556313993174%
-Accuracy action 10 1,17647058823529%
-Accuracy action 12 7,43801652892562%
-Accuracy action 13 23,0769230769231%
-Accuracy action 14 2,5%
+Accuracy action 9 0%
+Accuracy action 10 0%
+Accuracy action 12 2,22222222222222%
+Accuracy action 13 0%
+Accuracy action 14 0%
 
-Accuracy actor 1 27,7777777777778%
-Accuracy actor 2 14,5833333333333%
-Accuracy actor 3 20,8695652173913%
-Accuracy actor 4 17,8343949044586%
-Accuracy actor 5 12,6984126984127%
-Accuracy actor 6 15,9090909090909%
-Accuracy actor 7 21,0526315789474%
-Accuracy actor 8 15,625%
-Accuracy actor 9 9,09090909090909%
-Accuracy actor 10 15,2173913043478%
-Accuracy actor 11 22,1238938053097%
-Accuracy actor 12 19,2307692307692%
-Accuracy actor 13 12,6760563380282%
-Accuracy actor 14 15,3846153846154%
-Accuracy actor 15 21,2765957446809%
-
+Accuracy actor 1 16,6666666666667%
+Accuracy actor 2 25%
+Accuracy actor 3 33,3333333333333%
+Accuracy actor 4 23,3333333333333%
+Accuracy actor 5 33,3333333333333%
+Accuracy actor 6 22,2222222222222%
+Accuracy actor 7 31,5789473684211%
+Accuracy actor 8 41,1764705882353%
+Accuracy actor 9 12,5%
+Accuracy actor 10 15,3846153846154%
+Accuracy actor 11 50%
+Accuracy actor 12 24,3243243243243%
+Accuracy actor 13 13,1578947368421%
+Accuracy actor 14 16,6666666666667%
+Accuracy actor 15 14,2857142857143%
+Accuracy actor 16 44,4444444444444%
+Accuracy actor 17 23,5294117647059%
