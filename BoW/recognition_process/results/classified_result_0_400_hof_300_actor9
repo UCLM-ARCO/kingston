@@ -1,8 +1,8 @@
-10 
-7 
-7 
-9 
-7 
+10 11 12 6 7 
+7 13 12 1 8 
+7 10 13 11 12 
+9 1 13 2 3 
+7 10 13 11 12 
 Accuracy = 40% (2/5) (classification)
 Mean squared error = 14.8 (regression)
 Squared correlation coefficient = 0.11489 (regression)
